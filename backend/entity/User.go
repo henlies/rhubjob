@@ -9,23 +9,29 @@ import (
 // - ตารางหลัก User
 type User struct {
 	gorm.Model
-	PrefixID  int
+	PrefixID  uint
 	Prefix    Prefix `gorm:"references:id"`
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
 	Nickname  string `json:"nickname"`
-	GenderID  int
-	Gender    Gender    `gorm:"references:id"`
-	Phone     string    `json:"phone"`
+	GenderID  uint
+	Gender    Gender `gorm:"references:id"`
+	Phone     string `json:"phone"`
+	AddressID uint
+	Address   Address   `gorm:"references:id"`
 	Email     string    `json:"email"`
 	Birth     time.Time `json:"Birth"`
 	Age       int       `json:"age"`
-	BloodID   int
-	Blood     Blood  `gorm:"references:id"`
+	BloodID   uint
+	Blood     Blood `gorm:"references:id"`
+	PetID     uint
+	Pet       Pet    `gorm:"references:id"`
 	Descript  string `json:"descript"`
 	User      string `json:"user"`
 	Pass      string `json:"pass"`
 	Pic       string `json:"pic"`
-	SigninID  int
+	SigninID  uint
 	Signin    Signin `gorm:"references:id"`
+	// - ใช้สเตตัสแทนการลบข้อมูล
+	Statusu int `gorm:"statusu"`
 }

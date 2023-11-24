@@ -26,9 +26,18 @@ func SetupDatabase() {
 		&Gender{},
 		&Blood{},
 		&Per{},
+		&Gene{},
+		&Type{},
+		&District{},
+		&Province{},
+		&Status{},
+		// - ตารางย่อยที่สำคัญ
+		&Pet{},
+		&Address{},
 		// - ตารางหลัก
 		&Admin{},
 		&User{},
+		&Post{},
 	)
 	db = database
 

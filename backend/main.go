@@ -4,7 +4,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/henlies/project/controller"
 	"github.com/henlies/project/entity"
-	"github.com/henlies/project/middlewares"
 )
 
 func main() {
@@ -17,19 +16,25 @@ func main() {
 	app.Get("/genders", controller.ListGenders)
 	app.Get("/bloods", controller.ListBloods)
 	app.Get("/pers", controller.ListPers)
-
-	// - ป้องกันข้อมูล
-	api := app.Group("")
-	protected := api.Use(middlewares.Authorizes())
+	app.Get("/types", controller.ListTypes)
+	app.Get("/genes", controller.ListGenes)
+	app.Get("/provinces", controller.ListProvinces)
+	app.Get("/districts", controller.ListDistricts)
+	app.Get("/statuses", controller.ListStatuses)
 
 	// - User
-	protected.Get("/users", controller.ListUsers)
-	protected.Get("/user/:id", controller.GetUser)
-	protected.Post("/user", controller.CreateUser)
-	// protected.Patch("/user", controller.UpdateUser)
-	protected.Delete("/user/:id", controller.DeleteUser)
+	app.Get("/users", controller.ListUsers)
+	app.Get("/user/:id", controller.GetUser)
+	app.Post("/user", controller.CreateUser)
+	app.Patch("/userdetail", controller.UpdateUser)
+	app.Patch("/userpass", controller.UpdatePassword)
+	app.Delete("/user/:id", controller.DeleteUser)
 	// - Admin
-	protected.Get("/admins", controller.ListAdmins)
+	app.Get("/admins", controller.ListAdmins)
+
+	// - ป้องกันข้อมูล
+	// api := app.Group("")
+	// protected := api.Use(middlewares.Authorizes())
 
 	err := app.Listen(":3000")
 	if err != nil {
