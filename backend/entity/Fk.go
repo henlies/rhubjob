@@ -76,3 +76,11 @@ type Status struct {
 	Name string `json:"name"`
 	Post []Post `gorm:"foreignKey:StatusID"`
 }
+
+// - แยก Role
+type Role struct {
+	gorm.Model
+	Name  string  `json:"name"`
+	User  []User  `gorm:"foreignKey:RoleID"`
+	Admin []Admin `gorm:"foreignKey:RoleID"`
+}

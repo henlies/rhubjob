@@ -21,17 +21,16 @@ type User struct {
 	Address   Address   `gorm:"references:id"`
 	Email     string    `json:"email"`
 	Birth     time.Time `json:"Birth"`
-	Age       int       `json:"age"`
 	BloodID   uint
 	Blood     Blood `gorm:"references:id"`
 	PetID     uint
 	Pet       Pet    `gorm:"references:id"`
 	Descript  string `json:"descript"`
+	Pic       string `json:"pic"`
 	User      string `json:"user"`
 	Pass      string `json:"pass"`
-	Pic       string `json:"pic"`
-	SigninID  uint
-	Signin    Signin `gorm:"references:id"`
+	RoleID    uint
+	Role      Role `gorm:"references:ID"`
 	// - ใช้สเตตัสแทนการลบข้อมูล
 	Statusu int `gorm:"statusu"`
 }

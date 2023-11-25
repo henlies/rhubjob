@@ -110,20 +110,6 @@ func SetupIntoDatabase(db *gorm.DB) {
 	}
 	db.Model(&Address{}).Create(&address)
 	// ===== ทดสอบข้อมูล =====
-	signin := Signin{
-		User: "henlies",
-		Pass: SetupPasswordHash("12345"),
-		Role: role,
-	}
-	db.Model(&Signin{}).Create(&signin)
-
-	signinA := Signin{
-		User: "Admin",
-		Pass: SetupPasswordHash("Admin"),
-		Role: role1,
-	}
-	db.Model(&Signin{}).Create(&signinA)
-
 	user := User{
 		Prefix:    prefix,
 		Firstname: "ภัทรพล",
@@ -134,14 +120,13 @@ func SetupIntoDatabase(db *gorm.DB) {
 		Address:   address,
 		Email:     "tle.pattharapon@gmail.com",
 		Birth:     birth,
-		Age:       22,
 		Blood:     blood,
 		Pet:       pet,
 		Descript:  "ติดประชุม",
+		Pic:       "SOMEPICTURE",
 		User:      "henlies",
 		Pass:      SetupPasswordHash("12345"),
-		Pic:       "SOMEPICTURE",
-		Signin:    signin,
+		Role:      role,
 		Statusu:   1,
 	}
 	db.Model(&User{}).Create(&user)
@@ -154,13 +139,12 @@ func SetupIntoDatabase(db *gorm.DB) {
 		Gender:    gender,
 		Phone:     "0819650866",
 		Email:     "Admin@gmail.com",
-		Age:       27,
 		Blood:     blood,
-		User:      "Admin",
-		Pass:      SetupPasswordHash("Admin"),
 		Per:       per,
 		Pic:       "SOMEPICTURE",
-		Signin:    signinA,
+		User:      "Admin",
+		Pass:      SetupPasswordHash("Admin"),
+		Role:      role1,
 		Statusa:   1,
 	}
 	db.Model(&Admin{}).Create(&admin)

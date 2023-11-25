@@ -16,16 +16,15 @@ type Admin struct {
 	Gender    Gender `gorm:"references:id"`
 	Phone     string `json:"phone"`
 	Email     string `json:"email"`
-	Age       int    `json:"age"`
 	BloodID   uint
-	Blood     Blood  `gorm:"references:id"`
-	User      string `json:"user"`
-	Pass      string `json:"pass"`
+	Blood     Blood `gorm:"references:id"`
 	PerID     uint
 	Per       Per    `gorm:"references:id"`
 	Pic       string `json:"pic"`
-	SigninID  uint
-	Signin    Signin `gorm:"references:id"`
+	User      string `json:"user"`
+	Pass      string `json:"pass"`
+	RoleID    uint
+	Role      Role `gorm:"references:ID"`
 	// - ใช้สเตตัสแทนการลบข้อมูล
 	Statusa int `gorm:"statusa"`
 }

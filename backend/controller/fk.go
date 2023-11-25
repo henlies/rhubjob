@@ -49,7 +49,7 @@ func ListTypes(c *fiber.Ctx) error {
 
 func ListGenes(c *fiber.Ctx) error {
 	var genes []entity.Gene
-	if err := entity.DB().Preload("Type").Raw("SELECT * FROM genes").Find(&genes).Error; err != nil {
+	if err := entity.DB().Raw("SELECT * FROM genes").Find(&genes).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": genes})
@@ -65,7 +65,7 @@ func ListProvinces(c *fiber.Ctx) error {
 
 func ListDistricts(c *fiber.Ctx) error {
 	var districts []entity.District
-	if err := entity.DB().Preload("Province").Raw("SELECT * FROM districts").Find(&districts).Error; err != nil {
+	if err := entity.DB().Raw("SELECT * FROM districts").Find(&districts).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": districts})

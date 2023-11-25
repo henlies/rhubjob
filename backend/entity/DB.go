@@ -18,9 +18,6 @@ func SetupDatabase() {
 	}
 
 	database.AutoMigrate(
-		// - เอาไว้ signin
-		&Role{},
-		&Signin{},
 		// - ตารางย่อย
 		&Prefix{},
 		&Gender{},
@@ -31,6 +28,7 @@ func SetupDatabase() {
 		&District{},
 		&Province{},
 		&Status{},
+		&Role{},
 		// - ตารางย่อยที่สำคัญ
 		&Pet{},
 		&Address{},

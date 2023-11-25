@@ -17,9 +17,8 @@ func SetupPasswordHash(pwd string) string {
 func ListUsers(c *fiber.Ctx) error {
 	var users []entity.User
 	if err := entity.DB().Preload("Prefix").Preload("Gender").
-		Preload("Address.Province.District").Preload("Blood").
-		Preload("Pet.Type.Gene").Preload("Signin.Role").
-		Raw("SELECT * FROM users").Find(&users).Error; err != nil {
+		Preload("Address").Preload("Blood").Preload("Pet").
+		Preload("Role").Raw("SELECT * FROM users").Find(&users).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": users})
@@ -29,9 +28,8 @@ func GetUser(c *fiber.Ctx) error {
 	var user entity.User
 	id := c.Params("id")
 	if err := entity.DB().Preload("Prefix").Preload("Gender").
-		Preload("Address.Province.District").Preload("Blood").
-		Preload("Pet.Type.Gene").Preload("Signin.Role").
-		Raw("SELECT * FROM users WHERE id = ?", id).Find(&user).Error; err != nil {
+		Preload("Address").Preload("Blood").Preload("Pet").
+		Preload("Role").Raw("SELECT * FROM users WHERE id = ?", id).Find(&user).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": user})
@@ -67,12 +65,6 @@ func CreateUser(c *fiber.Ctx) error {
 	if err := entity.DB().Model(&entity.Role{}).Where("name = ?", "ผู้ใช้งานระบบ").First(&userrole).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User role not found"})
 	}
-	createusersignin := entity.Signin{
-		User: user.User,
-		Pass: SetupPasswordHash(user.Pass),
-		Role: userrole,
-	}
-
 	cu := entity.User{
 		Prefix:    prefix,
 		Firstname: user.Firstname,
@@ -83,14 +75,13 @@ func CreateUser(c *fiber.Ctx) error {
 		Address:   address,
 		Email:     user.Email,
 		Birth:     user.Birth,
-		Age:       user.Age,
 		Blood:     blood,
 		Pet:       pet,
 		Descript:  user.Descript,
+		Pic:       user.Pic,
 		User:      user.User,
 		Pass:      SetupPasswordHash(user.Pass),
-		Pic:       user.Pic,
-		Signin:    createusersignin,
+		Role:      userrole,
 		Statusu:   1,
 	}
 	if err := entity.DB().Create(&cu).Error; err != nil {
@@ -128,10 +119,8 @@ func UpdateUser(c *fiber.Ctx) error {
 		Nickname:  user.Nickname,
 		Gender:    gender,
 		Phone:     user.Phone,
-		Address:   address,
 		Email:     user.Email,
 		Birth:     user.Birth,
-		Age:       user.Age,
 		Blood:     blood,
 		Descript:  user.Descript,
 		Pic:       user.Pic,
@@ -149,21 +138,13 @@ func UpdatePassword(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	ups := entity.Signin{
+	up := entity.User{
 		Pass: SetupPasswordHash(user.Pass),
 	}
-	if err := entity.DB().Where("id = ?", user.ID).Updates(&ups).Error; err != nil {
+	if err := entity.DB().Where("id = ?", user.ID).Updates(&up).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	c.Status(http.StatusOK).JSON(fiber.Map{"data": ups})
-
-	upu := entity.User{
-		Pass: SetupPasswordHash(user.Pass),
-	}
-	if err := entity.DB().Where("id = ?", user.ID).Updates(&upu).Error; err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": upu})
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": up})
 }
 
 func DeleteUser(c *fiber.Ctx) error {
