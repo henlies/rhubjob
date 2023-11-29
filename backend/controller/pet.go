@@ -39,14 +39,14 @@ func CreatePet(c *fiber.Ctx) error {
 	}
 
 	cp := entity.Pet{
-		Name:     pet.Name,
-		Type:     typex,
-		Gene:     gene,
-		Food:     pet.Food,
-		Habit:    pet.Habit,
-		Descript: pet.Descript,
-		Pill:     pet.Pill,
-		Pic:      pet.Pic,
+		// Name:     pet.Name,
+		// Type:     typex,
+		// Gene:     gene,
+		// Food:     pet.Food,
+		// Habit:    pet.Habit,
+		// Descript: pet.Descript,
+		// Pill:     pet.Pill,
+		// Pic:      pet.Pic,
 	}
 	if err := entity.DB().Create(&cp).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -69,14 +69,14 @@ func UpdatePet(c *fiber.Ctx) error {
 	}
 
 	up := entity.Pet{
-		Name:     pet.Name,
-		Type:     typex,
-		Gene:     gene,
-		Food:     pet.Food,
-		Habit:    pet.Habit,
-		Descript: pet.Descript,
-		Pill:     pet.Pill,
-		Pic:      pet.Pic,
+		// Name:     pet.Name,
+		// Type:     typex,
+		// Gene:     gene,
+		// Food:     pet.Food,
+		// Habit:    pet.Habit,
+		// Descript: pet.Descript,
+		// Pill:     pet.Pill,
+		// Pic:      pet.Pic,
 	}
 	if err := entity.DB().Where("id = ?", pet.ID).Updates(&up).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})

@@ -29,9 +29,17 @@ func SetupDatabase() {
 		&Province{},
 		&Status{},
 		&Role{},
+		&Method{},
 		// - ตารางย่อยที่สำคัญ
 		&Pet{},
 		&Address{},
+		&Chat{},
+		&Comment{},
+		&Payment{},
+		// - ตารางหลายต่อหลาย
+		&UserChat{},
+		&UserComment{},
+		&UserPost{},
 		// - ตารางหลัก
 		&Admin{},
 		&User{},

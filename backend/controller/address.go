@@ -39,9 +39,9 @@ func CreateAddress(c *fiber.Ctx) error {
 	}
 
 	ca := entity.Address{
-		Province: province,
-		District: district,
-		Descript: address.Descript,
+		ProvinceID: province.ID,
+		DistrictID: district.ID,
+		Descript:   address.Descript,
 	}
 	if err := entity.DB().Create(&ca).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -64,9 +64,9 @@ func UpdateAddress(c *fiber.Ctx) error {
 	}
 
 	ua := entity.Address{
-		Province: province,
-		District: district,
-		Descript: address.Descript,
+		ProvinceID: province.ID,
+		DistrictID: district.ID,
+		Descript:   address.Descript,
 	}
 	if err := entity.DB().Where("id = ?", address.ID).Updates(&ua).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})

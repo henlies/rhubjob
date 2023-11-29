@@ -38,33 +38,29 @@ func SetupIntoDatabase(db *gorm.DB) {
 	db.Model(&Per{}).Create(&Per{Role: "คัดกรองข้อความ"})
 	db.Model(&Per{}).Create(&Per{Role: "จัดการข้อมูลผู้ใช้ระบบ"})
 	// - ชนิดสัตว์เลี้ยง
-	t1 := Type{
-		Name: "สุนัข",
-	}
+	t1 := Type{Name: "สุนัข"}
 	db.Model(&Type{}).Create(&t1)
 	// - พันธุ์สัตว์เลี้ยง
-	db.Model(&Gene{}).Create(&Gene{Name: "โกลเด้น รีทริฟเวอร์", TypeID: 1})
+	db.Model(&Gene{}).Create(&Gene{Name: "โกลเด้น รีทริฟเวอร์", TypeID: t1.ID})
 	// - จังหวัดน่าน
-	p1 := Province{
-		Name: "น่าน",
-	}
+	p1 := Province{Name: "น่าน"}
 	db.Model(&Province{}).Create(&p1)
 	// - อำเภอน่าน
-	db.Model(&District{}).Create(&District{Name: "ท่าวังผา", Zipcode: "55140", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "ทุ่งช้าง", Zipcode: "55130", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "นาน้อย", Zipcode: "55150", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "นาหมื่น", Zipcode: "55180", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "บ่อเกลือ", Zipcode: "55220", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "บ้านหลวง", Zipcode: "55190", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "ปัว", Zipcode: "55120", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "ภูเพียง", Zipcode: "55000", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "สองแคว", Zipcode: "55160", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "สันติสุข", Zipcode: "55210", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "เฉลิมพระเกียรติ", Zipcode: "55130", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "เชียงกลาง", Zipcode: "55160", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "เมืองน่าน", Zipcode: "55000", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "เวียงสา", Zipcode: "55110", ProvinceID: 1})
-	db.Model(&District{}).Create(&District{Name: "แม่จริม", Zipcode: "55170", ProvinceID: 1})
+	db.Model(&District{}).Create(&District{Name: "ท่าวังผา", Zipcode: "55140", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "ทุ่งช้าง", Zipcode: "55130", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "นาน้อย", Zipcode: "55150", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "นาหมื่น", Zipcode: "55180", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "บ่อเกลือ", Zipcode: "55220", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "บ้านหลวง", Zipcode: "55190", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "ปัว", Zipcode: "55120", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "ภูเพียง", Zipcode: "55000", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "สองแคว", Zipcode: "55160", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "สันติสุข", Zipcode: "55210", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "เฉลิมพระเกียรติ", Zipcode: "55130", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "เชียงกลาง", Zipcode: "55160", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "เมืองน่าน", Zipcode: "55000", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "เวียงสา", Zipcode: "55110", ProvinceID: p1.ID})
+	db.Model(&District{}).Create(&District{Name: "แม่จริม", Zipcode: "55170", ProvinceID: p1.ID})
 	// - สถานะ
 	db.Model(&Status{}).Create(&Status{Name: "รอเริ่มงาน"})
 	db.Model(&Status{}).Create(&Status{Name: "ดำเนินงาน"})
@@ -81,21 +77,21 @@ func SetupIntoDatabase(db *gorm.DB) {
 	var gene Gene
 	// var status Status
 	var dis District
-	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ใช้งานระบบ"`).Scan(&role)
-	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ดูแลระบบ"`).Scan(&role1)
-	db.Raw(`SELECT * FROM prefixes WHERE name = "นาย"`).Scan(&prefix)
-	db.Raw(`SELECT * FROM genders WHERE name = "เพศชาย"`).Scan(&gender)
-	db.Raw(`SELECT * FROM bloods WHERE name = "AB"`).Scan(&blood)
-	db.Raw(`SELECT * FROM pers WHERE role = "จัดการข้อมูลผู้ใช้ระบบ"`).Scan(&per)
-	db.Raw(`SELECT * FROM genes WHERE name = "โกลเด้น รีทริฟเวอร์"`).Scan(&gene)
-	// db.Raw(`SELECT * FROM statuses WHERE name = "รอเริ่มงาน"`).Scan(&status)
-	db.Raw(`SELECT * FROM districts WHERE name = "ท่าวังผา"`).Scan(&dis)
+	db.Raw(`SELECT ID FROM roles WHERE name = "ผู้ใช้งานระบบ"`).Scan(&role)
+	db.Raw(`SELECT ID FROM roles WHERE name = "ผู้ดูแลระบบ"`).Scan(&role1)
+	db.Raw(`SELECT ID FROM prefixes WHERE name = "นาย"`).Scan(&prefix)
+	db.Raw(`SELECT ID FROM genders WHERE name = "เพศชาย"`).Scan(&gender)
+	db.Raw(`SELECT ID FROM bloods WHERE name = "AB"`).Scan(&blood)
+	db.Raw(`SELECT ID FROM pers WHERE role = "จัดการข้อมูลผู้ใช้ระบบ"`).Scan(&per)
+	db.Raw(`SELECT ID FROM genes WHERE name = "โกลเด้น รีทริฟเวอร์"`).Scan(&gene)
+	// db.Raw(`SELECT ID FROM statuses WHERE name = "รอเริ่มงาน"`).Scan(&status)
+	db.Raw(`SELECT ID FROM districts WHERE name = "ท่าวังผา"`).Scan(&dis)
 
 	// ===== ทดสอบข้อมูลย่อย 1 =====
 	pet := Pet{
 		Name:     "มอมแมม",
-		Type:     t1,
-		Gene:     gene,
+		TypeID:   t1.ID,
+		GeneID:   gene.ID,
 		Food:     "เพดดรีกรี",
 		Habit:    "ขี้เล่น",
 		Descript: "ให้อาหารเช้า 08:00 ให้อาหารเย็น 18:00",
@@ -104,24 +100,24 @@ func SetupIntoDatabase(db *gorm.DB) {
 	}
 	db.Model(&Pet{}).Create(&pet)
 	address := Address{
-		Province: p1,
-		District: dis,
-		Descript: "218 หมู่ 15 บ้านโคกพิทักษ์",
+		ProvinceID: p1.ID,
+		DistrictID: dis.ID,
+		Descript:   "218 หมู่ 15 บ้านโคกพิทักษ์",
 	}
 	db.Model(&Address{}).Create(&address)
 	// ===== ทดสอบข้อมูล =====
 	user := User{
-		Prefix:    prefix,
+		PrefixID:  prefix.ID,
 		Firstname: "ภัทรพล",
 		Lastname:  "การวิชา",
 		Nickname:  "เติ้ล",
-		Gender:    gender,
+		GenderID:  gender.ID,
 		Phone:     "0933486360",
-		Address:   address,
+		AddressID: address.ID,
 		Email:     "tle.pattharapon@gmail.com",
 		Birth:     birth,
-		Blood:     blood,
-		Pet:       pet,
+		BloodID:   blood.ID,
+		PetID:     pet.ID,
 		Descript:  "ติดประชุม",
 		Pic:       "SOMEPICTURE",
 		User:      "henlies",
@@ -132,15 +128,15 @@ func SetupIntoDatabase(db *gorm.DB) {
 	db.Model(&User{}).Create(&user)
 
 	admin := Admin{
-		Prefix:    prefix,
+		PrefixID:  prefix.ID,
 		Firstname: "อมร",
 		Lastname:  "ณ ขอนแก่น",
 		Nickname:  "อมร",
-		Gender:    gender,
+		GenderID:  gender.ID,
 		Phone:     "0819650866",
 		Email:     "Admin@gmail.com",
-		Blood:     blood,
-		Per:       per,
+		BloodID:   blood.ID,
+		PerID:     per.ID,
 		Pic:       "SOMEPICTURE",
 		User:      "Admin",
 		Pass:      SetupPasswordHash("Admin"),

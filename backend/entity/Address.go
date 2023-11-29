@@ -6,10 +6,8 @@ import (
 
 type Address struct {
 	gorm.Model
-	ProvinceID uint
-	Province   Province `gorm:"references:id"`
-	DistrictID uint
-	District   District `gorm:"references:id"`
-	Descript   string   `json:"descript"`
-	User       []User   `gorm:"foreignKey:AddressID"`
+	ProvinceID uint   `json:"province_id"`
+	DistrictID uint   `json:"district_id"`
+	Descript   string `json:"descript"`
+	User       []User `gorm:"foreignKey:AddressID"`
 }

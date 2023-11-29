@@ -39,9 +39,8 @@ type Per struct {
 type Gene struct {
 	gorm.Model
 	Name   string `json:"name"`
-	TypeID uint
-	Type   Type  `gorm:"references:id"`
-	Pet    []Pet `gorm:"foreignKey:GeneID"`
+	TypeID uint   `json:"type_id"`
+	Pet    []Pet  `gorm:"foreignKey:GeneID"`
 }
 
 // - ชนิดสัตว์เลี้ยง
@@ -55,10 +54,9 @@ type Type struct {
 // - อำเภอ
 type District struct {
 	gorm.Model
-	Name       string `json:"name"`
-	Zipcode    string `json:"zipcode"`
-	ProvinceID uint
-	Province   Province  `gorm:"references:id"`
+	Name       string    `json:"name"`
+	Zipcode    string    `json:"zipcode"`
+	ProvinceID uint      `json:"province_id"`
 	Address    []Address `gorm:"foreignKey:DistrictID"`
 }
 
@@ -83,4 +81,12 @@ type Role struct {
 	Name  string  `json:"name"`
 	User  []User  `gorm:"foreignKey:RoleID"`
 	Admin []Admin `gorm:"foreignKey:RoleID"`
+}
+
+// - ช่องทางการชำระเงิน
+type Method struct {
+	gorm.Model
+	Name    string    `json:"name"`
+	Number  int       `json:"number"`
+	Payment []Payment `gorm:"foreignKey:MethodID" json:"payment"`
 }
