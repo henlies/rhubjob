@@ -16,7 +16,8 @@ func SetupPasswordHash(pwd string) string {
 
 func ListUsers(c *fiber.Ctx) error {
 	var users []entity.User
-	if err := entity.DB().Preload("Role").Raw("SELECT * FROM users").Find(&users).Error; err != nil {
+	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").Preload("Per").
+		Preload("Role").Raw("SELECT * FROM users").Find(&users).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": users})
@@ -25,7 +26,8 @@ func ListUsers(c *fiber.Ctx) error {
 func GetUser(c *fiber.Ctx) error {
 	var user entity.User
 	id := c.Params("id")
-	if err := entity.DB().Preload("Role").Raw("SELECT * FROM users WHERE id = ?", id).Find(&user).Error; err != nil {
+	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").Preload("Per").
+		Preload("Role").Raw("SELECT * FROM users WHERE id = ?", id).Find(&user).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": user})
@@ -33,27 +35,27 @@ func GetUser(c *fiber.Ctx) error {
 
 func CreateUser(c *fiber.Ctx) error {
 	var user entity.User
-	var prefix uint
-	var gender uint
-	var address uint
-	var blood uint
-	var pet uint
+	var prefix entity.Prefix
+	var gender entity.Gender
+	var address entity.Address
+	var blood entity.Blood
+	var pet entity.Pet
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	if tx := entity.DB().Raw("SELECT ID FROM users WHERE id = ?", user.PrefixID).First(&prefix); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", user.PrefixID).First(&prefix); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Prefix not found"})
 	}
-	if tx := entity.DB().Raw("SELECT ID FROM users WHERE id = ?", user.GenderID).First(&gender); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", user.GenderID).First(&gender); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Gender not found"})
 	}
-	if tx := entity.DB().Raw("SELECT ID FROM users WHERE id = ?", user.AddressID).First(&address); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", user.AddressID).First(&address); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Address not found"})
 	}
-	if tx := entity.DB().Raw("SELECT ID FROM users WHERE id = ?", user.BloodID).First(&blood); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", user.BloodID).First(&blood); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Blood not found"})
 	}
-	if tx := entity.DB().Raw("SELECT ID FROM users WHERE id = ?", user.PetID).First(&pet); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", user.PetID).First(&pet); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Pet not found"})
 	}
 
@@ -62,17 +64,17 @@ func CreateUser(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User role not found"})
 	}
 	cu := entity.User{
-		PrefixID:  prefix,
+		Prefix:    prefix,
 		Firstname: user.Firstname,
 		Lastname:  user.Lastname,
 		Nickname:  user.Nickname,
-		GenderID:  gender,
+		Gender:    gender,
 		Phone:     user.Phone,
-		AddressID: address,
+		Address:   address,
 		Email:     user.Email,
 		Birth:     user.Birth,
-		BloodID:   blood,
-		PetID:     pet,
+		Blood:     blood,
+		Pet:       pet,
 		Descript:  user.Descript,
 		Pic:       user.Pic,
 		User:      user.User,
@@ -88,36 +90,36 @@ func CreateUser(c *fiber.Ctx) error {
 
 func UpdateUser(c *fiber.Ctx) error {
 	var user entity.User
-	var prefix uint
-	var gender uint
-	var address uint
-	var blood uint
+	var prefix entity.Prefix
+	var gender entity.Gender
+	var address entity.Address
+	var blood entity.Blood
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	if tx := entity.DB().Raw("SELECT ID FROM users WHERE id = ?", user.PrefixID).First(&prefix); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", user.PrefixID).First(&prefix); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Prefix not found"})
 	}
-	if tx := entity.DB().Raw("SELECT ID FROM users WHERE id = ?", user.GenderID).First(&gender); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", user.GenderID).First(&gender); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Gender not found"})
 	}
-	if tx := entity.DB().Raw("SELECT ID FROM users WHERE id = ?", user.AddressID).First(&address); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", user.AddressID).First(&address); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Address not found"})
 	}
-	if tx := entity.DB().Raw("SELECT ID FROM users WHERE id = ?", user.BloodID).First(&blood); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("id = ?", user.BloodID).First(&blood); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Blood not found"})
 	}
 
 	uu := entity.User{
-		PrefixID:  prefix,
+		Prefix:    prefix,
 		Firstname: user.Firstname,
 		Lastname:  user.Lastname,
 		Nickname:  user.Nickname,
-		GenderID:  gender,
+		Gender:    gender,
 		Phone:     user.Phone,
 		Email:     user.Email,
 		Birth:     user.Birth,
-		BloodID:   blood,
+		Blood:     blood,
 		Descript:  user.Descript,
 		Pic:       user.Pic,
 	}

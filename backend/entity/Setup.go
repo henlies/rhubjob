@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
-
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +13,47 @@ func SetupPasswordHash(pwd string) string {
 	return string(password)
 }
 
-func SetupIntoDatabase(db *gorm.DB) {
+var db *gorm.DB
+
+func DB() *gorm.DB {
+	return db
+}
+
+func SetupDatabase() {
+	database, err := gorm.Open(sqlite.Open("urpet.db"), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database.")
+	}
+
+	database.AutoMigrate(
+		// - ตารางย่อย
+		&Prefix{},
+		&Gender{},
+		&Blood{},
+		&Per{},
+		&Gene{},
+		&Type{},
+		&District{},
+		&Province{},
+		&Status{},
+		&Role{},
+		&Method{},
+		// - ตารางย่อยที่สำคัญ
+		&Pet{},
+		&Address{},
+		&Chat{},
+		&Comment{},
+		&Payment{},
+		// - ตารางหลายต่อหลาย
+		&UserChat{},
+		&UserComment{},
+		&UserPost{},
+		// - ตารางหลัก
+		&Admin{},
+		&User{},
+		&Post{},
+	)
+	db = database
 
 	// - แยกบทบาท
 	db.Model(&Role{}).Create(&Role{Name: "ผู้ดูแลระบบ"})
@@ -132,11 +172,11 @@ func SetupIntoDatabase(db *gorm.DB) {
 		Firstname: "อมร",
 		Lastname:  "ณ ขอนแก่น",
 		Nickname:  "อมร",
-		GenderID:  gender.ID,
+		Gender:    gender,
 		Phone:     "0819650866",
 		Email:     "Admin@gmail.com",
-		BloodID:   blood.ID,
-		PerID:     per.ID,
+		Blood:     blood,
+		Per:       per,
 		Pic:       "SOMEPICTURE",
 		User:      "Admin",
 		Pass:      SetupPasswordHash("Admin"),
