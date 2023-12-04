@@ -94,6 +94,7 @@ func UpdateUser(c *fiber.Ctx) error {
 	var gender entity.Gender
 	var address entity.Address
 	var blood entity.Blood
+	var pet entity.Pet
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -109,6 +110,9 @@ func UpdateUser(c *fiber.Ctx) error {
 	if tx := entity.DB().Where("id = ?", user.BloodID).First(&blood); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Blood not found"})
 	}
+	if tx := entity.DB().Where("id = ?", user.PetID).First(&pet); tx.RowsAffected == 0 {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Pet not found"})
+	}
 
 	uu := entity.User{
 		Prefix:    prefix,
@@ -120,6 +124,7 @@ func UpdateUser(c *fiber.Ctx) error {
 		Email:     user.Email,
 		Birth:     user.Birth,
 		Blood:     blood,
+		Pet:       pet,
 		Descript:  user.Descript,
 		Pic:       user.Pic,
 	}
@@ -129,13 +134,11 @@ func UpdateUser(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": uu})
 }
 
-func UpdatePassword(c *fiber.Ctx) error {
+func UpdatePasswordUser(c *fiber.Ctx) error {
 	var user entity.User
-
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-
 	up := entity.User{
 		Pass: SetupPasswordHash(user.Pass),
 	}

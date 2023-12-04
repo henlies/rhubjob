@@ -23,9 +23,21 @@ func main() {
 	app.Get("/provinces", controller.ListProvinces)
 	app.Get("/districts", controller.ListDistricts)
 	app.Get("/statuses", controller.ListStatuses)
+	app.Get("/roles", controller.ListRoles)
+	app.Get("/methods", controller.ListMethods)
+	// - ตารางหลายต่อหลาย
+	app.Get("/userchats", controller.ListUserChats)
+	app.Get("/usercomments", controller.ListUserComments)
+	app.Get("/userposts", controller.ListUserPosts)
 	// - ป้องกันข้อมูล
 	api := app.Group("")
 	protected := api.Use(middlewares.Authorizes())
+	// - Comment
+	protected.Get("/comments", controller.ListComments)
+	// - Chat
+	protected.Get("/chats", controller.ListChats)
+	// - Payment
+	protected.Get("/payments", controller.ListPayments)
 	// - Addrss
 	protected.Get("/addresses", controller.ListAddresses)
 	protected.Get("/address/user/:id", controller.GetAddressUID)
@@ -41,10 +53,17 @@ func main() {
 	protected.Get("/user/:id", controller.GetUser)
 	protected.Post("/user", controller.CreateUser)
 	protected.Patch("/userdetail", controller.UpdateUser)
-	protected.Patch("/userpass", controller.UpdatePassword)
+	protected.Patch("/userpass", controller.UpdatePasswordUser)
 	protected.Delete("/user/:id", controller.DeleteUser)
 	// - Admin
 	protected.Get("/admins", controller.ListAdmins)
+	protected.Get("/admin/:id", controller.ListAdmins)
+	protected.Post("/admin", controller.CreateAdmin)
+	protected.Patch("/admindetail", controller.UpdateAdmin)
+	protected.Patch("/adminpass", controller.UpdatePasswordAdmin)
+	protected.Delete("/admin/:id", controller.DeleteAdmin)
+	// - Post
+	protected.Get("/posts", controller.ListAddresses)
 
 	err := app.Listen(":3000")
 	if err != nil {

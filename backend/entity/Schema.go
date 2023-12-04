@@ -91,10 +91,12 @@ type UserPost struct {
 
 type Address struct {
 	gorm.Model
-	ProvinceID uint   `json:"province_id"`
-	DistrictID uint   `json:"district_id"`
-	Descript   string `json:"descript"`
-	User       []User `gorm:"foreignKey:AddressID"`
+	ProvinceID uint     `json:"province_id"`
+	Province   Province `gorm:"references:ID"`
+	DistrictID uint     `json:"district_id"`
+	District   District `gorm:"references:ID"`
+	Descript   string   `json:"descript"`
+	User       []User   `gorm:"foreignKey:AddressID"`
 }
 
 type Pet struct {
@@ -128,7 +130,8 @@ type UserComment struct {
 
 type Chat struct {
 	gorm.Model
-	Message  string     `json:"message"`
+	Message1 string     `json:"message1"`
+	Message2 string     `json:"message2"`
 	UserChat []UserChat `gorm:"foreignKey:ChatID"`
 }
 

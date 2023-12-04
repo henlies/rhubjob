@@ -78,3 +78,41 @@ func ListStatuses(c *fiber.Ctx) error {
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": statuses})
 }
+func ListRoles(c *fiber.Ctx) error {
+	var roles []entity.Role
+	if err := entity.DB().Raw("SELECT * FROM roles").Find(&roles).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": roles})
+}
+func ListMethods(c *fiber.Ctx) error {
+	var methods []entity.Method
+	if err := entity.DB().Raw("SELECT * FROM statuses").Find(&methods).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": methods})
+}
+
+func ListUserPosts(c *fiber.Ctx) error {
+	var userposts []entity.UserPost
+	if err := entity.DB().Raw("SELECT * FROM user_posts").Find(&userposts).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": userposts})
+}
+
+func ListUserComments(c *fiber.Ctx) error {
+	var usercomments []entity.UserComment
+	if err := entity.DB().Raw("SELECT * FROM user_comments").Find(&usercomments).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": usercomments})
+}
+
+func ListUserChats(c *fiber.Ctx) error {
+	var userchats []entity.UserChat
+	if err := entity.DB().Raw("SELECT * FROM user_chats").Find(&userchats).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": userchats})
+}
