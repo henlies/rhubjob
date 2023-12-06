@@ -80,7 +80,7 @@ func CreateUser(c *fiber.Ctx) error {
 		User:      user.User,
 		Pass:      SetupPasswordHash(user.Pass),
 		Role:      userrole,
-		Statusu:   1,
+		Status:    1,
 	}
 	if err := entity.DB().Create(&cu).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})

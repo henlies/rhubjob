@@ -66,7 +66,7 @@ func CreateAdmin(c *fiber.Ctx) error {
 		User:      admin.User,
 		Pass:      SetupPasswordHash(admin.Pass),
 		Role:      adminrole,
-		Statusa:   1,
+		Status:    1,
 	}
 	if err := entity.DB().Create(&ca).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})

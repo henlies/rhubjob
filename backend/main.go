@@ -28,7 +28,6 @@ func main() {
 	// - ตารางหลายต่อหลาย
 	app.Get("/userchats", controller.ListUserChats)
 	app.Get("/usercomments", controller.ListUserComments)
-	app.Get("/userposts", controller.ListUserPosts)
 	// - ป้องกันข้อมูล
 	api := app.Group("")
 	protected := api.Use(middlewares.Authorizes())

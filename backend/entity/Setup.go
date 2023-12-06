@@ -47,7 +47,6 @@ func SetupDatabase() {
 		// - ตารางหลายต่อหลาย
 		&UserChat{},
 		&UserComment{},
-		&UserPost{},
 		// - ตารางหลัก
 		&Admin{},
 		&User{},
@@ -1237,9 +1236,20 @@ func SetupDatabase() {
 	db.Model(&Status{}).Create(&Status{Name: "รอเริ่มงาน"})
 	db.Model(&Status{}).Create(&Status{Name: "ดำเนินงาน"})
 	db.Model(&Status{}).Create(&Status{Name: "งานสิ้นสุด"})
+	// - วิธีชำระเงิน
+	db.Model(&Method{}).Create(&Method{Name: "ธนาคารกรุงเทพ", Number: 5423152669})
+	db.Model(&Method{}).Create(&Method{Name: "ธนาคารกสิกรไทย", Number: 4125633652})
+	db.Model(&Method{}).Create(&Method{Name: "ธนาคารกรุงไทย", Number: 439900408181})
+	db.Model(&Method{}).Create(&Method{Name: "ธนาคารทหารไทย", Number: 4185279665})
+	db.Model(&Method{}).Create(&Method{Name: "ธนาคารไทยพาณิชย์", Number: 5214253625})
+	db.Model(&Method{}).Create(&Method{Name: "ธนาคารกรุงศรีอยุธยา", Number: 2548989658})
+	db.Model(&Method{}).Create(&Method{Name: "ธนาคารออมสิน", Number: 114523652587})
 
 	// ===== Assign ข้อมูล =====
 	birth := time.Date(2001, 10, 13, 0, 0, 0, 0, time.Local)
+	currentTime := time.Date(2023, 12, 6, 0, 0, 0, 0, time.Local)
+	start := time.Date(2023, 12, 7, 0, 0, 0, 0, time.Local)
+	end := time.Date(2023, 12, 7, 0, 0, 0, 0, time.Local)
 	var role Role
 	var role1 Role
 	var prefix Prefix
@@ -1247,8 +1257,9 @@ func SetupDatabase() {
 	var blood Blood
 	var per Per
 	var gene Gene
-	// var status Status
+	var status Status
 	var dis District
+	var method Method
 	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ใช้งานระบบ"`).Scan(&role)
 	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ดูแลระบบ"`).Scan(&role1)
 	db.Raw(`SELECT * FROM prefixes WHERE name = "นาย"`).Scan(&prefix)
@@ -1256,8 +1267,22 @@ func SetupDatabase() {
 	db.Raw(`SELECT * FROM bloods WHERE name = "AB"`).Scan(&blood)
 	db.Raw(`SELECT * FROM pers WHERE role = "จัดการข้อมูลผู้ใช้ระบบ"`).Scan(&per)
 	db.Raw(`SELECT * FROM genes WHERE name = ""`).Scan(&gene)
-	// db.Raw(`SELECT * FROM statuses WHERE name = "รอเริ่มงาน"`).Scan(&status)
+	db.Raw(`SELECT * FROM statuses WHERE name = "รอเริ่มงาน"`).Scan(&status)
 	db.Raw(`SELECT * FROM districts WHERE name = "ท่าวังผา"`).Scan(&dis)
+	db.Raw(`SELECT * FROM methods WHERE name = "ธนาคารกรุงไทย"`).Scan(&method)
+
+	// ====== ทดสอบข้อมูลอื่นๆ ======
+	chat := Chat{
+		Message1: "",
+		Message2: "สวัสดีครับ",
+	}
+	db.Model(&Chat{}).Create(&chat)
+
+	comment := Comment{
+		Descript: "ทำงานดีมากๆ",
+		Score:    5,
+	}
+	db.Model(&Comment{}).Create(&comment)
 
 	// ===== ทดสอบข้อมูลย่อย 1 =====
 	pet := Pet{
@@ -1271,6 +1296,7 @@ func SetupDatabase() {
 		Pic:      "SOMEPICTURE",
 	}
 	db.Model(&Pet{}).Create(&pet)
+
 	address := Address{
 		Province: p1,
 		District: dis,
@@ -1278,7 +1304,10 @@ func SetupDatabase() {
 	}
 	db.Model(&Address{}).Create(&address)
 	// ===== ทดสอบข้อมูล =====
-	user := User{
+	user := User{}
+	db.Model(&User{}).Create(&user)
+
+	user1 := User{
 		Prefix:    prefix,
 		Firstname: "ภัทรพล",
 		Lastname:  "การวิชา",
@@ -1295,9 +1324,30 @@ func SetupDatabase() {
 		User:      "henlies",
 		Pass:      SetupPasswordHash("12345"),
 		Role:      role,
-		Statusu:   1,
+		Status:    1,
 	}
-	db.Model(&User{}).Create(&user)
+	db.Model(&User{}).Create(&user1)
+
+	user2 := User{
+		Prefix:    prefix,
+		Firstname: "เติ้ล",
+		Lastname:  "เติ้ล",
+		Nickname:  "เติ้ล",
+		Gender:    gender,
+		Phone:     "0933486360",
+		Address:   address,
+		Email:     "pattharapon@gmail.com",
+		Birth:     birth,
+		Blood:     blood,
+		Pet:       pet,
+		Descript:  "ค้าบโผมม",
+		Pic:       "SOMEPICTURE",
+		User:      "henlies1",
+		Pass:      SetupPasswordHash("123456"),
+		Role:      role,
+		Status:    1,
+	}
+	db.Model(&User{}).Create(&user2)
 
 	admin := Admin{
 		Prefix:    prefix,
@@ -1313,7 +1363,42 @@ func SetupDatabase() {
 		User:      "Admin",
 		Pass:      SetupPasswordHash("Admin"),
 		Role:      role1,
-		Statusa:   1,
+		Status:    1,
 	}
 	db.Model(&Admin{}).Create(&admin)
+
+	post := Post{
+		Descript: "หาคนรับเรียงน้องหมาด่วนนน ",
+		Lati:     14.114505570451097,
+		Long:     100.59872262163682,
+		Start:    start,
+		End:      end,
+		Price:    1400,
+		User1:    user1,
+		User2:    user,
+		Status:   status,
+	}
+	db.Model(&Post{}).Create(&post)
+
+	userchat := UserChat{
+		User1: user1,
+		User2: user2,
+		Chat:  chat,
+	}
+	db.Model(&UserChat{}).Create(&userchat)
+
+	usercomment := UserComment{
+		User1:   user1,
+		User2:   user2,
+		Comment: comment,
+	}
+	db.Model(&UserComment{}).Create(&usercomment)
+
+	payment := Payment{
+		Time:   currentTime,
+		Status: 1,
+		Method: method,
+		Post:   post,
+	}
+	db.Model(&Payment{}).Create(&payment)
 }

@@ -27,7 +27,7 @@ type Admin struct {
 	RoleID    uint   `json:"role_id"`
 	Role      Role   `gorm:"references:id"`
 	// - ใช้สเตตัสแทนการลบข้อมูล
-	Statusa int `gorm:"statusa"`
+	Status int `gorm:"status"`
 }
 
 type User struct {
@@ -56,37 +56,25 @@ type User struct {
 	Role        Role          `gorm:"references:id"`
 	UserChat    []UserChat    `gorm:"foreignKey:User1ID" gorm:"foreignKey:User2ID"`
 	UserComment []UserComment `gorm:"foreignKey:User1ID" gorm:"foreignKey:User2ID"`
-	UserPost    []UserPost    `gorm:"foreignKey:User1ID" gorm:"foreignKey:User2ID"`
 	// - ใช้สเตตัสแทนการลบข้อมูล
-	Statusu int `json:"statusu"`
+	Status int `json:"status"`
 }
 
 type Post struct {
 	gorm.Model
-	Descript  string    `json:"descript"`
-	Lati      float64   `json:"lati"`
-	Long      float64   `json:"long"`
-	Start     time.Time `json:"start"`
-	End       time.Time `json:"end"`
-	Price     int       `json:"price"`
-	StatusID  uint      `json:"status_id"`
-	Status    Status    `gorm:"references:ID"`
-	PaymentID uint      `json:"payment_id"`
-	Payment   Payment   `gorm:"references:ID"`
-	User1ID   uint      `json:"user1_id"`
-	User1     User      `gorm:"references:ID"`
-	User2ID   uint      `json:"user2_id"`
-	User2     User      `gorm:"references:ID"`
-	// - ใช้สเตตัสแทนการลบข้อมูล
-	Statusp  int        `gorm:"statusp"`
-	UserPost []UserPost `gorm:"foreignKey:PostID"`
-}
-
-type UserPost struct {
-	gorm.Model
-	User1ID uint `json:"user1_id"`
-	User2ID uint `json:"user2_id"`
-	PostID  uint `json:"post_id"`
+	Descript string    `json:"descript"`
+	Lati     float64   `json:"lati"`
+	Long     float64   `json:"long"`
+	Start    time.Time `json:"start"`
+	End      time.Time `json:"end"`
+	Price    int       `json:"price"`
+	User1ID  uint      `json:"user1_id"`
+	User1    User      `gorm:"references:ID"`
+	User2ID  uint      `json:"user2_id"`
+	User2    User      `gorm:"references:ID"`
+	StatusID uint      `json:"status_id"`
+	Status   Status    `gorm:"references:ID"`
+	Payment  []Payment `gorm:"foreignKey:PostID"`
 }
 
 type Address struct {
@@ -123,9 +111,12 @@ type Comment struct {
 
 type UserComment struct {
 	gorm.Model
-	User1ID   uint `json:"user1_id"`
-	User2ID   uint `json:"user2_id"`
-	CommentID uint `json:"comment_id"`
+	User1ID   uint    `json:"user1_id"`
+	User1     User    `gorm:"references:ID"`
+	User2ID   uint    `json:"user2_id"`
+	User2     User    `gorm:"references:ID"`
+	CommentID uint    `json:"comment_id"`
+	Comment   Comment `gorm:"references:ID"`
 }
 
 type Chat struct {
@@ -138,14 +129,21 @@ type Chat struct {
 type UserChat struct {
 	gorm.Model
 	User1ID uint `json:"user1_id"`
+	User1   User `gorm:"references:ID"`
 	User2ID uint `json:"user2_id"`
+	User2   User `gorm:"references:ID"`
 	ChatID  uint `json:"chat_id"`
+	Chat    Chat `gorm:"references:ID"`
 }
 
 type Payment struct {
 	gorm.Model
-	MethodID uint   `json:"method_id"`
-	Post     []Post `gorm:"foreignKey:PaymentID"`
+	Time     time.Time `json:"time"`
+	Status   int       `json:"status"`
+	MethodID uint      `json:"method_id"`
+	Method   Method    `gorm:"references:ID"`
+	PostID   uint      `json:"payment_id"`
+	Post     Post      `gorm:"references:ID"`
 }
 
 type Prefix struct {
