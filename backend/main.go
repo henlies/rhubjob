@@ -4,13 +4,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/henlies/project/controller"
 	"github.com/henlies/project/entity"
-	"github.com/henlies/project/middlewares"
 )
 
 func main() {
 	entity.SetupDatabase()
 
 	app := fiber.New()
+	app.Use(CORSMiddleware())
+
 	// - signin
 	app.Post("/signin", controller.Signin)
 	// - เอาไว้เช็คข้อมูล
@@ -29,43 +30,56 @@ func main() {
 	app.Get("/userchats", controller.ListUserChats)
 	app.Get("/usercomments", controller.ListUserComments)
 	// - ป้องกันข้อมูล
-	api := app.Group("")
-	protected := api.Use(middlewares.Authorizes())
+	// api := app.Group("")
+	// protected := api.Use(middlewares.Authorizes())
 	// - Comment
-	protected.Get("/comments", controller.ListComments)
+	app.Get("/comments", controller.ListComments)
 	// - Chat
-	protected.Get("/chats", controller.ListChats)
+	app.Get("/chats", controller.ListChats)
 	// - Payment
-	protected.Get("/payments", controller.ListPayments)
+	app.Get("/payments", controller.ListPayments)
 	// - Addrss
-	protected.Get("/addresses", controller.ListAddresses)
-	protected.Get("/address/user/:id", controller.GetAddressUID)
-	protected.Post("/address", controller.CreateAddress)
-	protected.Patch("/address", controller.UpdateAddress)
+	app.Get("/addresses", controller.ListAddresses)
+	app.Get("/address/user/:id", controller.GetAddressUID)
+	app.Post("/address", controller.CreateAddress)
+	app.Patch("/address", controller.UpdateAddress)
 	// - Pet
-	protected.Get("/pets", controller.ListPets)
-	protected.Get("/pet/user/:id", controller.GetPetUID)
-	protected.Post("/pet", controller.CreatePet)
-	protected.Patch("/pet", controller.UpdatePet)
+	app.Get("/pets", controller.ListPets)
+	app.Get("/pet/user/:id", controller.GetPetUID)
+	app.Post("/pet", controller.CreatePet)
+	app.Patch("/pet", controller.UpdatePet)
 	// - User
-	protected.Get("/users", controller.ListUsers)
-	protected.Get("/user/:id", controller.GetUser)
-	protected.Post("/user", controller.CreateUser)
-	protected.Patch("/userdetail", controller.UpdateUser)
-	protected.Patch("/userpass", controller.UpdatePasswordUser)
-	protected.Delete("/user/:id", controller.DeleteUser)
+	app.Get("/users", controller.ListUsers)
+	app.Get("/user/:id", controller.GetUser)
+	app.Post("/user", controller.CreateUser)
+	app.Patch("/userdetail", controller.UpdateUser)
+	app.Patch("/userpass", controller.UpdatePasswordUser)
+	app.Delete("/user/:id", controller.DeleteUser)
 	// - Admin
-	protected.Get("/admins", controller.ListAdmins)
-	protected.Get("/admin/:id", controller.ListAdmins)
-	protected.Post("/admin", controller.CreateAdmin)
-	protected.Patch("/admindetail", controller.UpdateAdmin)
-	protected.Patch("/adminpass", controller.UpdatePasswordAdmin)
-	protected.Delete("/admin/:id", controller.DeleteAdmin)
+	app.Get("/admins", controller.ListAdmins)
+	app.Get("/admin/:id", controller.ListAdmins)
+	app.Post("/admin", controller.CreateAdmin)
+	app.Patch("/admindetail", controller.UpdateAdmin)
+	app.Patch("/adminpass", controller.UpdatePasswordAdmin)
+	app.Delete("/admin/:id", controller.DeleteAdmin)
 	// - Post
-	protected.Get("/posts", controller.ListAddresses)
+	app.Get("/posts", controller.ListAddresses)
 
-	err := app.Listen(":3000")
-	if err != nil {
-		panic(err)
+	app.Listen(":8080")
+
+}
+
+func CORSMiddleware() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		c.Response().Header.Set("Access-Control-Allow-Origin", "*")
+		c.Response().Header.Set("Access-Control-Allow-Credentials", "true")
+		c.Response().Header.Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Response().Header.Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
+
+		if c.Method() == "OPTIONS" {
+			return c.SendStatus(204)
+		}
+
+		return c.Next()
 	}
 }

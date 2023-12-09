@@ -19,6 +19,7 @@ type AdminResponse struct {
 	ID    uint         `json:"id"`
 	Admin entity.Admin `json:"user"`
 	Role  string       `json:"role"`
+	Per   string       `json:"per"`
 	Name  string       `json:"name"`
 }
 
@@ -40,12 +41,13 @@ func Signin(c *fiber.Ctx) error {
 	// - ค้นหาว่าใคร Signin เข้ามา
 	if tx := entity.DB().Preload("Role").Raw("SELECT * FROM users WHERE user = ?", payload.User).Find(&user); tx.RowsAffected == 0 {
 		// - ถ้าไม่ใช่ User ให้เช็ค Admin
-		if tx := entity.DB().Preload("Role").Raw("SELECT * FROM admins WHERE user = ?", payload.User).Find(&admin); tx.RowsAffected == 0 {
+		if tx := entity.DB().Preload("Role").Preload("Per").Raw("SELECT * FROM admins WHERE user = ?", payload.User).Find(&admin); tx.RowsAffected == 0 {
 			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Not found"})
 		}
 	}
 	// - ถอดรหัส
 	var role entity.Role
+	var per entity.Per
 	var userID uint
 	var name string
 
@@ -59,6 +61,7 @@ func Signin(c *fiber.Ctx) error {
 		}
 	} else {
 		role = admin.Role
+		per = admin.Per
 		userID = admin.ID
 		name = admin.Firstname
 		err := bcrypt.CompareHashAndPassword([]byte(admin.Pass), []byte(payload.Pass))
@@ -84,6 +87,7 @@ func Signin(c *fiber.Ctx) error {
 			ID:    userID,
 			Admin: admin,
 			Role:  role.Name,
+			Per:   per.Role,
 			Name:  name,
 		}
 		c.Status(http.StatusOK).JSON(fiber.Map{"data": tokenRes})
