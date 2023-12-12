@@ -5,9 +5,12 @@ import ControlPost from './components/Admin/ControlPost';
 import ControlUser from './components/Admin/ControlUser';
 import DashboardAdmim from './components/Admin/DashboardAdmin';
 import DashboardUser from './components/User/DashboardUser';
-import Home from './components/User/Home';
-import Signin from './components/Signin';
+import Post from './components/User/Post';
+import Homie from './components/Home';
 import Sidebar from './components/Sidebar';
+import Petinfo from './components/Petinfo';
+import Navbar from './components/Navbar';
+import PostStatus from './components/User/PostStatus';
 
 const App: React.FC = () => {
   const [token, setToken] = useState<string>("");
@@ -26,9 +29,13 @@ const App: React.FC = () => {
   if (!token) {
     return (
       <Router>
-        <Routes>
-          <Route path="/" element={<Signin />} />
-        </Routes>
+        <Fragment>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Homie />} />
+            <Route path="/petinfo" element={<Petinfo />} />
+          </Routes>
+        </Fragment>
       </Router>
     );
   } else {
@@ -64,7 +71,8 @@ const App: React.FC = () => {
                   {!isAdmin && (
                     <>
                       <Route path="/" element={<DashboardUser />} />
-                      <Route path="/home" element={<Home />} />
+                      <Route path="/post" element={<Post />} />
+                      <Route path="/post-status" element={<PostStatus />} />
                     </>
                   )}
                 </Routes>

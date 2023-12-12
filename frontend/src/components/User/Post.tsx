@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Typography } from 'antd';
 
-const Home: React.FC = () => {
+const Post: React.FC = () => {
 
   const { Content } = Layout;
   const { Title } = Typography;
@@ -10,7 +10,7 @@ const Home: React.FC = () => {
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
         <div style={{ padding: 12, background: '#fff', minHeight: 360 }}>
-          <Title level={3}>Home</Title>
+          <Title level={3}>Post</Title>
           <p>This is a simple homepage using Ant Design, React, and TypeScript.</p>
         </div>
       </Content>
@@ -18,4 +18,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Post;

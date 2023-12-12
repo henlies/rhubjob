@@ -130,7 +130,7 @@ func UpdatePasswordAdmin(c *fiber.Ctx) error {
 
 func DeleteAdmin(c *fiber.Ctx) error {
 	id := c.Params("id")
-	if tx := entity.DB().Exec("UPDATE admins SET statusa = 0 WHERE id = ?", id); tx.RowsAffected == 0 {
+	if tx := entity.DB().Exec("UPDATE admins SET status = 0 WHERE id = ?", id); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Admin not found"})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})

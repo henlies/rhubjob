@@ -16,7 +16,7 @@ func SetupPasswordHash(pwd string) string {
 
 func ListUsers(c *fiber.Ctx) error {
 	var users []entity.User
-	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").Preload("Per").
+	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").Preload("Pet").
 		Preload("Role").Raw("SELECT * FROM users").Find(&users).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -26,7 +26,7 @@ func ListUsers(c *fiber.Ctx) error {
 func GetUser(c *fiber.Ctx) error {
 	var user entity.User
 	id := c.Params("id")
-	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").Preload("Per").
+	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").Preload("Pet").
 		Preload("Role").Raw("SELECT * FROM users WHERE id = ?", id).Find(&user).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -150,7 +150,7 @@ func UpdatePasswordUser(c *fiber.Ctx) error {
 
 func DeleteUser(c *fiber.Ctx) error {
 	id := c.Params("id")
-	if tx := entity.DB().Exec("UPDATE users SET statusu = 0 WHERE id = ?", id); tx.RowsAffected == 0 {
+	if tx := entity.DB().Exec("UPDATE users SET status = 0 WHERE id = ?", id); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})

@@ -62,9 +62,9 @@ func SetupDatabase() {
 	db.Model(&Prefix{}).Create(&Prefix{Name: "นาง"})
 	db.Model(&Prefix{}).Create(&Prefix{Name: "นางสาว"})
 	// - เพศ
-	db.Model(&Gender{}).Create(&Gender{Name: "เพศชาย"})
-	db.Model(&Gender{}).Create(&Gender{Name: "เพศหญิง"})
-	db.Model(&Gender{}).Create(&Gender{Name: "เพศทางเลือก"})
+	db.Model(&Gender{}).Create(&Gender{Name: "ชาย"})
+	db.Model(&Gender{}).Create(&Gender{Name: "หญิง"})
+	db.Model(&Gender{}).Create(&Gender{Name: "ทางเลือก"})
 	// - หมู่เลือด
 	db.Model(&Blood{}).Create(&Blood{Name: "AB"})
 	db.Model(&Blood{}).Create(&Blood{Name: "A"})
@@ -1263,10 +1263,10 @@ func SetupDatabase() {
 	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ใช้งานระบบ"`).Scan(&role)
 	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ดูแลระบบ"`).Scan(&role1)
 	db.Raw(`SELECT * FROM prefixes WHERE name = "นาย"`).Scan(&prefix)
-	db.Raw(`SELECT * FROM genders WHERE name = "เพศชาย"`).Scan(&gender)
+	db.Raw(`SELECT * FROM genders WHERE name = "ชาย"`).Scan(&gender)
 	db.Raw(`SELECT * FROM bloods WHERE name = "AB"`).Scan(&blood)
 	db.Raw(`SELECT * FROM pers WHERE role = "จัดการข้อมูลผู้ใช้ระบบ"`).Scan(&per)
-	db.Raw(`SELECT * FROM genes WHERE name = ""`).Scan(&gene)
+	db.Raw(`SELECT * FROM genes WHERE name = "ร็อตไวเลอร์"`).Scan(&gene)
 	db.Raw(`SELECT * FROM statuses WHERE name = "รอเริ่มงาน"`).Scan(&status)
 	db.Raw(`SELECT * FROM districts WHERE name = "ท่าวังผา"`).Scan(&dis)
 	db.Raw(`SELECT * FROM methods WHERE name = "ธนาคารกรุงไทย"`).Scan(&method)
@@ -1330,13 +1330,13 @@ func SetupDatabase() {
 
 	user2 := User{
 		Prefix:    prefix,
-		Firstname: "เติ้ล",
-		Lastname:  "เติ้ล",
-		Nickname:  "เติ้ล",
+		Firstname: "เฉลย",
+		Lastname:  "การวิชา",
+		Nickname:  "จุ่น",
 		Gender:    gender,
-		Phone:     "0933486360",
+		Phone:     "0819650866",
 		Address:   address,
-		Email:     "pattharapon@gmail.com",
+		Email:     "charoey@gmail.com",
 		Birth:     birth,
 		Blood:     blood,
 		Pet:       pet,

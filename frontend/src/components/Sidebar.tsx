@@ -1,22 +1,24 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
 import { DesktopOutlined, HomeOutlined, LogoutOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { SidebarProps, MenuItem } from '../models/Signin';
 
 const Sidebar: React.FC<SidebarProps> = ({ isAdmin, per }) => {
   const { Sider } = Layout;
+  const location = useLocation();
 
   const menuItemsUser: MenuItem[] = [
-    { key: '1', icon: <HomeOutlined />, label: 'Dashboard', link: '/' },
-    { key: '2', icon: <DesktopOutlined />, label: 'Home', link: '/home' },
+    { key: '1', icon: <HomeOutlined />, label: 'หน้าหลัก', link: '/' },
+    { key: '2', icon: <DesktopOutlined />, label: 'การรับเลี้ยง', link: '/post' },
+    { key: '2', icon: <DesktopOutlined />, label: 'สถานะการรับเลี้ยง', link: '/post-status' },
   ];
 
   const menuItemsAdmin: MenuItem[] = [
-    { key: '1', icon: <HomeOutlined />, label: 'Dashboard', link: '/' },
-    { key: '2', icon: <DesktopOutlined />, label: 'Control Post', link: '/control-post' },
-    { key: '3', icon: <DesktopOutlined />, label: 'Control Comment', link: '/control-comment' },
-    { key: '4', icon: <DesktopOutlined />, label: 'Control User', link: '/control-user' },
+    { key: '1', icon: <HomeOutlined />, label: 'หน้าหลัก', link: '/' },
+    { key: '2', icon: <DesktopOutlined />, label: 'การควบคุมโพสรับเลี้ยง', link: '/control-post' },
+    { key: '3', icon: <DesktopOutlined />, label: 'การควบคุมความคิดเห็น', link: '/control-comment' },
+    { key: '4', icon: <DesktopOutlined />, label: 'การควบคุมผู้ใช้งานระบบ', link: '/control-user' },
   ];
 
   const SignOut = () => {
@@ -36,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, per }) => {
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible>
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+        <Menu theme="dark" selectedKeys={[location.pathname]} defaultSelectedKeys={['1']} mode="inline">
           {isAdmin && per === 'ดูแลระบบ' && renderMenuItems(menuItemsAdmin)}
           {isAdmin && per === 'คัดกรองข้อความ' && (
             <>
@@ -50,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, per }) => {
           )}
           {!isAdmin && renderMenuItems(menuItemsUser)}
           <Menu.Item key="100" onClick={SignOut} icon={<LogoutOutlined />}>
-            Log out
+            ออกจากระบบ
           </Menu.Item>
         </Menu>
       </Sider>
