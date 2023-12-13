@@ -15,20 +15,22 @@ type SigninPayload struct {
 }
 
 type AdminResponse struct {
-	Token string       `json:"token"`
-	ID    uint         `json:"id"`
-	Admin entity.Admin `json:"user"`
-	Role  string       `json:"role"`
-	Per   string       `json:"per"`
-	Name  string       `json:"name"`
+	Token  string       `json:"token"`
+	ID     uint         `json:"id"`
+	Admin  entity.Admin `json:"user"`
+	Role   string       `json:"role"`
+	Per    string       `json:"per"`
+	Name   string       `json:"name"`
+	Status int          `json:"status"`
 }
 
 type UserResponse struct {
-	Token string      `json:"token"`
-	ID    uint        `json:"id"`
-	User  entity.User `json:"user"`
-	Role  string      `json:"role"`
-	Name  string      `json:"name"`
+	Token  string      `json:"token"`
+	ID     uint        `json:"id"`
+	User   entity.User `json:"user"`
+	Role   string      `json:"role"`
+	Name   string      `json:"name"`
+	Status int         `json:"status"`
 }
 
 func Signin(c *fiber.Ctx) error {
@@ -50,11 +52,13 @@ func Signin(c *fiber.Ctx) error {
 	var per entity.Per
 	var userID uint
 	var name string
+	var status int
 
 	if user.ID != 0 {
 		role = user.Role
 		userID = user.ID
 		name = user.Firstname
+		status = user.Status
 		err := bcrypt.CompareHashAndPassword([]byte(user.Pass), []byte(payload.Pass))
 		if err != nil {
 			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Password Incorrect"})
@@ -64,6 +68,7 @@ func Signin(c *fiber.Ctx) error {
 		per = admin.Per
 		userID = admin.ID
 		name = admin.Firstname
+		status = admin.Status
 		err := bcrypt.CompareHashAndPassword([]byte(admin.Pass), []byte(payload.Pass))
 		if err != nil {
 			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Password Incorrect"})
@@ -83,21 +88,23 @@ func Signin(c *fiber.Ctx) error {
 	// - ตรวจสอบว่าเป็น Admin หรือ User
 	if role.Name == "ผู้ดูแลระบบ" {
 		tokenRes := AdminResponse{
-			Token: signedToken,
-			ID:    userID,
-			Admin: admin,
-			Role:  role.Name,
-			Per:   per.Role,
-			Name:  name,
+			Token:  signedToken,
+			ID:     userID,
+			Admin:  admin,
+			Role:   role.Name,
+			Per:    per.Role,
+			Name:   name,
+			Status: status,
 		}
 		c.Status(http.StatusOK).JSON(fiber.Map{"data": tokenRes})
 	} else {
 		tokenRes := UserResponse{
-			Token: signedToken,
-			ID:    userID,
-			User:  user,
-			Role:  role.Name,
-			Name:  name,
+			Token:  signedToken,
+			ID:     userID,
+			User:   user,
+			Role:   role.Name,
+			Name:   name,
+			Status: status,
 		}
 		c.Status(http.StatusOK).JSON(fiber.Map{"data": tokenRes})
 	}

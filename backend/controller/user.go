@@ -80,7 +80,7 @@ func CreateUser(c *fiber.Ctx) error {
 		User:      user.User,
 		Pass:      SetupPasswordHash(user.Pass),
 		Role:      userrole,
-		Status:    1,
+		Status:    user.Status,
 	}
 	if err := entity.DB().Create(&cu).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -154,4 +154,26 @@ func DeleteUser(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
+}
+
+func CreateUserSignin(c *fiber.Ctx) error {
+	var user entity.User
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	var userrole entity.Role
+	if err := entity.DB().Model(&entity.Role{}).Where("name = ?", "ผู้ใช้งานระบบ").First(&userrole).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User role not found"})
+	}
+	cus := entity.User{
+		User:   user.User,
+		Pass:   SetupPasswordHash(user.Pass),
+		Role:   userrole,
+		Status: 1,
+	}
+	if err := entity.DB().Create(&cus).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": cus})
 }

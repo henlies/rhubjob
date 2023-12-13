@@ -1,6 +1,6 @@
 export interface SigninInterface {
-    User: string;
-    Pass: string;
+    User?: string;
+    Pass?: string;
 }
 
 export interface SidebarProps {

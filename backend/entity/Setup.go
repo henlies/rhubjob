@@ -1265,7 +1265,7 @@ func SetupDatabase() {
 	db.Raw(`SELECT * FROM prefixes WHERE name = "นาย"`).Scan(&prefix)
 	db.Raw(`SELECT * FROM genders WHERE name = "ชาย"`).Scan(&gender)
 	db.Raw(`SELECT * FROM bloods WHERE name = "AB"`).Scan(&blood)
-	db.Raw(`SELECT * FROM pers WHERE role = "จัดการข้อมูลผู้ใช้ระบบ"`).Scan(&per)
+	db.Raw(`SELECT * FROM pers WHERE role = "ดูแลระบบ"`).Scan(&per)
 	db.Raw(`SELECT * FROM genes WHERE name = "ร็อตไวเลอร์"`).Scan(&gene)
 	db.Raw(`SELECT * FROM statuses WHERE name = "รอเริ่มงาน"`).Scan(&status)
 	db.Raw(`SELECT * FROM districts WHERE name = "ท่าวังผา"`).Scan(&dis)
@@ -1342,8 +1342,8 @@ func SetupDatabase() {
 		Pet:       pet,
 		Descript:  "ค้าบโผมม",
 		Pic:       "SOMEPICTURE",
-		User:      "henlies1",
-		Pass:      SetupPasswordHash("123456"),
+		User:      "charoey",
+		Pass:      SetupPasswordHash("1"),
 		Role:      role,
 		Status:    1,
 	}

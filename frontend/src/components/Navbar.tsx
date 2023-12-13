@@ -1,28 +1,43 @@
 import React, { useState } from 'react';
-import { Button, Col, Form, Input, Menu, Modal, notification, Typography, Layout } from 'antd';
-import { HomeOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { MenuItem, SigninInterface } from '../models/Signin';
-import { UserOutlined, LockOutlined, LoginOutlined } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
+import { CreateUserSignin, GetSignin } from '../services/HttpServices';
+import { UserSigninInterface } from '../models/UserSignin';
+import {
+    Button, Col, Form, Input, Menu, Modal,
+    notification, Typography, Layout
+} from 'antd';
+import {
+    HomeOutlined,
+    UserOutlined,
+    LockOutlined,
+    LoginOutlined,
+    UserAddOutlined,
+    InfoCircleOutlined,
+    ToolOutlined
+} from '@ant-design/icons';
 
 const Navbar: React.FC = () => {
     const { Header } = Layout;
     const { Title } = Typography;
     const location = useLocation();
     const [signinopen, setSigninopen] = useState(false);
+    const [signupopen, setSignupopen] = useState(false);
+    const [checkpass, setCheckpass] = useState<string | undefined>('');
     const [signin, setSignin] = useState<Partial<SigninInterface>>({});
+    const [signinuser, setSigninUser] = useState<Partial<UserSigninInterface>>({});
     const [apisignin, signinHolder] = notification.useNotification();
 
     const openNotification = (type: 'success' | 'error', message: string, description: string) => {
         apisignin.open({
+            type,
             message,
             description,
-            duration: 3,
-            type,
+            duration: 5,
         });
     };
 
-    const handleSignin = () => {
+    const handleSignin = async () => {
         if ((signin.User === '' || !signin.User) && (signin.Pass === '' || !signin.Pass)) {
             openNotification('error', 'ผิดพลาด', 'โปรดใส่ชื่อผู้ใช้ และ รหัสผ่าน');
             return;
@@ -33,71 +48,64 @@ const Navbar: React.FC = () => {
             openNotification('error', 'ผิดพลาด', 'โปรดใส่รหัสผ่าน');
             return;
         } else {
-            const apiUrl = "http://127.0.0.1:8080/signin";
-            const requestOptions = {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(signin),
-            };
-            fetch(apiUrl, requestOptions)
-                .then((response) => response.json())
-                .then((res) => {
-                    console.log(res);
-                    if (res.data) {
-                        localStorage.setItem("token", res.data.token);
-                        localStorage.setItem("id", res.data.id);
-                        localStorage.setItem("user", JSON.stringify(res.data.user));
-                        localStorage.setItem("role", res.data.role);
-                        localStorage.setItem("name", res.data.name);
-                        localStorage.setItem("per", res.data.per);
-                        window.location.reload();
-                    } else {
-                        openNotification('error', 'ผิดพลาด', 'ชื่อผู้ใช้หรือรหัสผ่านผิด');
-                    }
-                })
-                .catch((error) => {
-                    openNotification('error', 'ผิดพลาด', 'เกิดข้อผิดพลาดระหว่างการลงชื่อเข้าใช้ กรุณาลองใหม่อีกครั้งในภายหลัง');
-                });
+            let res = await GetSignin(signin);
+            if (res) {
+                openNotification('success', 'สำเร็จ', 'เข้าสู่ระบบสำเร็จ');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                openNotification('error', 'ผิดพลาด', 'ชื่อผู้ใช้หรือรหัสผ่านผิด หรือ บัญชีอาจถูกลบ');
+            }
         }
     };
 
-    const handleInputChange = (
-        event: React.ChangeEvent<{ id?: string; value: any }>
-    ) => {
-        const id = event.target.id as keyof typeof signin;
-        const { value } = event.target;
-        setSignin({ ...signin, [id]: value });
-    };
-
-    const setUsername = (user: string) => {
-        setSignin({ ...signin, User: user });
-    };
-
-    const setPassword = (pass: string) => {
-        setSignin({ ...signin, Pass: pass });
+    const handleSignout = async () => {
+        if (signinuser.Pass !== checkpass) {
+            openNotification('error', 'ผิดพลาด', 'รหัสผ่านไม่ตรงกัน');
+            return;
+        } else {
+            let data = {
+                User: signinuser.User,
+                Pass: signinuser.Pass,
+            };
+            let res = await CreateUserSignin(data);
+            if (res) {
+                openNotification('success', 'สำเร็จ', 'สมัครสมาชิกสำเร็จแล้ว เข้าสู่ระบบเลย!');
+                setSignupopen(false);
+                setSigninopen(true);
+            }
+        }
     };
 
     const menuItemsSignin: MenuItem[] = [
         { key: '1', icon: <HomeOutlined />, label: 'หน้าหลัก', link: '/' },
-        { key: '2', icon: <AppstoreOutlined />, label: 'ข้อมูลสัตว์เลี้ยง', link: '/petinfo' },
+        { key: '2', icon: <InfoCircleOutlined />, label: 'ข้อมูลสัตว์เลี้ยง', link: '/petinfo' },
+        { key: '3', icon: <ToolOutlined />, label: 'คู่มือการใช้งาน', link: '/manual' },
     ];
+
+    const renderMenuItems = (items: MenuItem[]) => {
+        return items.map((item) => (
+            <Menu.Item key={item.key} icon={item.icon}>
+                <Link to={item.link}>{item.label}</Link>
+            </Menu.Item>
+        ));
+    };
 
     return (
         <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
-            <Menu theme="dark" selectedKeys={[location.pathname]} mode="horizontal">
+            <Menu theme="dark" selectedKeys={[location.pathname]} defaultSelectedKeys={['1']} mode="horizontal">
                 <div style={{ flex: 1 }}>
-                    {menuItemsSignin.map((menuItem) => (
-                        <Menu.Item key={menuItem.link}>
-                            <Link to={menuItem.link}>{menuItem.label}</Link>
-                        </Menu.Item>
-                    ))}
+                    <>
+                        {renderMenuItems(menuItemsSignin)}
+                    </>
                 </div>
                 <div>
-                    <Menu.Item key='3' onClick={() => setSigninopen(true)}>
+                    <Menu.Item key='4' onClick={() => setSigninopen(true)} icon={<LoginOutlined />}>
                         เข้าสู่ระบบ
                     </Menu.Item>
-                    <Menu.Item key='4'>
-                        <Link to="/signup">สมัครสมาชิก</Link>
+                    <Menu.Item key='5' onClick={() => setSignupopen(true)} icon={<UserAddOutlined />}>
+                        สมัครสมาชิก
                     </Menu.Item>
                 </div>
             </Menu>
@@ -105,7 +113,9 @@ const Navbar: React.FC = () => {
             <Modal
                 centered
                 open={signinopen}
-                onCancel={() => setSigninopen(false)}
+                onCancel={() => {
+                    setSigninopen(false);
+                }}
                 footer={null}
             >
                 <Col>
@@ -121,27 +131,21 @@ const Navbar: React.FC = () => {
                             <Input
                                 prefix={<UserOutlined className="site-form-item-icon" />}
                                 placeholder="ชื่อผู้ใช้"
-                                value={signin.User}
                                 onChange={(e) => {
-                                    handleInputChange(e);
-                                    setUsername(e.target.value);
+                                    setSignin({ ...signin, User: e.target.value });
                                 }}
                             />
                         </Form.Item>
-
                         <Form.Item name="pass" id="pass">
                             <Input
                                 prefix={<LockOutlined className="site-form-item-icon" />}
                                 type="password"
                                 placeholder="รหัสผ่าน"
-                                value={signin.Pass}
                                 onChange={(e) => {
-                                    handleInputChange(e);
-                                    setPassword(e.target.value);
+                                    setSignin({ ...signin, Pass: e.target.value });
                                 }}
                             />
                         </Form.Item>
-
                         <Form.Item>
                             <Button
                                 icon={<LoginOutlined />}
@@ -151,6 +155,70 @@ const Navbar: React.FC = () => {
                                 style={{ width: '100%' }}
                             >
                                 เข้าสู่ระบบ
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                    <div style={{ textAlign: 'center' }}>
+                        <Link to="#" onClick={() => { setSigninopen(false); setSignupopen(true); }}>
+                            ยังไม่มีบัญชี ?
+                        </Link>
+                    </div>
+                </Col>
+            </Modal>
+
+            <Modal
+                centered
+                open={signupopen}
+                onCancel={() => setSignupopen(false)}
+                footer={null}
+            >
+                <Col>
+                    {signinHolder}
+                    <div style={{ textAlign: 'center' }}>
+                        <Title level={2}>สมัครสมาชิก</Title>
+                    </div>
+                    <Form
+                        initialValues={{ remember: true }}
+                        style={{ maxWidth: '300px', margin: 'auto' }}
+                    >
+                        <Form.Item name="usersignup" id="usersignup">
+                            <Input
+                                prefix={<UserOutlined className="site-form-item-icon" />}
+                                placeholder="ชื่อผู้ใช้"
+                                onChange={(e) => {
+                                    setSigninUser({ ...signinuser, User: e.target.value });
+                                }}
+                            />
+                        </Form.Item>
+                        <Form.Item name="passsignup" id="passsignup">
+                            <Input
+                                prefix={<LockOutlined className="site-form-item-icon" />}
+                                type="password"
+                                placeholder="รหัสผ่าน"
+                                onChange={(e) => {
+                                    setSigninUser({ ...signinuser, Pass: e.target.value })
+                                }}
+                            />
+                        </Form.Item>
+                        <Form.Item name="passcheck" id="passcheck">
+                            <Input
+                                prefix={<LockOutlined className="site-form-item-icon" />}
+                                type="password"
+                                placeholder="ตรวจสอบรหัสผ่าน"
+                                onChange={(e) => {
+                                    setCheckpass(e.target.value);
+                                }}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button
+                                icon={<UserAddOutlined />}
+                                onClick={handleSignout}
+                                type="primary"
+                                htmlType="submit"
+                                style={{ width: '100%' }}
+                            >
+                                สมัครสมาชิก
                             </Button>
                         </Form.Item>
                     </Form>

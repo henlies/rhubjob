@@ -11,6 +11,7 @@ import Sidebar from './components/Sidebar';
 import Petinfo from './components/Petinfo';
 import Navbar from './components/Navbar';
 import PostStatus from './components/User/PostStatus';
+import Manual from './components/Manual';
 
 const App: React.FC = () => {
   const [token, setToken] = useState<string>("");
@@ -34,6 +35,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Homie />} />
             <Route path="/petinfo" element={<Petinfo />} />
+            <Route path="/manual" element={<Manual />} />
           </Routes>
         </Fragment>
       </Router>

@@ -55,6 +55,8 @@ func main() {
 	app.Patch("/userdetail", controller.UpdateUser)
 	app.Patch("/userpass", controller.UpdatePasswordUser)
 	app.Delete("/user/:id", controller.DeleteUser)
+	// - Test User
+	app.Post("/usersignin", controller.CreateUserSignin)
 	// - Admin
 	app.Get("/admins", controller.ListAdmins)
 	app.Get("/admin/:id", controller.ListAdmins)

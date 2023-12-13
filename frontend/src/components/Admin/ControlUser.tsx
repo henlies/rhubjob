@@ -26,7 +26,7 @@ const ControlUser: React.FC = () => {
     }
   };
 
-  const checkDelete = async (id: number) => {
+  const checkDelete = async (id?: number) => {
     const key = `open${Date.now()}`;
     const close = () => {
       console.log('Notification closed');
@@ -64,7 +64,7 @@ const ControlUser: React.FC = () => {
       title: "ชื่อ นามสกุล",
       dataIndex: "User",
       render: (text, record) =>
-        `${record.Prefix.Name}${record.Firstname} ${record.Lastname}`,
+        `${record.Prefix?.Name}${record.Firstname} ${record.Lastname}`,
       width: '22.5%',
       align: "center",
     },

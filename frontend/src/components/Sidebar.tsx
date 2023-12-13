@@ -1,8 +1,15 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
-import { DesktopOutlined, HomeOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { SidebarProps, MenuItem } from '../models/Signin';
+import {
+  CheckCircleOutlined,
+  CommentOutlined,
+  CreditCardOutlined,
+  HomeOutlined,
+  LogoutOutlined,
+  UserOutlined
+} from '@ant-design/icons';
 
 const Sidebar: React.FC<SidebarProps> = ({ isAdmin, per }) => {
   const { Sider } = Layout;
@@ -10,15 +17,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, per }) => {
 
   const menuItemsUser: MenuItem[] = [
     { key: '1', icon: <HomeOutlined />, label: 'หน้าหลัก', link: '/' },
-    { key: '2', icon: <DesktopOutlined />, label: 'การรับเลี้ยง', link: '/post' },
-    { key: '2', icon: <DesktopOutlined />, label: 'สถานะการรับเลี้ยง', link: '/post-status' },
+    { key: '2', icon: <CreditCardOutlined />, label: 'การรับเลี้ยง', link: '/post' },
+    { key: '2', icon: <CheckCircleOutlined />, label: 'สถานะการรับเลี้ยง', link: '/post-status' },
   ];
 
   const menuItemsAdmin: MenuItem[] = [
     { key: '1', icon: <HomeOutlined />, label: 'หน้าหลัก', link: '/' },
-    { key: '2', icon: <DesktopOutlined />, label: 'การควบคุมโพสรับเลี้ยง', link: '/control-post' },
-    { key: '3', icon: <DesktopOutlined />, label: 'การควบคุมความคิดเห็น', link: '/control-comment' },
-    { key: '4', icon: <DesktopOutlined />, label: 'การควบคุมผู้ใช้งานระบบ', link: '/control-user' },
+    { key: '2', icon: <CreditCardOutlined />, label: 'ควบคุมโพสรับเลี้ยง', link: '/control-post' },
+    { key: '3', icon: <CommentOutlined />, label: 'ควบคุมความคิดเห็น', link: '/control-comment' },
+    { key: '4', icon: <UserOutlined />, label: 'ควบคุมผู้ใช้งานระบบ', link: '/control-user' },
   ];
 
   const SignOut = () => {
