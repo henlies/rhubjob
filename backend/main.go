@@ -59,7 +59,7 @@ func main() {
 	app.Post("/usersignin", controller.CreateUserSignin)
 	// - Admin
 	app.Get("/admins", controller.ListAdmins)
-	app.Get("/admin/:id", controller.ListAdmins)
+	app.Get("/admin/:id", controller.GetAdmins)
 	app.Post("/admin", controller.CreateAdmin)
 	app.Patch("/admindetail", controller.UpdateAdmin)
 	app.Patch("/adminpass", controller.UpdatePasswordAdmin)

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Layout, Menu } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { SidebarProps, MenuItem } from '../models/Signin';
@@ -14,6 +14,13 @@ import {
 const Sidebar: React.FC<SidebarProps> = ({ isAdmin, per }) => {
   const { Sider } = Layout;
   const location = useLocation();
+  const [collapsed, setCollapsed] = useState(true);
+  const numberOfMenuItems = isAdmin
+    ? per === 'ดูแลระบบ' ? 15
+      : per === 'จัดการข้อมูลผู้ใช้ระบบ' ? 17
+        : per === 'คัดกรองข้อความ' ? 17
+          : 0
+    : 16;
 
   const menuItemsUser: MenuItem[] = [
     { key: '1', icon: <HomeOutlined />, label: 'หน้าหลัก', link: '/' },
@@ -41,9 +48,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, per }) => {
     ));
   };
 
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible>
+      <Sider collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)}>
         <div className="demo-logo-vertical" />
         <Menu theme="dark" selectedKeys={[location.pathname]} defaultSelectedKeys={['1']} mode="inline">
           {isAdmin && per === 'ดูแลระบบ' && renderMenuItems(menuItemsAdmin)}
@@ -58,12 +66,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, per }) => {
             </>
           )}
           {!isAdmin && renderMenuItems(menuItemsUser)}
-          <Menu.Item key="100" onClick={SignOut} icon={<LogoutOutlined />}>
+
+          {Array.from({ length: numberOfMenuItems }, (_, index) => (
+            <Menu.Item key={`menu-item-${index}`}>
+            </Menu.Item>
+          ))}
+
+          <Menu.Item key="logout" onClick={SignOut} icon={<LogoutOutlined />}>
             ออกจากระบบ
           </Menu.Item>
         </Menu>
       </Sider>
-    </Layout>
+    </Layout >
   );
 };
 

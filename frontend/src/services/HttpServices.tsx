@@ -1,3 +1,4 @@
+import { message } from "antd";
 import { SigninInterface } from "../models/Signin";
 import { UserInterface } from "../models/User";
 import { UserSigninInterface } from "../models/UserSignin";
@@ -105,6 +106,32 @@ async function GetUserList() {
     return res;
 };
 
+async function GetUserUID(id: string | null) {
+    let res = await fetch(`${apiUrl}/user/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetAdminUID(id: string | null) {
+    let res = await fetch(`${apiUrl}/admin/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
 async function DeleteUser(id?: number) {
     let res = await fetch(`${apiUrl}/user/${id}`, deleteRequestOptions)
         .then((response) => response.json())
@@ -123,5 +150,7 @@ export {
     CreateUser,
     CreateUserSignin,
     GetUserList,
+    GetUserUID,
+    GetAdminUID,
     DeleteUser,
 };

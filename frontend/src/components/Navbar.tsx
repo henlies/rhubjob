@@ -5,7 +5,7 @@ import { CreateUserSignin, GetSignin } from '../services/HttpServices';
 import { UserSigninInterface } from '../models/UserSignin';
 import {
     Button, Col, Form, Input, Menu, Modal,
-    notification, Typography, Layout
+    Typography, Layout, message
 } from 'antd';
 import {
     HomeOutlined,
@@ -26,58 +26,64 @@ const Navbar: React.FC = () => {
     const [checkpass, setCheckpass] = useState<string | undefined>('');
     const [signin, setSignin] = useState<Partial<SigninInterface>>({});
     const [signinuser, setSigninUser] = useState<Partial<UserSigninInterface>>({});
-    const [apisignin, signinHolder] = notification.useNotification();
+    const [api, Holder] = message.useMessage();
 
-    const openNotification = (type: 'success' | 'error', message: string, description: string) => {
-        apisignin.open({
+    const openAlert = (type: 'success' | 'error', content: string) => {
+        api.open({
             type,
-            message,
-            description,
+            content,
             duration: 5,
         });
     };
 
     const handleSignin = async () => {
         if ((signin.User === '' || !signin.User) && (signin.Pass === '' || !signin.Pass)) {
-            openNotification('error', 'ผิดพลาด', 'โปรดใส่ชื่อผู้ใช้ และ รหัสผ่าน');
+            openAlert('error', 'กรุณาใส่ชื่อผู้ใช้ และ รหัสผ่าน');
             return;
         } else if (signin.User === '' || !signin.User) {
-            openNotification('error', 'ผิดพลาด', 'โปรดใส่ชื่อผู้ใช้');
+            openAlert('error', 'กรุณาใส่ชื่อผู้ใช้');
             return;
         } else if (signin.Pass === '' || !signin.Pass) {
-            openNotification('error', 'ผิดพลาด', 'โปรดใส่รหัสผ่าน');
+            openAlert('error', 'กรุณาใส่รหัสผ่าน');
             return;
         } else {
             let res = await GetSignin(signin);
             if (res) {
-                openNotification('success', 'สำเร็จ', 'เข้าสู่ระบบสำเร็จ');
+                openAlert('success', 'เข้าสู่ระบบสำเร็จ!');
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000);
+                window.location.href = '/';
             } else {
-                openNotification('error', 'ผิดพลาด', 'ชื่อผู้ใช้หรือรหัสผ่านผิด หรือ บัญชีอาจถูกลบ');
+                openAlert('error', 'ชื่อผู้ใช้หรือรหัสผ่านผิด หรือ บัญชีอาจถูกลบ!');
             }
         }
     };
 
     const handleSignout = async () => {
-        if (signinuser.Pass !== checkpass) {
-            openNotification('error', 'ผิดพลาด', 'รหัสผ่านไม่ตรงกัน');
+        if (signinuser.User === '' || !signinuser.User) {
+            openAlert('error', 'กรุณาใส่ชื่อผู้ใช้');
             return;
-        } else {
+        } else if (signinuser.Pass === '' || !signinuser.Pass) {
+            openAlert('error', 'กรุณาใส่รหัสผ่าน');
+            return;
+        } else if (signinuser.Pass !== checkpass) {
+            openAlert('error', 'รหัสผ่านไม่ตรงกัน');
+        }else {
             let data = {
                 User: signinuser.User,
                 Pass: signinuser.Pass,
             };
             let res = await CreateUserSignin(data);
             if (res) {
-                openNotification('success', 'สำเร็จ', 'สมัครสมาชิกสำเร็จแล้ว เข้าสู่ระบบเลย!');
+                openAlert('success', 'สมัครสมาชิกสำเร็จแล้ว เข้าสู่ระบบเลย!');
                 setSignupopen(false);
                 setSigninopen(true);
             }
         }
-    };
 
+    };
+    
     const menuItemsSignin: MenuItem[] = [
         { key: '1', icon: <HomeOutlined />, label: 'หน้าหลัก', link: '/' },
         { key: '2', icon: <InfoCircleOutlined />, label: 'ข้อมูลสัตว์เลี้ยง', link: '/petinfo' },
@@ -119,7 +125,7 @@ const Navbar: React.FC = () => {
                 footer={null}
             >
                 <Col>
-                    {signinHolder}
+                    {Holder}
                     <div style={{ textAlign: 'center' }}>
                         <Title level={2}>ลงชื่อเข้าใช้</Title>
                     </div>
@@ -173,7 +179,7 @@ const Navbar: React.FC = () => {
                 footer={null}
             >
                 <Col>
-                    {signinHolder}
+                    {Holder}
                     <div style={{ textAlign: 'center' }}>
                         <Title level={2}>สมัครสมาชิก</Title>
                     </div>

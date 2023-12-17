@@ -12,6 +12,7 @@ import Petinfo from './components/Petinfo';
 import Navbar from './components/Navbar';
 import PostStatus from './components/User/PostStatus';
 import Manual from './components/Manual';
+import Error403 from './components/403';
 
 const App: React.FC = () => {
   const [token, setToken] = useState<string>("");
@@ -36,6 +37,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Homie />} />
             <Route path="/petinfo" element={<Petinfo />} />
             <Route path="/manual" element={<Manual />} />
+            <Route path="*" element={<Error403 />} />
           </Routes>
         </Fragment>
       </Router>
@@ -56,18 +58,21 @@ const App: React.FC = () => {
                       <Route path="/control-post" element={<ControlPost />} />
                       <Route path="/control-comment" element={<ControlComment />} />
                       <Route path="/control-user" element={<ControlUser />} />
+                      <Route path="*" element={<Error403 />} />
                     </>
                   )}
                   {isAdmin && per === "คัดกรองข้อความ" && (
                     <>
                       <Route path="/" element={<DashboardAdmim />} />
                       <Route path="/control-comment" element={<ControlComment />} />
+                      <Route path="*" element={<Error403 />} />
                     </>
                   )}
                   {isAdmin && per === "จัดการข้อมูลผู้ใช้ระบบ" && (
                     <>
                       <Route path="/" element={<DashboardAdmim />} />
                       <Route path="/control-user" element={<ControlUser />} />
+                      <Route path="*" element={<Error403 />} />
                     </>
                   )}
                   {!isAdmin && (
@@ -75,6 +80,7 @@ const App: React.FC = () => {
                       <Route path="/" element={<DashboardUser />} />
                       <Route path="/post" element={<Post />} />
                       <Route path="/post-status" element={<PostStatus />} />
+                      <Route path="*" element={<Error403 />} />
                     </>
                   )}
                 </Routes>
