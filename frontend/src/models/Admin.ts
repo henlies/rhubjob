@@ -6,6 +6,7 @@ import { RoleInterface } from "./Role";
 
 export interface AdminInterface {
     ID?: number;
+    PersonalID?: number;
     PrefixID?: number;
     Prefix?: PrefixInterface;
     Firstname: string;

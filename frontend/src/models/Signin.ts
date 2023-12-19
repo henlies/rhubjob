@@ -4,7 +4,7 @@ export interface SigninInterface {
 }
 
 export interface SidebarProps {
-    isAdmin: boolean;
+    role: string;
     per: string;
 }
 

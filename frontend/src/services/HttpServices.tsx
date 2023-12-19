@@ -1,7 +1,6 @@
-import { message } from "antd";
 import { SigninInterface } from "../models/Signin";
 import { UserInterface } from "../models/User";
-import { UserSigninInterface } from "../models/UserSignin";
+import { UserSigninJobInterface, UserSigninUseInterface } from "../models/UserSignin";
 
 const apiUrl = "http://localhost:8080";
 const getRequestOptions = {
@@ -32,7 +31,7 @@ async function GetSignin(data: SigninInterface) {
         let response = await fetch(`${apiUrl}/signin`, requestOptions);
         let res = await response.json();
         if (res.data) {
-            if (res.data.status === 0) {
+            if (res.data.active === 0 || res.data.status === 0) {
                 return false;
             }
             localStorage.setItem("token", res.data.token);
@@ -42,6 +41,7 @@ async function GetSignin(data: SigninInterface) {
             localStorage.setItem("name", res.data.name);
             localStorage.setItem("per", res.data.per);
             localStorage.setItem("status", res.data.status);
+            localStorage.setItem("active", res.data.active);
             return res.data;
         } else {
             return false;
@@ -72,7 +72,7 @@ async function CreateUser(data: UserInterface) {
     return res;
 };
 
-async function CreateUserSignin(data: UserSigninInterface) {
+async function CreateUserSigninUse(data: UserSigninUseInterface) {
     const requestOptions = {
         method: "POST",
         headers: {
@@ -81,7 +81,7 @@ async function CreateUserSignin(data: UserSigninInterface) {
         },
         body: JSON.stringify(data),
     };
-    let res = await fetch(`${apiUrl}/usersignin`, requestOptions)
+    let res = await fetch(`${apiUrl}/usersigninuse`, requestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -93,8 +93,42 @@ async function CreateUserSignin(data: UserSigninInterface) {
     return res;
 };
 
-async function GetUserList() {
-    let res = await fetch(`${apiUrl}/users`, getRequestOptions)
+async function CreateUserSigninJob(data: UserSigninJobInterface) {
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    };
+    let res = await fetch(`${apiUrl}/usersigninjob`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetUserListActive() {
+    let res = await fetch(`${apiUrl}/usersactive`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetUserListNonActive() {
+    let res = await fetch(`${apiUrl}/usersnonactive`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -132,8 +166,60 @@ async function GetAdminUID(id: string | null) {
     return res;
 };
 
+async function ApproveUser(id?: number) {
+    let res = await fetch(`${apiUrl}/userapprove/${id}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
 async function DeleteUser(id?: number) {
     let res = await fetch(`${apiUrl}/user/${id}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function ActiveUser(id?: number) {
+    let res = await fetch(`${apiUrl}/useractive/${id}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetRole() {
+    let res = await fetch(`${apiUrl}/roles`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetUser(id: string | null) {
+    let res = await fetch(`${apiUrl}/user/${id}`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -148,9 +234,15 @@ async function DeleteUser(id?: number) {
 export {
     GetSignin,
     CreateUser,
-    CreateUserSignin,
-    GetUserList,
+    CreateUserSigninUse,
+    CreateUserSigninJob,
+    GetUserListActive,
+    GetUserListNonActive,
     GetUserUID,
     GetAdminUID,
+    ApproveUser,
     DeleteUser,
+    ActiveUser,
+    GetRole,
+    GetUser,
 };

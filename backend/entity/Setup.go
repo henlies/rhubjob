@@ -56,7 +56,8 @@ func SetupDatabase() {
 
 	// - แยกบทบาท
 	db.Model(&Role{}).Create(&Role{Name: "ผู้ดูแลระบบ"})
-	db.Model(&Role{}).Create(&Role{Name: "ผู้ใช้งานระบบ"})
+	db.Model(&Role{}).Create(&Role{Name: "ผู้ใช้บริการ"})
+	db.Model(&Role{}).Create(&Role{Name: "ผู้ให้บริการ"})
 	// - คำนำหน้า
 	db.Model(&Prefix{}).Create(&Prefix{Name: "นาย"})
 	db.Model(&Prefix{}).Create(&Prefix{Name: "นาง"})
@@ -72,6 +73,7 @@ func SetupDatabase() {
 	db.Model(&Blood{}).Create(&Blood{Name: "O"})
 	db.Model(&Blood{}).Create(&Blood{Name: "Rh+"})
 	db.Model(&Blood{}).Create(&Blood{Name: "Rh-"})
+	db.Model(&Blood{}).Create(&Blood{Name: "ไม่ทราบ"})
 	// - สิทธ์
 	db.Model(&Per{}).Create(&Per{Role: "ดูแลระบบ"})
 	db.Model(&Per{}).Create(&Per{Role: "คัดกรองข้อความ"})
@@ -1252,6 +1254,7 @@ func SetupDatabase() {
 	end := time.Date(2023, 12, 7, 0, 0, 0, 0, time.Local)
 	var role Role
 	var role1 Role
+	var role2 Role
 	var prefix Prefix
 	var gender Gender
 	var blood Blood
@@ -1260,8 +1263,9 @@ func SetupDatabase() {
 	var status Status
 	var dis District
 	var method Method
-	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ใช้งานระบบ"`).Scan(&role)
-	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ดูแลระบบ"`).Scan(&role1)
+	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ใช้บริการ"`).Scan(&role)
+	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ให้บริการ"`).Scan(&role1)
+	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ดูแลระบบ"`).Scan(&role2)
 	db.Raw(`SELECT * FROM prefixes WHERE name = "นาย"`).Scan(&prefix)
 	db.Raw(`SELECT * FROM genders WHERE name = "ชาย"`).Scan(&gender)
 	db.Raw(`SELECT * FROM bloods WHERE name = "AB"`).Scan(&blood)
@@ -1304,66 +1308,69 @@ func SetupDatabase() {
 	}
 	db.Model(&Address{}).Create(&address)
 	// ===== ทดสอบข้อมูล =====
-	user := User{}
+	user := User{
+		PersonalID: 1439900408181,
+		Prefix:     prefix,
+		Firstname:  "ภัทรพล",
+		Lastname:   "การวิชา",
+		Nickname:   "เติ้ล",
+		Gender:     gender,
+		Phone:      "0933486360",
+		Address:    address,
+		Email:      "tle.pattharapon@gmail.com",
+		Birth:      birth,
+		Blood:      blood,
+		Pet:        pet,
+		Descript:   "ติดประชุม",
+		Pic:        "SOMEPICTURE",
+		User:       "henlies",
+		Pass:       SetupPasswordHash("12345"),
+		Role:       role,
+		Status:     1,
+		Active:     1,
+	}
 	db.Model(&User{}).Create(&user)
 
 	user1 := User{
-		Prefix:    prefix,
-		Firstname: "ภัทรพล",
-		Lastname:  "การวิชา",
-		Nickname:  "เติ้ล",
-		Gender:    gender,
-		Phone:     "0933486360",
-		Address:   address,
-		Email:     "tle.pattharapon@gmail.com",
-		Birth:     birth,
-		Blood:     blood,
-		Pet:       pet,
-		Descript:  "ติดประชุม",
-		Pic:       "SOMEPICTURE",
-		User:      "henlies",
-		Pass:      SetupPasswordHash("12345"),
-		Role:      role,
-		Status:    1,
+		PersonalID: 1439900408182,
+		Prefix:     prefix,
+		Firstname:  "เฉลย",
+		Lastname:   "การวิชา",
+		Nickname:   "จุ่น",
+		Gender:     gender,
+		Phone:      "0819650866",
+		Address:    address,
+		Email:      "charoey@gmail.com",
+		Birth:      birth,
+		Blood:      blood,
+		Pet:        pet,
+		Descript:   "ค้าบโผมม",
+		Pic:        "SOMEPICTURE",
+		User:       "charoey",
+		Pass:       SetupPasswordHash("1"),
+		Role:       role1,
+		Status:     1,
+		Active:     1,
 	}
 	db.Model(&User{}).Create(&user1)
 
-	user2 := User{
-		Prefix:    prefix,
-		Firstname: "เฉลย",
-		Lastname:  "การวิชา",
-		Nickname:  "จุ่น",
-		Gender:    gender,
-		Phone:     "0819650866",
-		Address:   address,
-		Email:     "charoey@gmail.com",
-		Birth:     birth,
-		Blood:     blood,
-		Pet:       pet,
-		Descript:  "ค้าบโผมม",
-		Pic:       "SOMEPICTURE",
-		User:      "charoey",
-		Pass:      SetupPasswordHash("1"),
-		Role:      role,
-		Status:    1,
-	}
-	db.Model(&User{}).Create(&user2)
-
 	admin := Admin{
-		Prefix:    prefix,
-		Firstname: "อมร",
-		Lastname:  "ณ ขอนแก่น",
-		Nickname:  "อมร",
-		Gender:    gender,
-		Phone:     "0819650866",
-		Email:     "Admin@gmail.com",
-		Blood:     blood,
-		Per:       per,
-		Pic:       "SOMEPICTURE",
-		User:      "Admin",
-		Pass:      SetupPasswordHash("Admin"),
-		Role:      role1,
-		Status:    1,
+		PersonalID: 1439900408183,
+		Prefix:     prefix,
+		Firstname:  "อมร",
+		Lastname:   "ณ ขอนแก่น",
+		Nickname:   "อมร",
+		Gender:     gender,
+		Phone:      "0819650866",
+		Email:      "Admin@gmail.com",
+		Blood:      blood,
+		Per:        per,
+		Pic:        "SOMEPICTURE",
+		User:       "Admin",
+		Pass:       SetupPasswordHash("Admin"),
+		Role:       role2,
+		Status:     1,
+		Active:     1,
 	}
 	db.Model(&Admin{}).Create(&admin)
 
@@ -1381,15 +1388,15 @@ func SetupDatabase() {
 	db.Model(&Post{}).Create(&post)
 
 	userchat := UserChat{
-		User1: user1,
-		User2: user2,
+		User1: user,
+		User2: user1,
 		Chat:  chat,
 	}
 	db.Model(&UserChat{}).Create(&userchat)
 
 	usercomment := UserComment{
-		User1:   user1,
-		User2:   user2,
+		User1:   user,
+		User2:   user1,
 		Comment: comment,
 	}
 	db.Model(&UserComment{}).Create(&usercomment)

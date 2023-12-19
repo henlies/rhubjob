@@ -8,30 +8,33 @@ import (
 
 type Admin struct {
 	gorm.Model
-	PrefixID  uint   `json:"Prefix_id"`
-	Prefix    Prefix `gorm:"references:id" json:"Prefix"`
-	Firstname string `json:"Firstname"`
-	Lastname  string `json:"Lastname"`
-	Nickname  string `json:"Nickname"`
-	GenderID  uint   `json:"Gender_id"`
-	Gender    Gender `gorm:"references:id" json:"Gender"`
-	Phone     string `json:"Phone"`
-	Email     string `json:"Email"`
-	BloodID   uint   `json:"Blood_id"`
-	Blood     Blood  `gorm:"references:id" json:"Blood"`
-	PerID     uint   `json:"Per_id"`
-	Per       Per    `gorm:"references:id" json:"Per"`
-	Pic       string `json:"Pic"`
-	User      string `json:"User"`
-	Pass      string `json:"Pass"`
-	RoleID    uint   `json:"Role_id"`
-	Role      Role   `gorm:"references:id" json:"Role"`
+	PersonalID uint   `json:"Personal_id"`
+	PrefixID   uint   `json:"Prefix_id"`
+	Prefix     Prefix `gorm:"references:id" json:"Prefix"`
+	Firstname  string `json:"Firstname"`
+	Lastname   string `json:"Lastname"`
+	Nickname   string `json:"Nickname"`
+	GenderID   uint   `json:"Gender_id"`
+	Gender     Gender `gorm:"references:id" json:"Gender"`
+	Phone      string `json:"Phone"`
+	Email      string `json:"Email"`
+	BloodID    uint   `json:"Blood_id"`
+	Blood      Blood  `gorm:"references:id" json:"Blood"`
+	PerID      uint   `json:"Per_id"`
+	Per        Per    `gorm:"references:id" json:"Per"`
+	Pic        string `json:"Pic"`
+	User       string `json:"User"`
+	Pass       string `json:"Pass"`
+	RoleID     uint   `json:"Role_id"`
+	Role       Role   `gorm:"references:id" json:"Role"`
 	// - ใช้สเตตัสแทนการลบข้อมูล
 	Status int `gorm:"Status"`
+	Active int `json:"Active"`
 }
 
 type User struct {
 	gorm.Model
+	PersonalID  uint          `json:"Personal_id"`
 	PrefixID    uint          `json:"Prefix_id"`
 	Prefix      Prefix        `gorm:"references:id" json:"Prefix"`
 	Firstname   string        `json:"Firstname"`
@@ -58,6 +61,7 @@ type User struct {
 	UserComment []UserComment `gorm:"foreignKey:User1ID" gorm:"foreignKey:User2ID"`
 	// - ใช้สเตตัสแทนการลบข้อมูล
 	Status int `json:"Status"`
+	Active int `json:"Active"`
 }
 
 type Post struct {

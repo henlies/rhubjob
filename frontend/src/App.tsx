@@ -13,6 +13,8 @@ import Navbar from './components/Navbar';
 import PostStatus from './components/User/PostStatus';
 import Manual from './components/Manual';
 import Error403 from './components/403';
+import { Layout } from 'antd';
+import TrackStatus from './components/User/TrackStatus';
 
 const App: React.FC = () => {
   const [token, setToken] = useState<string>("");
@@ -43,51 +45,56 @@ const App: React.FC = () => {
       </Router>
     );
   } else {
-    const isAdmin = role === "ผู้ดูแลระบบ";
     return (
       <Router>
-        <div style={{ display: 'flex' }}>
+        <Layout style={{ minHeight: '100vh' }}>
           {token && (
             <Fragment>
-              <Sidebar isAdmin={isAdmin} per={per} />
-              <div style={{ flex: 1000 }}>
-                <Routes>
-                  {isAdmin && per === "ดูแลระบบ" && (
-                    <>
-                      <Route path="/" element={<DashboardAdmim />} />
-                      <Route path="/control-post" element={<ControlPost />} />
-                      <Route path="/control-comment" element={<ControlComment />} />
-                      <Route path="/control-user" element={<ControlUser />} />
-                      <Route path="*" element={<Error403 />} />
-                    </>
-                  )}
-                  {isAdmin && per === "คัดกรองข้อความ" && (
-                    <>
-                      <Route path="/" element={<DashboardAdmim />} />
-                      <Route path="/control-comment" element={<ControlComment />} />
-                      <Route path="*" element={<Error403 />} />
-                    </>
-                  )}
-                  {isAdmin && per === "จัดการข้อมูลผู้ใช้ระบบ" && (
-                    <>
-                      <Route path="/" element={<DashboardAdmim />} />
-                      <Route path="/control-user" element={<ControlUser />} />
-                      <Route path="*" element={<Error403 />} />
-                    </>
-                  )}
-                  {!isAdmin && (
-                    <>
-                      <Route path="/" element={<DashboardUser />} />
-                      <Route path="/post" element={<Post />} />
-                      <Route path="/post-status" element={<PostStatus />} />
-                      <Route path="*" element={<Error403 />} />
-                    </>
-                  )}
-                </Routes>
-              </div>
+              <Sidebar role={role} per={per} />
+              <Routes>
+                {role === "ผู้ดูแลระบบ" && per === "ดูแลระบบ" && (
+                  <>
+                    <Route path="/" element={<DashboardAdmim />} />
+                    <Route path="/control-post" element={<ControlPost />} />
+                    <Route path="/control-comment" element={<ControlComment />} />
+                    <Route path="/control-user" element={<ControlUser />} />
+                    <Route path="*" element={<Error403 />} />
+                  </>
+                )}
+                {role === "ผู้ดูแลระบบ" && per === "คัดกรองข้อความ" && (
+                  <>
+                    <Route path="/" element={<DashboardAdmim />} />
+                    <Route path="/control-comment" element={<ControlComment />} />
+                    <Route path="*" element={<Error403 />} />
+                  </>
+                )}
+                {role === "ผู้ดูแลระบบ" && per === "จัดการข้อมูลผู้ใช้ระบบ" && (
+                  <>
+                    <Route path="/" element={<DashboardAdmim />} />
+                    <Route path="/control-user" element={<ControlUser />} />
+                    <Route path="*" element={<Error403 />} />
+                  </>
+                )}
+                {role === "ผู้ใช้บริการ" && (
+                  <>
+                    <Route path="/" element={<DashboardUser />} />
+                    <Route path="/post" element={<Post />} />
+                    <Route path="/track-status" element={<TrackStatus />} />
+                    <Route path="*" element={<Error403 />} />
+                  </>
+                )}
+                {role === "ผู้ให้บริการ" && (
+                  <>
+                    <Route path="/" element={<DashboardUser />} />
+                    <Route path="/post" element={<Post />} />
+                    <Route path="/post-status" element={<PostStatus />} />
+                    <Route path="*" element={<Error403 />} />
+                  </>
+                )}
+              </Routes>
             </Fragment>
           )}
-        </div>
+        </Layout>
       </Router>
     );
   }

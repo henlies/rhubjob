@@ -78,9 +78,11 @@ func ListStatuses(c *fiber.Ctx) error {
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": statuses})
 }
+
+// ใช้เเล้ว
 func ListRoles(c *fiber.Ctx) error {
 	var roles []entity.Role
-	if err := entity.DB().Raw("SELECT * FROM roles").Find(&roles).Error; err != nil {
+	if err := entity.DB().Raw("SELECT name, id FROM roles Where id = 2 OR id = 3").Find(&roles).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": roles})

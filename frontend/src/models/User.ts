@@ -7,6 +7,7 @@ import { RoleInterface } from "./Role";
 
 export interface UserInterface {
     ID?: number;
+    PersonalID?: number;
     PrefixID?: number;
     Prefix?: PrefixInterface;
     Firstname: string;
@@ -30,4 +31,5 @@ export interface UserInterface {
     RoleID?: number;
     Role?: RoleInterface;
     Status: number;
+    Active: number;
 }

@@ -21,6 +21,7 @@ type AdminResponse struct {
 	Role   string       `json:"role"`
 	Per    string       `json:"per"`
 	Name   string       `json:"name"`
+	Active int          `json:"active"`
 	Status int          `json:"status"`
 }
 
@@ -30,6 +31,7 @@ type UserResponse struct {
 	User   entity.User `json:"user"`
 	Role   string      `json:"role"`
 	Name   string      `json:"name"`
+	Active int         `json:"active"`
 	Status int         `json:"status"`
 }
 
@@ -52,12 +54,14 @@ func Signin(c *fiber.Ctx) error {
 	var per entity.Per
 	var userID uint
 	var name string
+	var active int
 	var status int
 
 	if user.ID != 0 {
 		role = user.Role
 		userID = user.ID
 		name = user.Firstname
+		active = user.Active
 		status = user.Status
 		err := bcrypt.CompareHashAndPassword([]byte(user.Pass), []byte(payload.Pass))
 		if err != nil {
@@ -68,6 +72,7 @@ func Signin(c *fiber.Ctx) error {
 		per = admin.Per
 		userID = admin.ID
 		name = admin.Firstname
+		active = admin.Active
 		status = admin.Status
 		err := bcrypt.CompareHashAndPassword([]byte(admin.Pass), []byte(payload.Pass))
 		if err != nil {
@@ -94,6 +99,7 @@ func Signin(c *fiber.Ctx) error {
 			Role:   role.Name,
 			Per:    per.Role,
 			Name:   name,
+			Active: active,
 			Status: status,
 		}
 		c.Status(http.StatusOK).JSON(fiber.Map{"data": tokenRes})
@@ -104,6 +110,7 @@ func Signin(c *fiber.Ctx) error {
 			User:   user,
 			Role:   role.Name,
 			Name:   name,
+			Active: active,
 			Status: status,
 		}
 		c.Status(http.StatusOK).JSON(fiber.Map{"data": tokenRes})

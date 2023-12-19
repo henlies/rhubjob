@@ -50,13 +50,18 @@ func main() {
 	app.Patch("/pet", controller.UpdatePet)
 	// - User
 	app.Get("/users", controller.ListUsers)
+	app.Get("/usersnonactive", controller.ListUsersNonactive)
+	app.Get("/usersactive", controller.ListUsersActive)
 	app.Get("/user/:id", controller.GetUser)
 	app.Post("/user", controller.CreateUser)
 	app.Patch("/userdetail", controller.UpdateUser)
 	app.Patch("/userpass", controller.UpdatePasswordUser)
 	app.Delete("/user/:id", controller.DeleteUser)
+	app.Delete("/userapprove/:id", controller.ApproveUser)
+	app.Delete("/useractive/:id", controller.ActiveUser)
 	// - Test User
-	app.Post("/usersignin", controller.CreateUserSignin)
+	app.Post("/usersigninuse", controller.CreateUserSigninUse)
+	app.Post("/usersigninjob", controller.CreateUserSigninJob)
 	// - Admin
 	app.Get("/admins", controller.ListAdmins)
 	app.Get("/admin/:id", controller.GetAdmins)

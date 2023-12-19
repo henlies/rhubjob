@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { MenuItem, SigninInterface } from '../models/Signin';
 import { Link, useLocation } from 'react-router-dom';
-import { CreateUserSignin, GetSignin } from '../services/HttpServices';
-import { UserSigninInterface } from '../models/UserSignin';
+import { CreateUserSigninJob, CreateUserSigninUse, GetSignin } from '../services/HttpServices';
+import { UserSigninJobInterface, UserSigninUseInterface } from '../models/UserSignin';
 import {
     Button, Col, Form, Input, Menu, Modal,
-    Typography, Layout, message
+    Typography, Layout, message, Radio, RadioChangeEvent
 } from 'antd';
 import {
     HomeOutlined,
@@ -14,18 +14,24 @@ import {
     LoginOutlined,
     UserAddOutlined,
     InfoCircleOutlined,
-    ToolOutlined
+    ToolOutlined,
+    PhoneOutlined,
+    GoogleOutlined,
+    EditOutlined
 } from '@ant-design/icons';
 
 const Navbar: React.FC = () => {
     const { Header } = Layout;
     const { Title } = Typography;
     const location = useLocation();
+    const [signin, setSignin] = useState<Partial<SigninInterface>>({});
     const [signinopen, setSigninopen] = useState(false);
     const [signupopen, setSignupopen] = useState(false);
     const [checkpass, setCheckpass] = useState<string | undefined>('');
-    const [signin, setSignin] = useState<Partial<SigninInterface>>({});
-    const [signinuser, setSigninUser] = useState<Partial<UserSigninInterface>>({});
+    const [signinuseruse, setSigninUserUse] = useState<Partial<UserSigninUseInterface>>({});
+    const [signinuserjob, setSigninUserJob] = useState<Partial<UserSigninJobInterface>>({});
+    const [role, setRole] = useState<number>(2);
+    const [userType, setUserType] = useState(1);
     const [api, Holder] = message.useMessage();
 
     const openAlert = (type: 'success' | 'error', content: string) => {
@@ -34,6 +40,11 @@ const Navbar: React.FC = () => {
             content,
             duration: 5,
         });
+    };
+
+    const onChange = (e: RadioChangeEvent) => {
+        setRole(e.target.value + 1);
+        setUserType(e.target.value);
     };
 
     const handleSignin = async () => {
@@ -52,38 +63,86 @@ const Navbar: React.FC = () => {
                 openAlert('success', 'เข้าสู่ระบบสำเร็จ!');
                 setTimeout(() => {
                     window.location.reload();
+                    window.location.href = '/';
                 }, 1000);
-                window.location.href = '/';
             } else {
-                openAlert('error', 'ชื่อผู้ใช้หรือรหัสผ่านผิด หรือ บัญชีอาจถูกลบ!');
+                openAlert('error', 'ชื่อผู้ใช้หรือรหัสผ่านผิด หรือ รอเจ้าหน้าที่ตรวจสอบ หรือ บัญชีอาจถูกลบ!');
             }
         }
     };
 
-    const handleSignout = async () => {
-        if (signinuser.User === '' || !signinuser.User) {
-            openAlert('error', 'กรุณาใส่ชื่อผู้ใช้');
-            return;
-        } else if (signinuser.Pass === '' || !signinuser.Pass) {
-            openAlert('error', 'กรุณาใส่รหัสผ่าน');
-            return;
-        } else if (signinuser.Pass !== checkpass) {
+    const isValidEmail = (email: string): boolean => {
+        const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const isValidPhone = (phoneNumber: string): boolean => {
+        const phoneRegex = /^\d{10}$/;
+        return phoneRegex.test(phoneNumber);
+    };
+
+    const isValidUserPass = (username: string): boolean => {
+        const userpassRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{7}$/;
+        return userpassRegex.test(username);
+    };
+
+    const handleSignoutuse = async () => {
+        if ((signinuserjob.User && !isValidUserPass(signinuserjob.User))
+            || !signinuserjob.User || signinuserjob.User === '') {
+            openAlert('error', 'กรุณาใส่ชื่อผู้ใช้ ให้มีตัวอักษรและตัวเลข 7 ตัวขึ้นไป');
+        } else if ((signinuserjob.Pass && !isValidUserPass(signinuserjob.Pass))
+            || !signinuserjob.Pass || signinuserjob.Pass === '') {
+            openAlert('error', 'กรุณาใส่รหัสผ่าน ให้มีตัวอักษรและตัวเลข 7 ตัวขึ้นไป');
+        } else if (signinuseruse.Pass !== checkpass) {
             openAlert('error', 'รหัสผ่านไม่ตรงกัน');
-        }else {
+        } else {
             let data = {
-                User: signinuser.User,
-                Pass: signinuser.Pass,
+                User: signinuseruse.User,
+                Pass: signinuseruse.Pass,
+                Role_id: role,
             };
-            let res = await CreateUserSignin(data);
+            let res = await CreateUserSigninUse(data);
             if (res) {
                 openAlert('success', 'สมัครสมาชิกสำเร็จแล้ว เข้าสู่ระบบเลย!');
                 setSignupopen(false);
                 setSigninopen(true);
             }
         }
-
     };
-    
+
+    const handleSignoutjob = async () => {
+        if ((signinuserjob.User && !isValidUserPass(signinuserjob.User))
+            || !signinuserjob.User || signinuserjob.User === '') {
+            openAlert('error', 'กรุณาใส่ชื่อผู้ใช้ ให้มีตัวอักษรและตัวเลข 7 ตัวขึ้นไป');
+        } else if ((signinuserjob.Pass && !isValidUserPass(signinuserjob.Pass))
+            || !signinuserjob.Pass || signinuserjob.Pass === '') {
+            openAlert('error', 'กรุณาใส่รหัสผ่าน ให้มีตัวอักษรและตัวเลข 7 ตัวขึ้นไป');
+        } else if (signinuserjob.Pass !== checkpass) {
+            openAlert('error', 'รหัสผ่านไม่ตรงกัน');
+        } else if ((signinuserjob.Phone && !isValidPhone(signinuserjob.Phone))
+            || !signinuserjob.Phone || signinuserjob.Phone === '') {
+            openAlert('error', 'กรุณาใส่อีเมลที่ถูกต้อง');
+        } else if ((signinuserjob.Email && !isValidEmail(signinuserjob.Email))
+            || !signinuserjob.Email || signinuserjob.Email === '') {
+            openAlert('error', 'กรุณาใส่เบอร์โทรศัพท์ที่ถูกต้อง');
+        } else {
+            let data = {
+                User: signinuserjob.User,
+                Pass: signinuserjob.Pass,
+                Role_id: role,
+                Email: signinuserjob.Email,
+                Phone: signinuserjob.Phone,
+
+            };
+            let res = await CreateUserSigninJob(data);
+            if (res && role === 3) {
+                openAlert('success', 'สมัครสมาชิกสำเร็จแล้ว กรุณารอเจ้าหน้าที่ตรวจสอบ!');
+                setSignupopen(false);
+                setSigninopen(true);
+            }
+        }
+    };
+
     const menuItemsSignin: MenuItem[] = [
         { key: '1', icon: <HomeOutlined />, label: 'หน้าหลัก', link: '/' },
         { key: '2', icon: <InfoCircleOutlined />, label: 'ข้อมูลสัตว์เลี้ยง', link: '/petinfo' },
@@ -133,18 +192,18 @@ const Navbar: React.FC = () => {
                         initialValues={{ remember: true }}
                         style={{ maxWidth: '300px', margin: 'auto' }}
                     >
-                        <Form.Item name="user" id="user">
+                        <Form.Item>
                             <Input
-                                prefix={<UserOutlined className="site-form-item-icon" />}
+                                prefix={<UserOutlined />}
                                 placeholder="ชื่อผู้ใช้"
                                 onChange={(e) => {
                                     setSignin({ ...signin, User: e.target.value });
                                 }}
                             />
                         </Form.Item>
-                        <Form.Item name="pass" id="pass">
+                        <Form.Item>
                             <Input
-                                prefix={<LockOutlined className="site-form-item-icon" />}
+                                prefix={<LockOutlined />}
                                 type="password"
                                 placeholder="รหัสผ่าน"
                                 onChange={(e) => {
@@ -187,46 +246,135 @@ const Navbar: React.FC = () => {
                         initialValues={{ remember: true }}
                         style={{ maxWidth: '300px', margin: 'auto' }}
                     >
-                        <Form.Item name="usersignup" id="usersignup">
-                            <Input
-                                prefix={<UserOutlined className="site-form-item-icon" />}
-                                placeholder="ชื่อผู้ใช้"
-                                onChange={(e) => {
-                                    setSigninUser({ ...signinuser, User: e.target.value });
-                                }}
-                            />
+                        <Form.Item style={{ textAlign: 'center' }}>
+                            <Radio.Group onChange={onChange} defaultValue={1}>
+                                <Radio value={1}>ผู้ใช้บริการ</Radio>
+                                <Radio value={2}>ผู้ให้บริการ</Radio>
+                            </Radio.Group>
                         </Form.Item>
-                        <Form.Item name="passsignup" id="passsignup">
-                            <Input
-                                prefix={<LockOutlined className="site-form-item-icon" />}
-                                type="password"
-                                placeholder="รหัสผ่าน"
-                                onChange={(e) => {
-                                    setSigninUser({ ...signinuser, Pass: e.target.value })
-                                }}
-                            />
-                        </Form.Item>
-                        <Form.Item name="passcheck" id="passcheck">
-                            <Input
-                                prefix={<LockOutlined className="site-form-item-icon" />}
-                                type="password"
-                                placeholder="ตรวจสอบรหัสผ่าน"
-                                onChange={(e) => {
-                                    setCheckpass(e.target.value);
-                                }}
-                            />
-                        </Form.Item>
-                        <Form.Item>
-                            <Button
-                                icon={<UserAddOutlined />}
-                                onClick={handleSignout}
-                                type="primary"
-                                htmlType="submit"
-                                style={{ width: '100%' }}
-                            >
-                                สมัครสมาชิก
-                            </Button>
-                        </Form.Item>
+                        {userType === 1 && (
+                            <>
+                                <Form.Item>
+                                    <Input
+                                        prefix={<UserOutlined />}
+                                        placeholder="ชื่อผู้ใช้"
+                                        onChange={(e) => {
+                                            setSigninUserUse({ ...signinuseruse, User: e.target.value });
+                                        }}
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Input
+                                        prefix={<LockOutlined />}
+                                        type="password"
+                                        placeholder="รหัสผ่าน"
+                                        onChange={(e) => {
+                                            setSigninUserUse({ ...signinuseruse, Pass: e.target.value })
+                                        }}
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Input
+                                        prefix={<LockOutlined />}
+                                        type="password"
+                                        placeholder="ตรวจสอบรหัสผ่าน"
+                                        onChange={(e) => {
+                                            setCheckpass(e.target.value);
+                                        }}
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button
+                                        icon={<UserAddOutlined />}
+                                        onClick={handleSignoutuse}
+                                        type="primary"
+                                        htmlType="submit"
+                                        style={{ width: '100%' }}
+                                    >
+                                        สมัครสมาชิก
+                                    </Button>
+                                </Form.Item>
+                            </>
+                        )}
+                        {userType === 2 && (
+                            <>
+                                <Form.Item>
+                                    <Input
+                                        prefix={<UserOutlined />}
+                                        placeholder="ชื่อผู้ใช้"
+                                        onChange={(e) => {
+                                            setSigninUserJob({ ...signinuserjob, User: e.target.value });
+                                        }}
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Input
+                                        prefix={<LockOutlined />}
+                                        type="password"
+                                        placeholder="รหัสผ่าน"
+                                        onChange={(e) => {
+                                            setSigninUserJob({ ...signinuserjob, Pass: e.target.value })
+                                        }}
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Input
+                                        prefix={<LockOutlined />}
+                                        type="password"
+                                        placeholder="ตรวจสอบรหัสผ่าน"
+                                        onChange={(e) => {
+                                            setCheckpass(e.target.value);
+                                        }}
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <div style={{ display: "flex", gap: "10px" }}>
+                                        <Input
+                                            prefix={<EditOutlined />}
+                                            placeholder="ชื่อจริง"
+                                            onChange={(e) => {
+                                                setSigninUserJob({ ...signinuserjob, Firstname: e.target.value })
+                                            }}
+                                        />
+                                        <Input
+                                            placeholder="นามสกุล"
+                                            onChange={(e) => {
+                                                setSigninUserJob({ ...signinuserjob, Lastname: e.target.value })
+                                            }}
+                                        />
+                                    </div>
+                                </Form.Item>
+                                <Form.Item>
+                                    <Input
+                                        prefix={<PhoneOutlined />}
+                                        placeholder="เบอร์โทรศัพท์"
+                                        onChange={(e) => {
+                                            setSigninUserJob({ ...signinuserjob, Phone: e.target.value })
+                                        }}
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Input
+                                        prefix={<GoogleOutlined />}
+                                        placeholder="อีเมล"
+                                        onChange={(e) => {
+                                            setSigninUserJob({ ...signinuserjob, Email: e.target.value })
+                                        }}
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button
+                                        icon={<UserAddOutlined />}
+                                        onClick={handleSignoutjob}
+                                        type="primary"
+                                        htmlType="submit"
+                                        style={{ width: '100%' }}
+                                    >
+                                        สมัครสมาชิก
+                                    </Button>
+                                </Form.Item>
+                            </>
+                        )}
                     </Form>
                 </Col>
             </Modal>
