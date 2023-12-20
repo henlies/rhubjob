@@ -1,3 +1,4 @@
+import { PostsInterface } from "../models/Post";
 import { SigninInterface } from "../models/Signin";
 import { UserInterface } from "../models/User";
 import { UserSigninJobInterface, UserSigninUseInterface } from "../models/UserSignin";
@@ -103,6 +104,27 @@ async function CreateUserSigninJob(data: UserSigninJobInterface) {
         body: JSON.stringify(data),
     };
     let res = await fetch(`${apiUrl}/usersigninjob`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function CreatePost(data: PostsInterface) {
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    };
+    let res = await fetch(`${apiUrl}/post`, requestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -231,11 +253,25 @@ async function GetUser(id: string | null) {
     return res;
 };
 
+async function GetPostStart() {
+    let res = await fetch(`${apiUrl}/poststart`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
 export {
     GetSignin,
     CreateUser,
     CreateUserSigninUse,
     CreateUserSigninJob,
+    CreatePost,
     GetUserListActive,
     GetUserListNonActive,
     GetUserUID,
@@ -245,4 +281,5 @@ export {
     ActiveUser,
     GetRole,
     GetUser,
+    GetPostStart,
 };

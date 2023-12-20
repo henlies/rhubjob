@@ -1,5 +1,5 @@
 export interface MethodInterface {
-    ID: number;
-    Name: string;
-    Number: number;
+    ID?: number;
+    Name?: string;
+    Number?: number;
 }

@@ -81,17 +81,15 @@ const Navbar: React.FC = () => {
         return phoneRegex.test(phoneNumber);
     };
 
-    const isValidUserPass = (username: string): boolean => {
-        const userpassRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{7}$/;
-        return userpassRegex.test(username);
+    const isValidUserPass = (userpass: string): boolean => {
+        const userpassRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{7,}$/;
+        return userpassRegex.test(userpass);
     };
 
     const handleSignoutuse = async () => {
-        if ((signinuserjob.User && !isValidUserPass(signinuserjob.User))
-            || !signinuserjob.User || signinuserjob.User === '') {
+        if ((signinuseruse.User && !isValidUserPass(signinuseruse.User)) || (!signinuseruse.User || signinuseruse.User === '')) {
             openAlert('error', 'กรุณาใส่ชื่อผู้ใช้ ให้มีตัวอักษรและตัวเลข 7 ตัวขึ้นไป');
-        } else if ((signinuserjob.Pass && !isValidUserPass(signinuserjob.Pass))
-            || !signinuserjob.Pass || signinuserjob.Pass === '') {
+        } else if ((signinuseruse.Pass && !isValidUserPass(signinuseruse.Pass)) || (!signinuseruse.Pass || signinuseruse.Pass === '')) {
             openAlert('error', 'กรุณาใส่รหัสผ่าน ให้มีตัวอักษรและตัวเลข 7 ตัวขึ้นไป');
         } else if (signinuseruse.Pass !== checkpass) {
             openAlert('error', 'รหัสผ่านไม่ตรงกัน');
@@ -99,7 +97,7 @@ const Navbar: React.FC = () => {
             let data = {
                 User: signinuseruse.User,
                 Pass: signinuseruse.Pass,
-                Role_id: role,
+                RoleID: role,
             };
             let res = await CreateUserSigninUse(data);
             if (res) {
@@ -109,27 +107,23 @@ const Navbar: React.FC = () => {
             }
         }
     };
-
+    
     const handleSignoutjob = async () => {
-        if ((signinuserjob.User && !isValidUserPass(signinuserjob.User))
-            || !signinuserjob.User || signinuserjob.User === '') {
+        if ((signinuserjob.User && !isValidUserPass(signinuserjob.User)) || (!signinuserjob.User || signinuserjob.User === '')) {
             openAlert('error', 'กรุณาใส่ชื่อผู้ใช้ ให้มีตัวอักษรและตัวเลข 7 ตัวขึ้นไป');
-        } else if ((signinuserjob.Pass && !isValidUserPass(signinuserjob.Pass))
-            || !signinuserjob.Pass || signinuserjob.Pass === '') {
+        } else if ((signinuserjob.Pass && !isValidUserPass(signinuserjob.Pass)) || (!signinuserjob.Pass || signinuserjob.Pass === '')) {
             openAlert('error', 'กรุณาใส่รหัสผ่าน ให้มีตัวอักษรและตัวเลข 7 ตัวขึ้นไป');
         } else if (signinuserjob.Pass !== checkpass) {
             openAlert('error', 'รหัสผ่านไม่ตรงกัน');
-        } else if ((signinuserjob.Phone && !isValidPhone(signinuserjob.Phone))
-            || !signinuserjob.Phone || signinuserjob.Phone === '') {
+        } else if ((signinuserjob.Phone && !isValidPhone(signinuserjob.Phone)) || (!signinuserjob.Phone || signinuserjob.Phone === '')) {
             openAlert('error', 'กรุณาใส่อีเมลที่ถูกต้อง');
-        } else if ((signinuserjob.Email && !isValidEmail(signinuserjob.Email))
-            || !signinuserjob.Email || signinuserjob.Email === '') {
-            openAlert('error', 'กรุณาใส่เบอร์โทรศัพท์ที่ถูกต้อง');
+        } else if ((signinuserjob.Email && !isValidEmail(signinuserjob.Email)) || (!signinuserjob.Email || signinuserjob.Email === '')) {
+            openAlert('error', 'กรุณาใส่เบอร์โทรศัพท์ 10 ตัว');
         } else {
             let data = {
                 User: signinuserjob.User,
                 Pass: signinuserjob.Pass,
-                Role_id: role,
+                RoleID: role,
                 Email: signinuserjob.Email,
                 Phone: signinuserjob.Phone,
 

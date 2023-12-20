@@ -69,7 +69,8 @@ const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
   );
 
   return (
-    <Sider collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)}>
+    <Sider collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)} //style={{ position: 'fixed'}}
+    >
       <div style={{ position: 'fixed', width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Dropdown overlay={avatarMenu}>
@@ -81,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
           </Dropdown>
         </div>
       </div>
-      <div className="demo-logo-vertical" />
+      <div />
       <Menu theme="dark" selectedKeys={[location.pathname]} defaultSelectedKeys={['1']} mode="inline">
         {role === 'ผู้ดูแลระบบ' && per === 'ดูแลระบบ' && renderMenuItems(menuItemsAdmin)}
         {role === 'ผู้ดูแลระบบ' && (

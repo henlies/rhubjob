@@ -1,4 +1,4 @@
 export interface PerInterface {
-    ID: number;
-    Role: string;
+    ID?: number;
+    Role?: string;
 }

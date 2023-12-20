@@ -70,7 +70,8 @@ func main() {
 	app.Patch("/adminpass", controller.UpdatePasswordAdmin)
 	app.Delete("/admin/:id", controller.DeleteAdmin)
 	// - Post
-	app.Get("/posts", controller.ListAddresses)
+	app.Get("/poststart", controller.ListPostStart)
+	app.Post("/post", controller.CreatePost)
 
 	app.Listen(":8080")
 

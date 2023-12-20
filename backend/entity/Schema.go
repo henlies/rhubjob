@@ -8,24 +8,24 @@ import (
 
 type Admin struct {
 	gorm.Model
-	PersonalID uint   `json:"Personal_id"`
-	PrefixID   uint   `json:"Prefix_id"`
+	PersonalID uint   `json:"PersonalID"`
+	PrefixID   uint   `json:"PrefixID"`
 	Prefix     Prefix `gorm:"references:id" json:"Prefix"`
 	Firstname  string `json:"Firstname"`
 	Lastname   string `json:"Lastname"`
 	Nickname   string `json:"Nickname"`
-	GenderID   uint   `json:"Gender_id"`
+	GenderID   uint   `json:"GenderID"`
 	Gender     Gender `gorm:"references:id" json:"Gender"`
 	Phone      string `json:"Phone"`
 	Email      string `json:"Email"`
-	BloodID    uint   `json:"Blood_id"`
+	BloodID    uint   `json:"BloodID"`
 	Blood      Blood  `gorm:"references:id" json:"Blood"`
-	PerID      uint   `json:"Per_id"`
+	PerID      uint   `json:"PerID"`
 	Per        Per    `gorm:"references:id" json:"Per"`
 	Pic        string `json:"Pic"`
 	User       string `json:"User"`
 	Pass       string `json:"Pass"`
-	RoleID     uint   `json:"Role_id"`
+	RoleID     uint   `json:"RoleID"`
 	Role       Role   `gorm:"references:id" json:"Role"`
 	// - ใช้สเตตัสแทนการลบข้อมูล
 	Status int `gorm:"Status"`
@@ -34,28 +34,28 @@ type Admin struct {
 
 type User struct {
 	gorm.Model
-	PersonalID  uint          `json:"Personal_id"`
-	PrefixID    uint          `json:"Prefix_id"`
+	PersonalID  uint          `json:"PersonalID"`
+	PrefixID    uint          `json:"PrefixID"`
 	Prefix      Prefix        `gorm:"references:id" json:"Prefix"`
 	Firstname   string        `json:"Firstname"`
 	Lastname    string        `json:"Lastname"`
 	Nickname    string        `json:"Nickname"`
-	GenderID    uint          `json:"Gender_id"`
+	GenderID    uint          `json:"GenderID"`
 	Gender      Gender        `gorm:"references:id" json:"Gender"`
 	Phone       string        `json:"Phone"`
-	AddressID   uint          `json:"Address_id"`
+	AddressID   uint          `json:"AddressID"`
 	Address     Address       `gorm:"references:id" json:"Address"`
 	Email       string        `json:"Email"`
 	Birth       time.Time     `json:"Birth"`
-	BloodID     uint          `json:"Blood_id"`
+	BloodID     uint          `json:"BloodID"`
 	Blood       Blood         `gorm:"references:id" json:"Blood"`
-	PetID       uint          `json:"Pet_id"`
+	PetID       uint          `json:"PetID"`
 	Pet         Pet           `gorm:"references:id" json:"Pet"`
 	Descript    string        `json:"Descript"`
 	Pic         string        `json:"Pic"`
 	User        string        `json:"User"`
 	Pass        string        `json:"Pass"`
-	RoleID      uint          `json:"Role_id"`
+	RoleID      uint          `json:"RoleID"`
 	Role        Role          `gorm:"references:id" json:"Role"`
 	UserChat    []UserChat    `gorm:"foreignKey:User1ID" gorm:"foreignKey:User2ID"`
 	UserComment []UserComment `gorm:"foreignKey:User1ID" gorm:"foreignKey:User2ID"`
@@ -72,11 +72,11 @@ type Post struct {
 	Start    time.Time `json:"Start"`
 	End      time.Time `json:"End"`
 	Price    int       `json:"Price"`
-	User1ID  uint      `json:"User1_id"`
+	User1ID  uint      `json:"User1ID"`
 	User1    User      `gorm:"references:ID" json:"User1"`
-	User2ID  uint      `json:"User2_id"`
+	User2ID  uint      `json:"User2ID"`
 	User2    User      `gorm:"references:ID" json:"User2"`
-	StatusID uint      `json:"Status_id"`
+	StatusID uint      `json:"StatusID"`
 	Status   Status    `gorm:"references:ID" json:"Status"`
 	Payment  []Payment `gorm:"foreignKey:PostID"`
 }
@@ -84,9 +84,9 @@ type Post struct {
 type Address struct {
 	gorm.Model
 	Descript   string   `json:"Descript"`
-	ProvinceID uint     `json:"Province_id"`
+	ProvinceID uint     `json:"ProvinceID"`
 	Province   Province `gorm:"references:ID" json:"Province"`
-	DistrictID uint     `json:"District_id"`
+	DistrictID uint     `json:"DistrictID"`
 	District   District `gorm:"references:ID" json:"District"`
 	User       []User   `gorm:"foreignKey:AddressID"`
 }
@@ -94,9 +94,9 @@ type Address struct {
 type Pet struct {
 	gorm.Model
 	Name     string `json:"Name"`
-	TypeID   uint   `json:"Type_id"`
+	TypeID   uint   `json:"TypeID"`
 	Type     Type   `gorm:"references:ID" json:"Type"`
-	GeneID   uint   `json:"Gene_id"`
+	GeneID   uint   `json:"GeneID"`
 	Gene     Gene   `gorm:"references:ID" json:"Gene"`
 	Food     string `json:"Food"`
 	Habit    string `json:"Habit"`
@@ -115,11 +115,11 @@ type Comment struct {
 
 type UserComment struct {
 	gorm.Model
-	User1ID   uint    `json:"User1_id"`
+	User1ID   uint    `json:"User1ID"`
 	User1     User    `gorm:"references:ID" json:"User1"`
-	User2ID   uint    `json:"User2_id"`
+	User2ID   uint    `json:"User2ID"`
 	User2     User    `gorm:"references:ID" json:"User2"`
-	CommentID uint    `json:"Comment_id"`
+	CommentID uint    `json:"CommentID"`
 	Comment   Comment `gorm:"references:ID" json:"Comment"`
 }
 
@@ -132,11 +132,11 @@ type Chat struct {
 
 type UserChat struct {
 	gorm.Model
-	User1ID uint `json:"User1_id"`
+	User1ID uint `json:"User1ID"`
 	User1   User `gorm:"references:ID" json:"User1"`
-	User2ID uint `json:"User2_id"`
+	User2ID uint `json:"User2ID"`
 	User2   User `gorm:"references:ID" json:"User2"`
-	ChatID  uint `json:"Chat_id"`
+	ChatID  uint `json:"ChatID"`
 	Chat    Chat `gorm:"references:ID" json:"Chat"`
 }
 
@@ -144,9 +144,9 @@ type Payment struct {
 	gorm.Model
 	Time     time.Time `json:"Time"`
 	Status   int       `json:"Status"`
-	MethodID uint      `json:"Method_id"`
+	MethodID uint      `json:"MethodID"`
 	Method   Method    `gorm:"references:ID" json:"Method"`
-	PostID   uint      `json:"Post_id"`
+	PostID   uint      `json:"PostID"`
 	Post     Post      `gorm:"references:ID" json:"Post"`
 }
 
@@ -180,7 +180,7 @@ type Per struct {
 type Gene struct {
 	gorm.Model
 	Name   string `json:"Name"`
-	TypeID uint   `json:"Type_id"`
+	TypeID uint   `json:"TypeID"`
 	Type   Type   `gorm:"references:ID" json:"Type"`
 	Pet    []Pet  `gorm:"foreignKey:GeneID"`
 }
@@ -196,7 +196,7 @@ type District struct {
 	gorm.Model
 	Name       string    `json:"Name"`
 	Zipcode    string    `json:"Zipcode"`
-	ProvinceID uint      `json:"Province_id"`
+	ProvinceID uint      `json:"ProvinceID"`
 	Province   Province  `gorm:"references:ID" json:"Province"`
 	Address    []Address `gorm:"foreignKey:DistrictID"`
 }
