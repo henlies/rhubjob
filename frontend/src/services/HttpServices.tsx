@@ -1,7 +1,7 @@
-import { PostsInterface } from "../models/Post";
 import { SigninInterface } from "../models/Signin";
-import { UserInterface } from "../models/User";
 import { UserSigninJobInterface, UserSigninUseInterface } from "../models/UserSignin";
+import { UserInterface } from "../models/User";
+import { PostaInterface, PosteInterface, PostsInterface } from "../models/Post";
 
 const apiUrl = "http://localhost:8080";
 const getRequestOptions = {
@@ -136,6 +136,28 @@ async function CreatePost(data: PostsInterface) {
     return res;
 };
 
+async function UpdatePost(data: PosteInterface) {
+    const requestOptions = {
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    }
+
+    let res = await fetch(`${apiUrl}/post`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+}
+
 async function GetUserListActive() {
     let res = await fetch(`${apiUrl}/usersactive`, getRequestOptions)
         .then((response) => response.json())
@@ -253,6 +275,19 @@ async function GetUser(id: string | null) {
     return res;
 };
 
+async function GetPostbyId(id?: number) {
+    let res = await fetch(`${apiUrl}/post/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
 async function GetPostStart() {
     let res = await fetch(`${apiUrl}/poststart`, getRequestOptions)
         .then((response) => response.json())
@@ -266,12 +301,88 @@ async function GetPostStart() {
     return res;
 };
 
+async function GetPostStartId(id: string | null) {
+    let res = await fetch(`${apiUrl}/poststart/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetPostIdTrack(id: string | null) {
+    let res = await fetch(`${apiUrl}/posttrack/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetPostIdStatus(id: string | null) {
+    let res = await fetch(`${apiUrl}/poststatus/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function AcceptPost(data: PostaInterface) {
+    const requestOptions = {
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    }
+
+    let res = await fetch(`${apiUrl}/postacc`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+}
+
+async function DeletePost(id?: number) {
+    let res = await fetch(`${apiUrl}/post/${id}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
 export {
+    
     GetSignin,
     CreateUser,
     CreateUserSigninUse,
     CreateUserSigninJob,
     CreatePost,
+    UpdatePost,
     GetUserListActive,
     GetUserListNonActive,
     GetUserUID,
@@ -281,5 +392,11 @@ export {
     ActiveUser,
     GetRole,
     GetUser,
+    GetPostbyId,
     GetPostStart,
+    GetPostStartId,
+    GetPostIdTrack,
+    GetPostIdStatus,
+    AcceptPost,
+    DeletePost,
 };

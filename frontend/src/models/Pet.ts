@@ -3,6 +3,7 @@ import { TypeInterface } from "./Type";
 
 export interface PetInterface {
     ID?: number;
+    Name?: string;
     TypeID?: number;
     Type?: TypeInterface
     GeneID?: number;

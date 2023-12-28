@@ -28,3 +28,19 @@ export interface PostsInterface {
     User1ID?: number;
     User1?: UserInterface;
 }
+
+export interface PosteInterface {
+    ID?: number;
+    Descript?: string;
+    Lati?: number;
+    Long?: number;
+    Start?: Date;
+    End?: Date;
+    Price?: number;
+}
+
+export interface PostaInterface {
+    ID?: number;
+    User2ID?: number;
+    User2?: UserInterface;
+}

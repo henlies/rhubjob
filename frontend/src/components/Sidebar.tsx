@@ -59,45 +59,42 @@ const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
 
   const avatarMenu = (
     <Menu>
-      <Menu.Item >
+      {/* <Menu.Item >
         <Link to="/profile">Profile</Link>
-      </Menu.Item>
-      <Menu.Item >
-        <Link to="/settings">Settings</Link>
+      </Menu.Item> */}
+      {Holder}
+      <Menu.Item key="logout" onClick={SignOut} icon={<LogoutOutlined />}>
+        ออกจากระบบ
       </Menu.Item>
     </Menu>
   );
 
   return (
-    <Sider collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)} //style={{ position: 'fixed'}}
-    >
-      <div style={{ position: 'fixed', width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Dropdown overlay={avatarMenu}>
-            <Avatar
-              size={60}
-              src={personImage}
-              style={{ cursor: 'pointer', marginTop: '20px', marginRight: '20px' }}
-            />
-          </Dropdown>
+    <Sider collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)} style={{ zIndex: '1' }}>
+      <div>
+        <div style={{ position: 'fixed', width: '100%' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Dropdown overlay={avatarMenu}>
+              <Avatar
+                size={60}
+                src={personImage}
+                style={{ cursor: 'pointer', marginTop: '20px', marginRight: '20px' }}
+              />
+            </Dropdown>
+          </div>
         </div>
+        <Menu theme="dark" selectedKeys={[location.pathname]} defaultSelectedKeys={['1']} mode="inline">
+          {role === 'ผู้ดูแลระบบ' && per === 'ดูแลระบบ' && renderMenuItems(menuItemsAdmin)}
+          {role === 'ผู้ดูแลระบบ' && (
+            <>
+              {per === 'คัดกรองข้อความ' && renderMenuItems([menuItemsAdmin[0], menuItemsAdmin[2]])}
+              {per === 'จัดการข้อมูลผู้ใช้ระบบ' && renderMenuItems([menuItemsAdmin[0], menuItemsAdmin[3]])}
+            </>
+          )}
+          {role === 'ผู้ใช้บริการ' && renderMenuItems([menuItemsUser[0], menuItemsUser[1], menuItemsUser[2]])}
+          {role === 'ผู้ให้บริการ' && renderMenuItems([menuItemsUser[0], menuItemsUser[1], menuItemsUser[3]])}
+        </Menu>
       </div>
-      <div />
-      <Menu theme="dark" selectedKeys={[location.pathname]} defaultSelectedKeys={['1']} mode="inline">
-        {role === 'ผู้ดูแลระบบ' && per === 'ดูแลระบบ' && renderMenuItems(menuItemsAdmin)}
-        {role === 'ผู้ดูแลระบบ' && (
-          <>
-            {per === 'คัดกรองข้อความ' && renderMenuItems([menuItemsAdmin[0], menuItemsAdmin[2]])}
-            {per === 'จัดการข้อมูลผู้ใช้ระบบ' && renderMenuItems([menuItemsAdmin[0], menuItemsAdmin[3]])}
-          </>
-        )}
-        {role === 'ผู้ใช้บริการ' && renderMenuItems([menuItemsUser[0], menuItemsUser[1], menuItemsUser[2]])}
-        {role === 'ผู้ให้บริการ' && renderMenuItems([menuItemsUser[0], menuItemsUser[1], menuItemsUser[3]])}
-        {Holder}
-        <Menu.Item key="logout" onClick={SignOut} icon={<LogoutOutlined />}>
-          ออกจากระบบ
-        </Menu.Item>
-      </Menu>
     </Sider>
   );
 };

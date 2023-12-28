@@ -14,6 +14,7 @@ func main() {
 
 	// - signin
 	app.Post("/signin", controller.Signin)
+
 	// - เอาไว้เช็คข้อมูล
 	app.Get("/prefixes", controller.ListPrefixes)
 	app.Get("/genders", controller.ListGenders)
@@ -26,42 +27,49 @@ func main() {
 	app.Get("/statuses", controller.ListStatuses)
 	app.Get("/roles", controller.ListRoles)
 	app.Get("/methods", controller.ListMethods)
+
 	// - ตารางหลายต่อหลาย
 	app.Get("/userchats", controller.ListUserChats)
 	app.Get("/usercomments", controller.ListUserComments)
+
 	// - ป้องกันข้อมูล
 	// api := app.Group("")
 	// protected := api.Use(middlewares.Authorizes())
+
 	// - Comment
 	app.Get("/comments", controller.ListComments)
+
 	// - Chat
 	app.Get("/chats", controller.ListChats)
+
 	// - Payment
 	app.Get("/payments", controller.ListPayments)
+
 	// - Addrss
 	app.Get("/addresses", controller.ListAddresses)
 	app.Get("/address/user/:id", controller.GetAddressUID)
 	app.Post("/address", controller.CreateAddress)
 	app.Patch("/address", controller.UpdateAddress)
+
 	// - Pet
 	app.Get("/pets", controller.ListPets)
 	app.Get("/pet/user/:id", controller.GetPetUID)
 	app.Post("/pet", controller.CreatePet)
 	app.Patch("/pet", controller.UpdatePet)
+
 	// - User
-	app.Get("/users", controller.ListUsers)
+	app.Patch("/userdetail", controller.UpdateUser)
+	app.Patch("/userpass", controller.UpdatePasswordUser)
+
 	app.Get("/usersnonactive", controller.ListUsersNonactive)
 	app.Get("/usersactive", controller.ListUsersActive)
 	app.Get("/user/:id", controller.GetUser)
-	app.Post("/user", controller.CreateUser)
-	app.Patch("/userdetail", controller.UpdateUser)
-	app.Patch("/userpass", controller.UpdatePasswordUser)
 	app.Delete("/user/:id", controller.DeleteUser)
 	app.Delete("/userapprove/:id", controller.ApproveUser)
 	app.Delete("/useractive/:id", controller.ActiveUser)
-	// - Test User
 	app.Post("/usersigninuse", controller.CreateUserSigninUse)
 	app.Post("/usersigninjob", controller.CreateUserSigninJob)
+
 	// - Admin
 	app.Get("/admins", controller.ListAdmins)
 	app.Get("/admin/:id", controller.GetAdmins)
@@ -69,9 +77,17 @@ func main() {
 	app.Patch("/admindetail", controller.UpdateAdmin)
 	app.Patch("/adminpass", controller.UpdatePasswordAdmin)
 	app.Delete("/admin/:id", controller.DeleteAdmin)
+
 	// - Post
+	app.Get("/post/:id", controller.GetPostbyId)
 	app.Get("/poststart", controller.ListPostStart)
+	app.Get("/poststart/:id", controller.ListPostStartId)
+	app.Get("/posttrack/:id", controller.ListPostIdTrack)
+	app.Get("/poststatus/:id", controller.ListPostIdStatus)
 	app.Post("/post", controller.CreatePost)
+	app.Patch("/post", controller.UpdatePost)
+	app.Patch("/postacc", controller.AcceptPost)
+	app.Delete("/post/:id", controller.DeletePost)
 
 	app.Listen(":8080")
 
