@@ -26,31 +26,29 @@ func SetupDatabase() {
 	}
 
 	database.AutoMigrate(
-		// - ตารางย่อย
+		// &Method{},
+		// &Chat{},
+		// &Comment{},
+		// &Payment{},
+		// &UserChat{},
+		// &UserComment{},
+		// &User{},
+		&Admin{},
+		&Per{},
+		ServiceUser{},
+		ServiceProvider{},
 		&Prefix{},
 		&Gender{},
 		&Blood{},
-		&Per{},
+		&Role{},
+		&Pet{},
 		&Gene{},
 		&Type{},
+		&Address{},
 		&District{},
 		&Province{},
-		&Status{},
-		&Role{},
-		&Method{},
-		// - ตารางย่อยที่สำคัญ
-		&Pet{},
-		&Address{},
-		&Chat{},
-		&Comment{},
-		&Payment{},
-		// - ตารางหลายต่อหลาย
-		&UserChat{},
-		&UserComment{},
-		// - ตารางหลัก
-		&Admin{},
-		&User{},
 		&Post{},
+		&Status{},
 	)
 	db = database
 
@@ -71,14 +69,12 @@ func SetupDatabase() {
 	db.Model(&Blood{}).Create(&Blood{Name: "A"})
 	db.Model(&Blood{}).Create(&Blood{Name: "B"})
 	db.Model(&Blood{}).Create(&Blood{Name: "O"})
-	db.Model(&Blood{}).Create(&Blood{Name: "Rh+"})
-	db.Model(&Blood{}).Create(&Blood{Name: "Rh-"})
 	db.Model(&Blood{}).Create(&Blood{Name: "ไม่ทราบ"})
 	// - สิทธ์
 	db.Model(&Per{}).Create(&Per{Role: "ดูแลระบบ"})
 	db.Model(&Per{}).Create(&Per{Role: "คัดกรองข้อความ"})
 	db.Model(&Per{}).Create(&Per{Role: "จัดการข้อมูลผู้ใช้ระบบ"})
-	// - ชนิดสัตว์เลี้ยง
+	// - สัตว์เลี้ยง
 	t1 := Type{Name: "สุนัข"}
 	db.Model(&Type{}).Create(&t1)
 	db.Model(&Gene{}).Create(&Gene{Name: "ร็อตไวเลอร์", Type: t1})
@@ -133,26 +129,7 @@ func SetupDatabase() {
 	db.Model(&Gene{}).Create(&Gene{Name: "นอร์วีเจียนฟอเรสต์", Type: t2})
 	db.Model(&Gene{}).Create(&Gene{Name: "ทิฟฟานี", Type: t2})
 	db.Model(&Gene{}).Create(&Gene{Name: "คาราคัล", Type: t2})
-	t3 := Type{Name: "แฮมสเตอร์"}
-	db.Model(&Type{}).Create(&t3)
-	db.Model(&Gene{}).Create(&Gene{Name: "วินเทอร์ ไวท์", Type: t3})
-	db.Model(&Gene{}).Create(&Gene{Name: "แคมเบล", Type: t3})
-	db.Model(&Gene{}).Create(&Gene{Name: "โรโบรอฟสกี้", Type: t3})
-	db.Model(&Gene{}).Create(&Gene{Name: "ไชนีส", Type: t3})
-	db.Model(&Gene{}).Create(&Gene{Name: "ไซเรียน โกลเด้น หรือ ไจแอนท์", Type: t3})
-	t4 := Type{Name: "กระต่าย"}
-	db.Model(&Type{}).Create(&t4)
-	db.Model(&Gene{}).Create(&Gene{Name: "ฮอลแลนด์ลอป", Type: t4})
-	db.Model(&Gene{}).Create(&Gene{Name: "มินิลอป", Type: t4})
-	db.Model(&Gene{}).Create(&Gene{Name: "ดัตช์", Type: t4})
-	db.Model(&Gene{}).Create(&Gene{Name: "ไลอ้อนเฮด", Type: t4})
-	db.Model(&Gene{}).Create(&Gene{Name: "เฟรนลอป", Type: t4})
-	db.Model(&Gene{}).Create(&Gene{Name: "แคลิฟอร์เนีย", Type: t4})
-	db.Model(&Gene{}).Create(&Gene{Name: "เฟลมมิชไจแอนท์", Type: t4})
-	db.Model(&Gene{}).Create(&Gene{Name: "เนเธอร์แลนด์ดวอฟ", Type: t4})
-	db.Model(&Gene{}).Create(&Gene{Name: "มินิเร็กซ์", Type: t4})
-	db.Model(&Gene{}).Create(&Gene{Name: "อิงลิชลอป", Type: t4})
-	// - จังหวัดน่าน
+	// - จังหวัด
 	p1 := Province{Name: "น่าน"}
 	db.Model(&Province{}).Create(&p1)
 	db.Model(&District{}).Create(&District{Name: "ท่าวังผา", Zipcode: "55140", Province: p1})
@@ -1236,26 +1213,18 @@ func SetupDatabase() {
 	db.Model(&District{}).Create(&District{Name: "ไชยา", Zipcode: "84110", Province: p77})
 	// - สถานะ
 	db.Model(&Status{}).Create(&Status{Name: "รอเริ่มงาน"})
+	db.Model(&Status{}).Create(&Status{Name: "รอการยืนยัน"})
 	db.Model(&Status{}).Create(&Status{Name: "ดำเนินงาน"})
 	db.Model(&Status{}).Create(&Status{Name: "งานสิ้นสุด"})
 	db.Model(&Status{}).Create(&Status{Name: "ยกเลิกงาน"})
-	// - วิธีชำระเงิน
-	db.Model(&Method{}).Create(&Method{Name: "ธนาคารกรุงเทพ", Number: 5423152669})
-	db.Model(&Method{}).Create(&Method{Name: "ธนาคารกสิกรไทย", Number: 4125633652})
-	db.Model(&Method{}).Create(&Method{Name: "ธนาคารกรุงไทย", Number: 439900408181})
-	db.Model(&Method{}).Create(&Method{Name: "ธนาคารทหารไทย", Number: 4185279665})
-	db.Model(&Method{}).Create(&Method{Name: "ธนาคารไทยพาณิชย์", Number: 5214253625})
-	db.Model(&Method{}).Create(&Method{Name: "ธนาคารกรุงศรีอยุธยา", Number: 2548989658})
-	db.Model(&Method{}).Create(&Method{Name: "ธนาคารออมสิน", Number: 114523652587})
 
 	// ===== Assign ข้อมูล =====
 	birth := time.Date(2001, 10, 13, 0, 0, 0, 0, time.Local)
-	currentTime := time.Date(2023, 12, 6, 0, 0, 0, 0, time.Local)
 	start := time.Date(2023, 12, 7, 0, 0, 0, 0, time.Local)
 	end := time.Date(2023, 12, 7, 0, 0, 0, 0, time.Local)
-	var role Role
-	var role1 Role
-	var role2 Role
+	var roleu Role
+	var rolej Role
+	var rolea Role
 	var prefix Prefix
 	var gender Gender
 	var blood Blood
@@ -1263,10 +1232,9 @@ func SetupDatabase() {
 	var gene Gene
 	var status Status
 	var dis District
-	var method Method
-	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ใช้บริการ"`).Scan(&role)
-	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ให้บริการ"`).Scan(&role1)
-	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ดูแลระบบ"`).Scan(&role2)
+	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ใช้บริการ"`).Scan(&roleu)
+	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ให้บริการ"`).Scan(&rolej)
+	db.Raw(`SELECT * FROM roles WHERE name = "ผู้ดูแลระบบ"`).Scan(&rolea)
 	db.Raw(`SELECT * FROM prefixes WHERE name = "นาย"`).Scan(&prefix)
 	db.Raw(`SELECT * FROM genders WHERE name = "ชาย"`).Scan(&gender)
 	db.Raw(`SELECT * FROM bloods WHERE name = "AB"`).Scan(&blood)
@@ -1274,22 +1242,7 @@ func SetupDatabase() {
 	db.Raw(`SELECT * FROM genes WHERE name = "ร็อตไวเลอร์"`).Scan(&gene)
 	db.Raw(`SELECT * FROM statuses WHERE name = "รอเริ่มงาน"`).Scan(&status)
 	db.Raw(`SELECT * FROM districts WHERE name = "ท่าวังผา"`).Scan(&dis)
-	db.Raw(`SELECT * FROM methods WHERE name = "ธนาคารกรุงไทย"`).Scan(&method)
 
-	// ====== ทดสอบข้อมูลอื่นๆ ======
-	chat := Chat{
-		Message1: "",
-		Message2: "สวัสดีครับ",
-	}
-	db.Model(&Chat{}).Create(&chat)
-
-	comment := Comment{
-		Descript: "ทำงานดีมากๆ",
-		Score:    5,
-	}
-	db.Model(&Comment{}).Create(&comment)
-
-	// ===== ทดสอบข้อมูลย่อย 1 =====
 	pet := Pet{
 		Name:     "มอมแมม",
 		Type:     t1,
@@ -1308,52 +1261,6 @@ func SetupDatabase() {
 		Descript: "218 หมู่ 15 บ้านโคกพิทักษ์",
 	}
 	db.Model(&Address{}).Create(&address)
-	// ===== ทดสอบข้อมูล =====
-	user := User{
-		PersonalID: 1439900408181,
-		Prefix:     prefix,
-		Firstname:  "ภัทรพล",
-		Lastname:   "การวิชา",
-		Nickname:   "เติ้ล",
-		Gender:     gender,
-		Phone:      "0933486360",
-		Address:    address,
-		Email:      "tle.pattharapon@gmail.com",
-		Birth:      birth,
-		Blood:      blood,
-		Pet:        pet,
-		Descript:   "ติดประชุม",
-		Pic:        "SOMEPICTURE",
-		User:       "henlies",
-		Pass:       SetupPasswordHash("12345"),
-		Role:       role,
-		Status:     1,
-		Active:     1,
-	}
-	db.Model(&User{}).Create(&user)
-
-	user1 := User{
-		PersonalID: 1439900408182,
-		Prefix:     prefix,
-		Firstname:  "เฉลย",
-		Lastname:   "การวิชา",
-		Nickname:   "จุ่น",
-		Gender:     gender,
-		Phone:      "0819650866",
-		Address:    address,
-		Email:      "charoey@gmail.com",
-		Birth:      birth,
-		Blood:      blood,
-		Pet:        pet,
-		Descript:   "ค้าบโผมม",
-		Pic:        "SOMEPICTURE",
-		User:       "charoey",
-		Pass:       SetupPasswordHash("1"),
-		Role:       role1,
-		Status:     1,
-		Active:     1,
-	}
-	db.Model(&User{}).Create(&user1)
 
 	admin := Admin{
 		PersonalID: 1439900408183,
@@ -1366,46 +1273,69 @@ func SetupDatabase() {
 		Email:      "Admin@gmail.com",
 		Blood:      blood,
 		Per:        per,
-		Pic:        "SOMEPICTURE",
+		Pic:        "data:image/jpeg;base64,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",
 		User:       "Admin",
 		Pass:       SetupPasswordHash("Admin"),
-		Role:       role2,
+		Role:       rolea,
 		Status:     1,
 		Active:     1,
 	}
 	db.Model(&Admin{}).Create(&admin)
 
+	s_user := ServiceUser{
+		PersonalID: 1439900408181,
+		Prefix:     prefix,
+		Firstname:  "ภัทรพล",
+		Lastname:   "การวิชา",
+		Nickname:   "เติ้ล",
+		Gender:     gender,
+		Phone:      "0933486360",
+		Address:    address,
+		Email:      "tle.pattharapon@gmail.com",
+		Line:       "@0880463206",
+		Birth:      birth,
+		Blood:      blood,
+		Pet:        pet,
+		Descript:   "ติดประชุม",
+		Pic:        "data:image/jpeg;base64,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",
+		User:       "henlies",
+		Pass:       SetupPasswordHash("12345"),
+		Role:       roleu,
+		Status:     1,
+		Active:     1,
+	}
+	db.Model(&ServiceUser{}).Create(&s_user)
+
+	s_pro := ServiceProvider{
+		PersonalID: 1439900408182,
+		Prefix:     prefix,
+		Firstname:  "เฉลย",
+		Lastname:   "การวิชา",
+		Nickname:   "จุ่น",
+		Gender:     gender,
+		Phone:      "0819650866",
+		Address:    address,
+		Email:      "charoey@gmail.com",
+		Line:       "@0933486360",
+		Birth:      birth,
+		Blood:      blood,
+		Pic:        "data:image/jpeg;base64,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",
+		User:       "charoey",
+		Pass:       SetupPasswordHash("1"),
+		Role:       rolej,
+		Status:     1,
+		Active:     1,
+	}
+	db.Model(&ServiceProvider{}).Create(&s_pro)
+
 	post := Post{
-		Descript: "หาคนรับเรียงน้องหมาด่วนนน ",
-		Lati:     14.114505570451097,
-		Long:     100.59872262163682,
-		Start:    start,
-		End:      end,
-		Price:    1400,
-		User1:    user,
-		Status:   status,
+		Descript:        "สวัสดีค้าบ",
+		Start:           start,
+		End:             end,
+		Price:           400,
+		ServiceUser:     s_user,
+		ServiceProvider: s_pro,
+		Status:          status,
 	}
 	db.Model(&Post{}).Create(&post)
-
-	userchat := UserChat{
-		User1: user,
-		User2: user1,
-		Chat:  chat,
-	}
-	db.Model(&UserChat{}).Create(&userchat)
-
-	usercomment := UserComment{
-		User1:   user,
-		User2:   user1,
-		Comment: comment,
-	}
-	db.Model(&UserComment{}).Create(&usercomment)
-
-	payment := Payment{
-		Time:   currentTime,
-		Status: 1,
-		Method: method,
-		Post:   post,
-	}
-	db.Model(&Payment{}).Create(&payment)
 }

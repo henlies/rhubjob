@@ -15,6 +15,7 @@ import Manual from './components/Manual';
 import Error403 from './components/403';
 import { Layout } from 'antd';
 import TrackStatus from './components/User/TrackStatus';
+import Postpro from './components/User/Postpro';
 
 const App: React.FC = () => {
   const [token, setToken] = useState<string>("");
@@ -86,7 +87,7 @@ const App: React.FC = () => {
                 {role === "ผู้ให้บริการ" && (
                   <>
                     <Route path="/" element={<DashboardUser />} />
-                    <Route path="/post" element={<Post />} />
+                    <Route path="/post" element={<Postpro />} />
                     <Route path="/post-status" element={<PostStatus />} />
                     <Route path="*" element={<Error403 />} />
                   </>

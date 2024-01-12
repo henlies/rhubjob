@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Avatar, Dropdown, Layout, Menu, message } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { SidebarProps, MenuItem } from '../models/Signin';
-import personImage from './User/etc/person.jpg';
 import {
   CheckCircleOutlined,
   CommentOutlined,
@@ -17,6 +16,14 @@ const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(true);
   const [api, Holder] = message.useMessage();
+  const [pic, setPic] = useState<string>("");
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setPic(localStorage.getItem("pic") || '');
+    }
+  }, []);
 
   const openAlert = (type: 'success' | 'error', content: string) => {
     api.open({
@@ -77,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
             <Dropdown overlay={avatarMenu}>
               <Avatar
                 size={60}
-                src={personImage}
+                src={pic}
                 style={{ cursor: 'pointer', marginTop: '20px', marginRight: '20px' }}
               />
             </Dropdown>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Layout, Popconfirm, Popover, Table, Tabs, Typography, message } from 'antd';
 import { UserInterface } from '../../models/User';
-import { ActiveUser, ApproveUser, DeleteUser, GetUserListActive, GetUserListNonActive } from '../../services/HttpServices';
+import { ActiveServiceProvider, ActiveServiceUser, ApproveUser, DeleteServiceProvider, DeleteServiceUser, GetUserListActive, GetUserListNonActive } from '../../services/HttpServices';
 import { ColumnsType } from 'antd/es/table';
 import { CheckOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -54,11 +54,17 @@ const ControlUser: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id?: number) => {
+  const handleDelete = async (rolename?: string, email?: string) => {
     if (confirmation === admin) {
-      await DeleteUser(id);
-      getuserlistactive();
-      getuserlistnonactive();
+      if (rolename === 'ผู้ให้บริการ') {
+        await DeleteServiceProvider(email);
+        getuserlistactive();
+        getuserlistnonactive();
+      } else {
+        await DeleteServiceUser(email);
+        getuserlistactive();
+        getuserlistnonactive();
+      }
     } else {
       openAlert('error', 'ชื่อไม่ตรง ไม่สามารถลบได้');
     }
@@ -74,11 +80,17 @@ const ControlUser: React.FC = () => {
     }
   };
 
-  const handalActive = async (id?: number) => {
+  const handalActive = async (rolename?: string, email?: string) => {
     if (confirmation === admin) {
-      await ActiveUser(id);
-      getuserlistactive();
-      getuserlistnonactive();
+      if (rolename === 'ผู้ให้บริการ') {
+        await ActiveServiceProvider(email);
+        getuserlistactive();
+        getuserlistnonactive();
+      } else {
+        await ActiveServiceUser(email);
+        getuserlistactive();
+        getuserlistnonactive();
+      }
     } else {
       openAlert('error', 'ชื่อไม่ตรง ไม่สามารถยืนยันได้');
     }
@@ -213,7 +225,7 @@ const ControlUser: React.FC = () => {
                 />
               </>
             }
-            onConfirm={() => handleDelete(record.ID)}
+            onConfirm={() => handleDelete(record.Role?.Name, record.Email)}
             cancelText="ไม่"
             okText="ใช่"
             icon={null}
@@ -322,7 +334,7 @@ const ControlUser: React.FC = () => {
                 />
               </>
             }
-            onConfirm={() => handalActive(record.ID)}
+            onConfirm={() => handalActive(record.Role?.Name, record.Email)}
             cancelText="ไม่"
             okText="ใช่"
             icon={null}
@@ -354,7 +366,7 @@ const ControlUser: React.FC = () => {
           <Title level={3}>ตารางรายชื่อผู้ใช้งานระบบ</Title>
           <div style={{ display: 'flex', justifyContent: 'flex-start', marginLeft: '39px' }}>
             <Popover content={content} trigger="click" visible={visible} onVisibleChange={setVisible}>
-              <Button shape="round" style={{ marginBottom: "13px" }} onClick={handleButtonClick} icon={<SearchOutlined />}>
+              <Button shape="round" style={{ marginBottom: "13px" }} onClick={handleButtonClick}>
                 ข้อมูล
               </Button>
             </Popover>

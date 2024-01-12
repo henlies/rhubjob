@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Avatar, Layout, Button, Modal, Col, Form, Input, Typography, DatePicker, Dropdown, Menu, Space } from 'antd';
+import { Card, Avatar, Layout, Button, Modal, Col, Form, Input, Typography, DatePicker, Dropdown, Menu, Space, Tabs } from 'antd';
 import {
   CreatePost,
   DeletePost,
@@ -7,7 +7,7 @@ import {
   GetPostbyId,
   UpdatePost,
   GetPostStartId,
-  AcceptPost,
+  CheckPost,
 } from '../../services/HttpServices';
 import { PostInterface, PostsInterface } from '../../models/Post';
 import dayjs, { Dayjs } from 'dayjs';
@@ -17,9 +17,10 @@ import MapInteractionComponent from './etc/MapInteraction';
 import personImage from './etc/person.jpg';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { DashOutlined } from '@ant-design/icons';
+import TabPane from 'antd/es/tabs/TabPane';
+import { Content } from 'antd/es/layout/layout';
 
 const Post: React.FC = () => {
-  const { Content } = Layout;
   const { Title } = Typography;
   const { RangePicker } = DatePicker;
   const role = localStorage.getItem("role")
@@ -97,7 +98,7 @@ const Post: React.FC = () => {
       ID: id,
       User2ID: numId,
     };
-    let res = await AcceptPost(data);
+    let res = await CheckPost(data);
     if (res) {
       getpoststart();
     }
@@ -161,234 +162,249 @@ const Post: React.FC = () => {
     return (
       <Layout style={{ minHeight: '100vh' }}>
         <Content style={{ margin: '16px' }}>
-          <div style={{ display: 'flex', marginBottom: '24px', marginTop: '16px', marginLeft: '24px', alignItems: 'start' }}>
+          <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '24px', alignItems: 'start' }}>
             <Button onClick={() => setPostopen(true)}>
               สร้างโพส
             </Button>
           </div>
-          {postId.length > 0 ? (
-            postId.map((postId) => {
-              const startDate = postId.Start instanceof Date ? postId.Start : new Date();
-              const starts: string = startDate.toLocaleDateString(undefined, {
-                day: 'numeric',
-                month: '2-digit',
-                year: 'numeric',
-              }).replace(/\//g, '-');
+          <Tabs defaultActiveKey="1">
+            <TabPane tab="โพสงาน" key="1">
+              {postId.length > 0 ? (
+                postId.map((postId) => {
+                  const startDate = postId.Start instanceof Date ? postId.Start : new Date();
+                  const starts: string = startDate.toLocaleDateString(undefined, {
+                    day: 'numeric',
+                    month: '2-digit',
+                    year: 'numeric',
+                  }).replace(/\//g, '-');
 
-              const part = starts.split('-');
-              const start = part[1] + '-' + part[0] + '-' + part[2];
+                  const part = starts.split('-');
+                  const start = part[1] + '-' + part[0] + '-' + part[2];
 
-              const endDate = postId.End instanceof Date ? postId.End : new Date();
-              const ends: string = endDate.toLocaleDateString(undefined, {
-                day: 'numeric',
-                month: '2-digit',
-                year: 'numeric',
-              }).replace(/\//g, '-');
-              const parts = ends.split('-');
-              const end = parts[1] + '-' + parts[0] + '-' + parts[2];
+                  const endDate = postId.End instanceof Date ? postId.End : new Date();
+                  const ends: string = endDate.toLocaleDateString(undefined, {
+                    day: 'numeric',
+                    month: '2-digit',
+                    year: 'numeric',
+                  }).replace(/\//g, '-');
+                  const parts = ends.split('-');
+                  const end = parts[1] + '-' + parts[0] + '-' + parts[2];
 
-              return (
-                <Card style={{ marginTop: '8px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                    <div style={{ margin: '12px' }}>
-                      <Avatar size={'large'} src={personImage} />
-                    </div>
-                    <div style={{ marginRight: '20px' }}>
-                      <Input addonBefore="ชื่อผู้ใช้" value={`${postId.User1?.Firstname} ${postId.User1?.Lastname}`} />
-                    </div>
-                    <div>
-                      <Input addonBefore="สถานะ" value={`${postId.Status?.Name}`} />
-                    </div>
-                    <div>
-                      <Dropdown overlay={() => MenuOptions(postId.ID)} trigger={['click']}>
-                        <Space>
-                          <DashOutlined />
-                        </Space>
-                      </Dropdown>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                    <Col span={12}>
-                      <div style={{ margin: '24px' }}>
-                        <Input value="รายละเอียดการใช้บริการ" />
-                        <div style={{ marginBottom: '12px', marginTop: '12px' }}>
-                          <MapDisplayComponent initialLat={postId.Lati} initialLng={postId.Long} imageUrl="https://e7.pngegg.com/pngimages/457/630/png-clipart-location-logo-location-computer-icons-symbol-location-miscellaneous-angle-thumbnail.png" />
+                  return (
+                    <Card style={{ marginTop: '8px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
+                        <div style={{ margin: '12px' }}>
+                          <Avatar size={'large'} src={personImage} />
+                        </div>
+                        <div style={{ marginRight: '20px' }}>
+                          <Input addonBefore="ชื่อผู้ใช้" value={`${postId.User1?.Firstname} ${postId.User1?.Lastname}`} />
                         </div>
                         <div>
-                          <Input addonBefore="คำแนะนำ" value={`${postId.Descript}`} />
-                          <Input addonBefore="วันที่" value={`${start} ถึงวันที่ ${end}`} />
-                          <Input addonBefore="ราคา" value={`${postId.Price}`} />
-                        </div>
-                      </div>
-                    </Col>
-                    <Col span={12}>
-                      <div style={{ margin: '24px' }}>
-                        <Input value="รายละเอียดสัตว์เลี้ยง" />
-                        <div style={{ marginBottom: '12px', marginTop: '12px' }}>
-                          <Avatar shape="square" size={250}>{postId.User1?.Pet?.Pic}</Avatar>
+                          <Input addonBefore="สถานะ" value={`${postId.Status?.Name}`} />
                         </div>
                         <div>
-                          <Input addonBefore="ชื่อ" value={postId.User1?.Pet?.Name} />
-                          <Input addonBefore="คำแนะนำ" value={postId.User1?.Pet?.Descript} />
-                          <Input addonBefore="ชนิด" value={postId.User1?.Pet?.Gene?.Type?.Name} />
-                          <Input addonBefore="สายพันธุ์" value={postId.User1?.Pet?.Gene?.Name} />
-                          <Input addonBefore="อาหาร" value={postId.User1?.Pet?.Food} />
-                          <Input addonBefore="นิสัย" value={postId.User1?.Pet?.Habit} />
-                          <Input addonBefore="ยา" value={postId.User1?.Pet?.Pill} />
+                          <Dropdown overlay={() => MenuOptions(postId.ID)} trigger={['click']}>
+                            <Space>
+                              <DashOutlined />
+                            </Space>
+                          </Dropdown>
                         </div>
                       </div>
-                    </Col>
+                      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
+                        <Col span={12}>
+                          <div style={{ margin: '24px' }}>
+                            <Input value="รายละเอียดการใช้บริการ" />
+                            <div style={{ marginBottom: '12px', marginTop: '12px' }}>
+                              <MapDisplayComponent initialLat={postId.Lati} initialLng={postId.Long} imageUrl="https://e7.pngegg.com/pngimages/457/630/png-clipart-location-logo-location-computer-icons-symbol-location-miscellaneous-angle-thumbnail.png" />
+                            </div>
+                            <div>
+                              <Input addonBefore="คำแนะนำ" value={`${postId.Descript}`} />
+                              <Input addonBefore="วันที่" value={`${start} ถึงวันที่ ${end}`} />
+                              <Input addonBefore="ราคา" value={`${postId.Price}`} />
+                            </div>
+                          </div>
+                        </Col>
+                        <Col span={12}>
+                          <div style={{ margin: '24px' }}>
+                            <Input value="รายละเอียดสัตว์เลี้ยง" />
+                            <div style={{ marginBottom: '12px', marginTop: '12px' }}>
+                              <Avatar shape="square" size={250} src={postId.User1?.Pet?.Pic} />
+                            </div>
+                            <div>
+                              <Input addonBefore="ชื่อ" value={postId.User1?.Pet?.Name} />
+                              <Input addonBefore="คำแนะนำ" value={postId.User1?.Pet?.Descript} />
+                              <Input addonBefore="ชนิด" value={postId.User1?.Pet?.Gene?.Type?.Name} />
+                              <Input addonBefore="สายพันธุ์" value={postId.User1?.Pet?.Gene?.Name} />
+                              <Input addonBefore="อาหาร" value={postId.User1?.Pet?.Food} />
+                              <Input addonBefore="นิสัย" value={postId.User1?.Pet?.Habit} />
+                              <Input addonBefore="ยา" value={postId.User1?.Pet?.Pill} />
+                            </div>
+                          </div>
+                        </Col>
+                      </div>
+                    </Card>
+                  );
+                })
+              ) : (
+                <div style={{ textAlign: 'center', marginTop: '100px' }}>
+                  <h2>ยังไม่มีโพสสำหรับการรับเลี้ยงของคุณ</h2>
+                </div>
+              )}
+
+              <Modal
+                centered
+                open={postopen}
+                onCancel={() => {
+                  setPostopen(false);
+                }}
+                footer={null}
+              >
+                <Col>
+                  <div style={{ textAlign: 'center' }}>
+                    <Title level={2}>สร้างโพส</Title>
                   </div>
-                </Card>
-              );
-            })
-          ) : (
-            <div style={{ textAlign: 'center', marginTop: '100px' }}>
-              <h2>ยังไม่มีโพสสำหรับการรับเลี้ยงของคุณ</h2>
-            </div>
-          )}
-
-          <Modal
-            centered
-            open={postopen}
-            onCancel={() => {
-              setPostopen(false);
-            }}
-            footer={null}
-          >
-            <Col>
-              <div style={{ textAlign: 'center' }}>
-                <Title level={2}>สร้างโพส</Title>
-              </div>
-              <Form
-                initialValues={{ remember: true }}
-                style={{ maxWidth: '300px', margin: 'auto' }}
-              >
-                <Input
-                  placeholder="ข้อมูล"
-                  onChange={(e) => {
-                    setPosts({ ...posts, Descript: e.target.value });
-                  }}
-                />
-                <div style={{ marginTop: '10px' }}>
-                  <RangePicker
-                    placeholder={['วันที่เริ่มต้น', 'วันที่สิ้นสุด']}
-                    onChange={(date) => handleRangeDateChange(date)}
-                  />
-                </div>
-                <div style={{ marginTop: '10px' }}>
-                  <MapInteractionComponent onMapClick={handleMapClick} />
-                </div>
-                <div style={{ display: "flex", gap: "10px", marginTop: '10px' }}>
-                  <Input
-                    disabled
-                    placeholder="latitude"
-                    value={posts.Lati} />
-                  <Input
-                    disabled
-                    placeholder="longtitude"
-                    value={posts.Long} />
-                </div>
-                <Input
-                  style={{ marginTop: '10px' }}
-                  placeholder="ราคา"
-                  onChange={(e) => {
-                    const price = parseInt(e.target.value);
-                    setPosts({ ...posts, Price: price });
-                  }}
-                />
-                <Button
-                  style={{ marginTop: '10px', width: '100%' }}
-                  type="primary"
-                  htmlType="submit"
-                  onClick={submit}
-                >
-                  โพส
-                </Button>
-              </Form>
-            </Col>
-          </Modal>
-
-          <Modal
-            centered
-            open={postedit}
-            onCancel={() => {
-              setPostedit(false);
-            }}
-            footer={null}
-          >
-            <Col>
-              <div style={{ textAlign: 'center' }}>
-                <Title level={2}>แก้ไข</Title>
-              </div>
-              <Form
-                initialValues={{ remember: true }}
-                style={{ maxWidth: '300px', margin: 'auto' }}
-              >
-                <Input
-                  placeholder="ข้อมูล"
-                  value={poste.Descript}
-                  onChange={(e) => {
-                    setPoste({ ...poste, Descript: e.target.value });
-                  }}
-                />
-                <div style={{ marginTop: '10px' }}>
-                  <RangePicker
-                    placeholder={['วันที่เริ่มต้น', 'วันที่สิ้นสุด']}
-                    value={[
-                      poste.Start ? dayjs(poste.Start) : null,
-                      poste.End ? dayjs(poste.End) : null,
-                    ]}
-                    onChange={(date) => handleRangeDateChangee(date)}
-                  />
-                </div>
-                <div style={{ marginTop: '10px' }}>
-                  <MapCombinedComponent onMapClick={handleMapClick}
-                    initialLat={poste.Lati} initialLng={poste.Long}
-                    imageUrl="https://e7.pngegg.com/pngimages/457/630/png-clipart-location-logo-location-computer-icons-symbol-location-miscellaneous-angle-thumbnail.png"
-                  />
-                </div>
-                <div style={{ display: "flex", gap: "10px", marginTop: '10px' }}>
-                  <Input
-                    disabled
-                    placeholder="latitude"
-                    value={poste.Lati} />
-                  <Input
-                    disabled
-                    placeholder="longtitude"
-                    value={poste.Long} />
-                </div>
-                <Input
-                  style={{ marginTop: '10px' }}
-                  placeholder="ราคา"
-                  value={poste.Price}
-                  onChange={(e) => {
-                    const price = parseInt(e.target.value);
-                    setPoste({ ...poste, Price: price });
-                  }}
-                />
-                <div>
-                  <Button
-                    style={{ marginTop: '10px', width: '100%' }}
-                    type="primary"
-                    htmlType="submit"
-                    onClick={handleEdit}
+                  <Form
+                    initialValues={{ remember: true }}
+                    style={{ maxWidth: '300px', margin: 'auto' }}
                   >
-                    แก้ไข
-                  </Button>
-                  <Button
-                    style={{ marginTop: '10px', width: '100%' }}
-                    type="primary" danger
-                    htmlType="submit"
-                    onClick={handleCancle}
-                  >
-                    ยกเลิก
-                  </Button>
-                </div>
-              </Form>
-            </Col>
-          </Modal>
+                    <Input
+                      placeholder="ข้อมูล"
+                      onChange={(e) => {
+                        setPosts({ ...posts, Descript: e.target.value });
+                      }}
+                    />
+                    <div style={{ marginTop: '10px' }}>
+                      <RangePicker
+                        placeholder={['วันที่เริ่มต้น', 'วันที่สิ้นสุด']}
+                        onChange={(date) => handleRangeDateChange(date)}
+                      />
+                    </div>
+                    <div style={{ marginTop: '10px' }}>
+                      <MapInteractionComponent onMapClick={handleMapClick} />
+                    </div>
+                    <div style={{ display: "flex", gap: "10px", marginTop: '10px' }}>
+                      <Input
+                        disabled
+                        placeholder="latitude"
+                        value={posts.Lati} />
+                      <Input
+                        disabled
+                        placeholder="longtitude"
+                        value={posts.Long} />
+                    </div>
+                    <Input
+                      style={{ marginTop: '10px' }}
+                      placeholder="ราคา"
+                      onChange={(e) => {
+                        const price = parseInt(e.target.value);
+                        setPosts({ ...posts, Price: price });
+                      }}
+                    />
+                    <Button
+                      style={{ marginTop: '10px', width: '100%' }}
+                      type="primary"
+                      htmlType="submit"
+                      onClick={submit}
+                    >
+                      โพส
+                    </Button>
+                  </Form>
+                </Col>
+              </Modal>
 
+              <Modal
+                centered
+                open={postedit}
+                onCancel={() => {
+                  setPostedit(false);
+                }}
+                footer={null}
+              >
+                <Col>
+                  <div style={{ textAlign: 'center' }}>
+                    <Title level={2}>แก้ไข</Title>
+                  </div>
+                  <Form
+                    initialValues={{ remember: true }}
+                    style={{ maxWidth: '300px', margin: 'auto' }}
+                  >
+                    <Input
+                      placeholder="ข้อมูล"
+                      value={poste.Descript}
+                      onChange={(e) => {
+                        setPoste({ ...poste, Descript: e.target.value });
+                      }}
+                    />
+                    <div style={{ marginTop: '10px' }}>
+                      <RangePicker
+                        placeholder={['วันที่เริ่มต้น', 'วันที่สิ้นสุด']}
+                        value={[
+                          poste.Start ? dayjs(poste.Start) : null,
+                          poste.End ? dayjs(poste.End) : null,
+                        ]}
+                        onChange={(date) => handleRangeDateChangee(date)}
+                      />
+                    </div>
+                    <div style={{ marginTop: '10px' }}>
+                      <MapCombinedComponent onMapClick={handleMapClick}
+                        initialLat={poste.Lati} initialLng={poste.Long}
+                        imageUrl="https://e7.pngegg.com/pngimages/457/630/png-clipart-location-logo-location-computer-icons-symbol-location-miscellaneous-angle-thumbnail.png"
+                      />
+                    </div>
+                    <div style={{ display: "flex", gap: "10px", marginTop: '10px' }}>
+                      <Input
+                        disabled
+                        placeholder="latitude"
+                        value={poste.Lati} />
+                      <Input
+                        disabled
+                        placeholder="longtitude"
+                        value={poste.Long} />
+                    </div>
+                    <Input
+                      style={{ marginTop: '10px' }}
+                      placeholder="ราคา"
+                      value={poste.Price}
+                      onChange={(e) => {
+                        const price = parseInt(e.target.value);
+                        setPoste({ ...poste, Price: price });
+                      }}
+                    />
+                    <div>
+                      <Button
+                        style={{ marginTop: '10px', width: '100%' }}
+                        type="primary"
+                        htmlType="submit"
+                        onClick={handleEdit}
+                      >
+                        แก้ไข
+                      </Button>
+                      <Button
+                        style={{ marginTop: '10px', width: '100%' }}
+                        type="primary" danger
+                        htmlType="submit"
+                        onClick={handleCancle}
+                      >
+                        ยกเลิก
+                      </Button>
+                    </div>
+                  </Form>
+                </Col>
+              </Modal>
+            </TabPane>
+
+            <TabPane tab="เช็คการรับงาน" key="2">
+              <Layout style={{ minHeight: '100vh' }}>
+                <Content style={{ margin: '16px' }}>
+                  <Card style={{ marginTop: '8px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
+                      
+                    </div>
+                  </Card>
+                </Content>
+              </Layout>
+            </TabPane>
+          </Tabs>
         </Content >
       </Layout >
     );
@@ -454,7 +470,7 @@ const Post: React.FC = () => {
                     <div style={{ margin: '24px' }}>
                       <Input value="รายละเอียดสัตว์เลี้ยง" />
                       <div style={{ marginBottom: '12px', marginTop: '12px' }}>
-                        <Avatar shape="square" size={250}>{post.User1?.Pet?.Pic}</Avatar>
+                        <Avatar shape="square" size={250} src={post.User1?.Pet?.Pic} />
                       </div>
                       <div>
                         <Input addonBefore="ชื่อ" value={post.User1?.Pet?.Name} />

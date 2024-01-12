@@ -5,17 +5,10 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/henlies/project/entity"
-	"golang.org/x/crypto/bcrypt"
 )
 
-// - ไว้เข้ารหัส
-func SetupPasswordHash(pwd string) string {
-	var password, _ = bcrypt.GenerateFromPassword([]byte(pwd), 14)
-	return string(password)
-}
-
 func UpdateUser(c *fiber.Ctx) error {
-	var user entity.User
+	var user entity.ServiceUser
 	var prefix entity.Prefix
 	var gender entity.Gender
 	var address entity.Address
@@ -40,7 +33,7 @@ func UpdateUser(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Pet not found"})
 	}
 
-	uu := entity.User{
+	uu := entity.ServiceUser{
 		Prefix:    prefix,
 		Firstname: user.Firstname,
 		Lastname:  user.Lastname,
@@ -48,6 +41,7 @@ func UpdateUser(c *fiber.Ctx) error {
 		Gender:    gender,
 		Phone:     user.Phone,
 		Email:     user.Email,
+		Line:      user.Line,
 		Birth:     user.Birth,
 		Blood:     blood,
 		Pet:       pet,
@@ -61,11 +55,11 @@ func UpdateUser(c *fiber.Ctx) error {
 }
 
 func UpdatePasswordUser(c *fiber.Ctx) error {
-	var user entity.User
+	var user entity.ServiceUser
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	up := entity.User{
+	up := entity.ServiceUser{
 		Pass: SetupPasswordHash(user.Pass),
 	}
 	if err := entity.DB().Where("id = ?", user.ID).Updates(&up).Error; err != nil {
@@ -74,27 +68,48 @@ func UpdatePasswordUser(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": up})
 }
 
-// ใช้เเล้ว
 func ListUsersActive(c *fiber.Ctx) error {
-	var users []entity.User
-	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").Preload("Pet").
-		Preload("Role").Raw("SELECT * FROM users WHERE active = 1").Find(&users).Error; err != nil {
+	var users []entity.ServiceUser
+	rawQuery := `
+			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
+				   role_id, prefix_id, firstname, lastname, nickname, 
+				   gender_id, phone, email, birth, blood_id, status, active
+			FROM service_users WHERE active = 1 
+			UNION 
+			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
+				   role_id, prefix_id, firstname, lastname, nickname, 
+				   gender_id, phone, email, birth, blood_id, status, active
+			FROM service_providers WHERE active = 1;
+		`
+	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").
+		Preload("Role").Raw(rawQuery).Find(&users).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": users})
 }
 
 func ListUsersNonactive(c *fiber.Ctx) error {
-	var users []entity.User
-	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").Preload("Pet").
-		Preload("Role").Raw("SELECT * FROM users WHERE active = 0").Find(&users).Error; err != nil {
+	var users []entity.ServiceUser
+	rawQuery := `
+			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
+				   role_id, prefix_id, firstname, lastname, nickname, 
+				   gender_id, phone, email, birth, blood_id, status, active
+			FROM service_users WHERE active = 0 
+			UNION 
+			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
+				   role_id, prefix_id, firstname, lastname, nickname, 
+				   gender_id, phone, email, birth, blood_id, status, active
+			FROM service_providers WHERE active = 0;
+		`
+	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").
+		Preload("Role").Raw(rawQuery).Find(&users).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": users})
 }
 
 func GetUser(c *fiber.Ctx) error {
-	var user entity.User
+	var user entity.ServiceUser
 	id := c.Params("id")
 	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").Preload("Pet").
 		Preload("Role").Raw("SELECT * FROM users WHERE id = ?", id).Find(&user).Error; err != nil {
@@ -105,30 +120,46 @@ func GetUser(c *fiber.Ctx) error {
 
 func ApproveUser(c *fiber.Ctx) error {
 	id := c.Params("id")
-	if tx := entity.DB().Exec("UPDATE users SET status = 1 WHERE id = ?", id); tx.RowsAffected == 0 {
+	if tx := entity.DB().Exec("UPDATE service_providers SET status = 1 WHERE id = ?", id); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
 }
 
-func DeleteUser(c *fiber.Ctx) error {
-	id := c.Params("id")
-	if tx := entity.DB().Exec("UPDATE users SET active = 0 WHERE id = ?", id); tx.RowsAffected == 0 {
+func DeleteServiceProvider(c *fiber.Ctx) error {
+	email := c.Params("email")
+	if tx := entity.DB().Exec("UPDATE service_providers SET active = 0 WHERE email = ?", email); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": email})
 }
 
-func ActiveUser(c *fiber.Ctx) error {
-	id := c.Params("id")
-	if tx := entity.DB().Exec("UPDATE users SET active = 1 WHERE id = ?", id); tx.RowsAffected == 0 {
+func DeleteServiceUser(c *fiber.Ctx) error {
+	email := c.Params("email")
+	if tx := entity.DB().Exec("UPDATE service_users SET active = 0 WHERE email = ?", email); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": email})
+}
+
+func ActiveServiceProvider(c *fiber.Ctx) error {
+	email := c.Params("email")
+	if tx := entity.DB().Exec("UPDATE service_providers SET active = 1 WHERE email = ?", email); tx.RowsAffected == 0 {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": email})
+}
+
+func ActiveServiceUser(c *fiber.Ctx) error {
+	email := c.Params("email")
+	if tx := entity.DB().Exec("UPDATE service_users SET active = 1 WHERE email = ?", email); tx.RowsAffected == 0 {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": email})
 }
 
 func CreateUserSigninUse(c *fiber.Ctx) error {
-	var user entity.User
+	var user entity.ServiceUser
 	var role entity.Role
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -137,7 +168,7 @@ func CreateUserSigninUse(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Role not found"})
 	}
 
-	cus := entity.User{
+	cus := entity.ServiceUser{
 		User:   user.User,
 		Pass:   SetupPasswordHash(user.Pass),
 		Role:   role,
@@ -151,7 +182,7 @@ func CreateUserSigninUse(c *fiber.Ctx) error {
 }
 
 func CreateUserSigninJob(c *fiber.Ctx) error {
-	var user entity.User
+	var user entity.ServiceUser
 	var role entity.Role
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -160,7 +191,7 @@ func CreateUserSigninJob(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Role not found"})
 	}
 
-	cus := entity.User{
+	cus := entity.ServiceUser{
 		User:       user.User,
 		Pass:       SetupPasswordHash(user.Pass),
 		Firstname:  user.Firstname,

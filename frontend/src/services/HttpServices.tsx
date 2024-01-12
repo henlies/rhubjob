@@ -41,8 +41,9 @@ async function GetSignin(data: SigninInterface) {
             localStorage.setItem("role", res.data.role);
             localStorage.setItem("name", res.data.name);
             localStorage.setItem("per", res.data.per);
-            localStorage.setItem("status", res.data.status);
             localStorage.setItem("active", res.data.active);
+            localStorage.setItem("status", res.data.status);
+            localStorage.setItem("pic", res.data.pic);
             return res.data;
         } else {
             return false;
@@ -184,19 +185,6 @@ async function GetUserListNonActive() {
     return res;
 };
 
-async function GetUserUID(id: string | null) {
-    let res = await fetch(`${apiUrl}/user/${id}`, getRequestOptions)
-        .then((response) => response.json())
-        .then((res) => {
-            if (res.data) {
-                return res.data;
-            } else {
-                return false;
-            }
-        });
-    return res;
-};
-
 async function GetAdminUID(id: string | null) {
     let res = await fetch(`${apiUrl}/admin/${id}`, getRequestOptions)
         .then((response) => response.json())
@@ -223,8 +211,8 @@ async function ApproveUser(id?: number) {
     return res;
 };
 
-async function DeleteUser(id?: number) {
-    let res = await fetch(`${apiUrl}/user/${id}`, deleteRequestOptions)
+async function DeleteServiceUser(email?: string) {
+    let res = await fetch(`${apiUrl}/serviceuser/${email}`, deleteRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -236,8 +224,34 @@ async function DeleteUser(id?: number) {
     return res;
 };
 
-async function ActiveUser(id?: number) {
-    let res = await fetch(`${apiUrl}/useractive/${id}`, deleteRequestOptions)
+async function DeleteServiceProvider(email?: string) {
+    let res = await fetch(`${apiUrl}/serviceprovider/${email}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function ActiveServiceUser(email?: string) {
+    let res = await fetch(`${apiUrl}/useractive/${email}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function ActiveServiceProvider(email?: string) {
+    let res = await fetch(`${apiUrl}/provideractive/${email}`, deleteRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -251,19 +265,6 @@ async function ActiveUser(id?: number) {
 
 async function GetRole() {
     let res = await fetch(`${apiUrl}/roles`, getRequestOptions)
-        .then((response) => response.json())
-        .then((res) => {
-            if (res.data) {
-                return res.data;
-            } else {
-                return false;
-            }
-        });
-    return res;
-};
-
-async function GetUser(id: string | null) {
-    let res = await fetch(`${apiUrl}/user/${id}`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -340,7 +341,7 @@ async function GetPostIdStatus(id: string | null) {
     return res;
 };
 
-async function AcceptPost(data: PostaInterface) {
+async function CheckPost(data: PostaInterface) {
     const requestOptions = {
         method: "PATCH",
         headers: {
@@ -350,7 +351,7 @@ async function AcceptPost(data: PostaInterface) {
         body: JSON.stringify(data),
     }
 
-    let res = await fetch(`${apiUrl}/postacc`, requestOptions)
+    let res = await fetch(`${apiUrl}/postchk`, requestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -376,7 +377,7 @@ async function DeletePost(id?: number) {
 };
 
 export {
-    
+
     GetSignin,
     CreateUser,
     CreateUserSigninUse,
@@ -385,18 +386,18 @@ export {
     UpdatePost,
     GetUserListActive,
     GetUserListNonActive,
-    GetUserUID,
     GetAdminUID,
     ApproveUser,
-    DeleteUser,
-    ActiveUser,
+    DeleteServiceProvider,
+    DeleteServiceUser,
+    ActiveServiceUser,
+    ActiveServiceProvider,
     GetRole,
-    GetUser,
     GetPostbyId,
     GetPostStart,
     GetPostStartId,
     GetPostIdTrack,
     GetPostIdStatus,
-    AcceptPost,
+    CheckPost,
     DeletePost,
 };

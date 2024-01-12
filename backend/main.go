@@ -16,34 +16,11 @@ func main() {
 	app.Post("/signin", controller.Signin)
 
 	// - เอาไว้เช็คข้อมูล
-	app.Get("/prefixes", controller.ListPrefixes)
-	app.Get("/genders", controller.ListGenders)
-	app.Get("/bloods", controller.ListBloods)
-	app.Get("/pers", controller.ListPers)
-	app.Get("/types", controller.ListTypes)
-	app.Get("/genes", controller.ListGenes)
-	app.Get("/provinces", controller.ListProvinces)
-	app.Get("/districts", controller.ListDistricts)
-	app.Get("/statuses", controller.ListStatuses)
 	app.Get("/roles", controller.ListRoles)
-	app.Get("/methods", controller.ListMethods)
-
-	// - ตารางหลายต่อหลาย
-	app.Get("/userchats", controller.ListUserChats)
-	app.Get("/usercomments", controller.ListUserComments)
 
 	// - ป้องกันข้อมูล
 	// api := app.Group("")
 	// protected := api.Use(middlewares.Authorizes())
-
-	// - Comment
-	app.Get("/comments", controller.ListComments)
-
-	// - Chat
-	app.Get("/chats", controller.ListChats)
-
-	// - Payment
-	app.Get("/payments", controller.ListPayments)
 
 	// - Addrss
 	app.Get("/addresses", controller.ListAddresses)
@@ -61,12 +38,14 @@ func main() {
 	app.Patch("/userdetail", controller.UpdateUser)
 	app.Patch("/userpass", controller.UpdatePasswordUser)
 
-	app.Get("/usersnonactive", controller.ListUsersNonactive)
-	app.Get("/usersactive", controller.ListUsersActive)
 	app.Get("/user/:id", controller.GetUser)
-	app.Delete("/user/:id", controller.DeleteUser)
+	app.Get("/usersactive", controller.ListUsersActive)
+	app.Get("/usersnonactive", controller.ListUsersNonactive)
+	app.Delete("/serviceprovider/:email", controller.DeleteServiceProvider)
+	app.Delete("/serviceuser/:email", controller.DeleteServiceUser)
 	app.Delete("/userapprove/:id", controller.ApproveUser)
-	app.Delete("/useractive/:id", controller.ActiveUser)
+	app.Delete("/provideractive/:email", controller.ActiveServiceProvider)
+	app.Delete("/useractive/:email", controller.ActiveServiceUser)
 	app.Post("/usersigninuse", controller.CreateUserSigninUse)
 	app.Post("/usersigninjob", controller.CreateUserSigninJob)
 
@@ -79,15 +58,15 @@ func main() {
 	app.Delete("/admin/:id", controller.DeleteAdmin)
 
 	// - Post
-	app.Get("/post/:id", controller.GetPostbyId)
-	app.Get("/poststart", controller.ListPostStart)
-	app.Get("/poststart/:id", controller.ListPostStartId)
-	app.Get("/posttrack/:id", controller.ListPostIdTrack)
-	app.Get("/poststatus/:id", controller.ListPostIdStatus)
-	app.Post("/post", controller.CreatePost)
-	app.Patch("/post", controller.UpdatePost)
-	app.Patch("/postacc", controller.AcceptPost)
-	app.Delete("/post/:id", controller.DeletePost)
+	// app.Get("/post/:id", controller.GetPostbyId)
+	// app.Get("/poststart", controller.ListPostStart)
+	// app.Get("/poststart/:id", controller.ListPostStartId)
+	// app.Get("/posttrack/:id", controller.ListPostIdTrack)
+	// app.Get("/poststatus/:id", controller.ListPostIdStatus)
+	// app.Post("/post", controller.CreatePost)
+	// app.Patch("/post", controller.UpdatePost)
+	// app.Patch("/postchk", controller.CheckPost)
+	// app.Delete("/post/:id", controller.DeletePost)
 
 	app.Listen(":8080")
 

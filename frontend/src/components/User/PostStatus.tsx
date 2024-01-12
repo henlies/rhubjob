@@ -80,7 +80,7 @@ const Poststatus: React.FC = () => {
                     <div style={{ margin: '24px' }}>
                       <Input value="รายละเอียดสัตว์เลี้ยง" />
                       <div style={{ marginBottom: '12px', marginTop: '12px' }}>
-                        <Avatar shape="square" size={250}>{post.User1?.Pet?.Pic}</Avatar>
+                        <Avatar shape="square" size={250} src={post.User1?.Pet?.Pic} />
                       </div>
                       <div>
                         <Input addonBefore="ชื่อ" value={post.User1?.Pet?.Name} />
