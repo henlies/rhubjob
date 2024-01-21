@@ -61,6 +61,7 @@ func main() {
 	// - Post
 	app.Get("/getpost/:id", controller.GetPostbyId)
 	app.Get("/posts", controller.GetPostShow)
+	app.Get("/postchart", controller.GetPostChart)
 	app.Get("/poststatus1/:id", controller.GetPostShowIDstatus1)
 	app.Get("/poststatus2/:id", controller.GetPostShowIDstatus2)
 	app.Get("/poststatus3/:id", controller.GetPostShowIDstatus3)

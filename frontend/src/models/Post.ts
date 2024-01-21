@@ -80,3 +80,9 @@ export interface PostEInterface {
     TypeID?: number;
     Note?: string;
 }
+
+// Chart Post
+export interface PostChartInterface {
+    status: string;
+    value: string;
+}

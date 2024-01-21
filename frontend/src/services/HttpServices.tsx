@@ -1,10 +1,11 @@
 import { SigninInterface } from "../models/Signin";
 import { UserSigninJobInterface, UserSigninUseInterface } from "../models/UserSignin";
 import { UserInterface } from "../models/User";
-import { 
+import {
     PostEInterface,
     // PostaInterface, 
-    PostsInterface } from "../models/Post";
+    PostsInterface
+} from "../models/Post";
 
 const apiUrl = "http://localhost:8080";
 const getRequestOptions = {
@@ -530,6 +531,20 @@ async function CanclePost(data: PostEInterface) {
         });
     return res;
 }
+
+async function ShowChart() {
+    let res = await fetch(`${apiUrl}/postchart`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
 export {
 
     GetSignin,
@@ -564,4 +579,5 @@ export {
     AcceptPost,
     NonAcceptPost,
     CanclePost,
+    ShowChart,
 };

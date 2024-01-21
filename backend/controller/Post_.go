@@ -156,3 +156,39 @@ func CanclePost(c *fiber.Ctx) error {
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": cp})
 }
+
+func GetPostChart(c *fiber.Ctx) error {
+	rawQuery := `
+			SELECT
+			CASE status_id
+				WHEN 1 THEN 'รอเริ่มงาน'
+				WHEN 2 THEN 'รอการยืนยัน'
+				WHEN 3 THEN 'ดำเนินงาน'
+				WHEN 4 THEN 'งานสิ้นสุด'
+				WHEN 5 THEN 'ยกเลิกงาน'
+				ELSE 'ลบโพส'
+			END AS status,
+			COUNT(*) AS value
+			FROM posts p
+			LEFT JOIN (SELECT DISTINCT name, id FROM statuses) s ON p.status_id = s.id
+			GROUP BY s.name
+			ORDER BY p.status_id
+		`
+	rows, err := entity.DB().Raw(rawQuery).Rows()
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Error executing query"})
+	}
+	defer rows.Close()
+
+	var result []map[string]interface{}
+	for rows.Next() {
+		var status string
+		var value int
+		if err := rows.Scan(&status, &value); err != nil {
+			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Error scanning rows"})
+		}
+		result = append(result, map[string]interface{}{"status": status, "value": value})
+	}
+
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": result})
+}

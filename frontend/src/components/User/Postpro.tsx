@@ -189,8 +189,6 @@ const Postpro: React.FC = () => {
     }
   }
 
-  console.log(poste.Note);
-
   const submit = async () => {
     let data = {
       Descript: postc.Descript,
@@ -208,6 +206,8 @@ const Postpro: React.FC = () => {
     }
   };
 
+  console.log(postc);
+
   useEffect(() => {
     getpostshow();
     gettype();
@@ -221,12 +221,16 @@ const Postpro: React.FC = () => {
           <Col span={2}>
           </Col>
           <Col span={20}>
-            <Title level={3}>รายการรับเลี้ยงของคุณ</Title>
+            <div style={{ textAlign: 'center' }}>
+              <Title level={3}>รายการรับเลี้ยงของคุณ</Title>
+            </div>
           </Col>
           <Col span={2}>
-            <Button onClick={() => setPostopen(true)}>
-              สร้างโพส
-            </Button>
+            <div style={{ textAlign: 'center' }}>
+              <Button onClick={() => setPostopen(true)}>
+                สร้างโพส
+              </Button>
+            </div>
           </Col>
         </div>
         <Tabs defaultActiveKey="1" tabPosition="right">
