@@ -54,14 +54,16 @@ const ControlUser: React.FC = () => {
     }
   };
 
-  const handleDelete = async (rolename?: string, email?: string) => {
+  const handleDelete = async (rolename?: string, user?: string) => {
     if (confirmation === admin) {
+      console.log(user);
+      
       if (rolename === 'ผู้ให้บริการ') {
-        await DeleteServiceProvider(email);
+        await DeleteServiceProvider(user);
         getuserlistactive();
         getuserlistnonactive();
       } else {
-        await DeleteServiceUser(email);
+        await DeleteServiceUser(user);
         getuserlistactive();
         getuserlistnonactive();
       }
@@ -80,14 +82,14 @@ const ControlUser: React.FC = () => {
     }
   };
 
-  const handalActive = async (rolename?: string, email?: string) => {
+  const handalActive = async (rolename?: string, user?: string) => {
     if (confirmation === admin) {
       if (rolename === 'ผู้ให้บริการ') {
-        await ActiveServiceProvider(email);
+        await ActiveServiceProvider(user);
         getuserlistactive();
         getuserlistnonactive();
       } else {
-        await ActiveServiceUser(email);
+        await ActiveServiceUser(user);
         getuserlistactive();
         getuserlistnonactive();
       }
@@ -225,7 +227,7 @@ const ControlUser: React.FC = () => {
                 />
               </>
             }
-            onConfirm={() => handleDelete(record.Role?.Name, record.Email)}
+            onConfirm={() => handleDelete(record.Role?.Name, record.User)}
             cancelText="ไม่"
             okText="ใช่"
             icon={null}
@@ -334,7 +336,7 @@ const ControlUser: React.FC = () => {
                 />
               </>
             }
-            onConfirm={() => handalActive(record.Role?.Name, record.Email)}
+            onConfirm={() => handalActive(record.Role?.Name, record.User)}
             cancelText="ไม่"
             okText="ใช่"
             icon={null}

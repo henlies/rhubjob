@@ -1217,6 +1217,7 @@ func SetupDatabase() {
 	db.Model(&Status{}).Create(&Status{Name: "ดำเนินงาน"})
 	db.Model(&Status{}).Create(&Status{Name: "งานสิ้นสุด"})
 	db.Model(&Status{}).Create(&Status{Name: "ยกเลิกงาน"})
+	db.Model(&Status{}).Create(&Status{Name: "ลบงาน"})
 
 	// ===== Assign ข้อมูล =====
 	birth := time.Date(2001, 10, 13, 0, 0, 0, 0, time.Local)
@@ -1333,9 +1334,10 @@ func SetupDatabase() {
 		Start:           start,
 		End:             end,
 		Price:           400,
-		ServiceUser:     s_user,
+		Type:            t1,
 		ServiceProvider: s_pro,
 		Status:          status,
+		// ServiceUser:     s_user,
 	}
 	db.Model(&Post{}).Create(&post)
 }

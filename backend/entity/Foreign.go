@@ -58,6 +58,7 @@ type Type struct {
 	Name string `json:"Name"`
 	Gene []Gene `gorm:"foreignKey:TypeID"`
 	Pet  []Pet  `gorm:"foreignKey:TypeID"`
+	Post []Post `gorm:"foreignKey:TypeID"`
 }
 
 // ===== Use in Address =====

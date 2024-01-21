@@ -68,46 +68,6 @@ func UpdatePasswordUser(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": up})
 }
 
-func ListUsersActive(c *fiber.Ctx) error {
-	var users []entity.ServiceUser
-	rawQuery := `
-			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
-				   role_id, prefix_id, firstname, lastname, nickname, 
-				   gender_id, phone, email, birth, blood_id, status, active
-			FROM service_users WHERE active = 1 
-			UNION 
-			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
-				   role_id, prefix_id, firstname, lastname, nickname, 
-				   gender_id, phone, email, birth, blood_id, status, active
-			FROM service_providers WHERE active = 1;
-		`
-	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").
-		Preload("Role").Raw(rawQuery).Find(&users).Error; err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": users})
-}
-
-func ListUsersNonactive(c *fiber.Ctx) error {
-	var users []entity.ServiceUser
-	rawQuery := `
-			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
-				   role_id, prefix_id, firstname, lastname, nickname, 
-				   gender_id, phone, email, birth, blood_id, status, active
-			FROM service_users WHERE active = 0 
-			UNION 
-			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
-				   role_id, prefix_id, firstname, lastname, nickname, 
-				   gender_id, phone, email, birth, blood_id, status, active
-			FROM service_providers WHERE active = 0;
-		`
-	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").
-		Preload("Role").Raw(rawQuery).Find(&users).Error; err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": users})
-}
-
 func GetUser(c *fiber.Ctx) error {
 	var user entity.ServiceUser
 	id := c.Params("id")
@@ -118,44 +78,20 @@ func GetUser(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": user})
 }
 
-func ApproveUser(c *fiber.Ctx) error {
-	id := c.Params("id")
-	if tx := entity.DB().Exec("UPDATE service_providers SET status = 1 WHERE id = ?", id); tx.RowsAffected == 0 {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
-	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
-}
-
-func DeleteServiceProvider(c *fiber.Ctx) error {
-	email := c.Params("email")
-	if tx := entity.DB().Exec("UPDATE service_providers SET active = 0 WHERE email = ?", email); tx.RowsAffected == 0 {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
-	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": email})
-}
-
 func DeleteServiceUser(c *fiber.Ctx) error {
-	email := c.Params("email")
-	if tx := entity.DB().Exec("UPDATE service_users SET active = 0 WHERE email = ?", email); tx.RowsAffected == 0 {
+	user := c.Params("user")
+	if tx := entity.DB().Exec("UPDATE service_users SET active = 0 WHERE user = ?", user); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": email})
-}
-
-func ActiveServiceProvider(c *fiber.Ctx) error {
-	email := c.Params("email")
-	if tx := entity.DB().Exec("UPDATE service_providers SET active = 1 WHERE email = ?", email); tx.RowsAffected == 0 {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
-	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": email})
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": user})
 }
 
 func ActiveServiceUser(c *fiber.Ctx) error {
-	email := c.Params("email")
-	if tx := entity.DB().Exec("UPDATE service_users SET active = 1 WHERE email = ?", email); tx.RowsAffected == 0 {
+	user := c.Params("user")
+	if tx := entity.DB().Exec("UPDATE service_users SET active = 1 WHERE user = ?", user); tx.RowsAffected == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": email})
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": user})
 }
 
 func CreateUserSigninUse(c *fiber.Ctx) error {

@@ -1,5 +1,6 @@
 import { StatusInterface } from "./Status";
-import { UserInterface } from "./User";
+import { TypeInterface } from "./Type";
+import { ServiceProviderInterface, ServiceUserInterface } from "./User";
 
 export interface PostInterface {
     ID?: number;
@@ -9,10 +10,6 @@ export interface PostInterface {
     Start?: Date;
     End?: Date;
     Price?: number;
-    User1ID?: number;
-    User1?: UserInterface;
-    User2ID?: number;
-    User2?: UserInterface;
     StatusID?: number;
     Status?: StatusInterface;
 }
@@ -25,8 +22,6 @@ export interface PostsInterface {
     Start?: Date;
     End?: Date;
     Price?: number;
-    User1ID?: number;
-    User1?: UserInterface;
 }
 
 export interface PosteInterface {
@@ -39,8 +34,49 @@ export interface PosteInterface {
     Price?: number;
 }
 
-export interface PostaInterface {
+// export interface PostaInterface {
+//     ID?: number;
+//     User2ID?: number;
+//     User2?: UserInterface;
+// }
+
+// Show Post
+export interface PostSInterface {
     ID?: number;
-    User2ID?: number;
-    User2?: UserInterface;
+    Descript?: string;
+    Start: Date;
+    End: Date;
+    Price?: number;
+    TypeID?: number;
+    Type?: TypeInterface;
+    Service_UserID?: number
+    Service_User?: ServiceUserInterface;
+    Service_ProviderID?: number;
+    ServiceProvider?: ServiceProviderInterface;
+    StatusID?: number;
+    Status?: StatusInterface;
+    Note?: string;
+}
+
+// Create Post
+export interface PostCInterface {
+    ID?: number;
+    Descript?: string;
+    Start?: Date;
+    End?: Date;
+    Price?: number;
+    TypeID?: number;
+    Service_ProviderID?: number;
+    StatusID?: number;
+}
+
+// Edit Post
+export interface PostEInterface {
+    ID?: number;
+    Descript?: string;
+    Start?: Date;
+    End?: Date;
+    Price?: number;
+    TypeID?: number;
+    Note?: string;
 }

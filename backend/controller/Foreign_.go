@@ -22,3 +22,14 @@ func ListRoles(c *fiber.Ctx) error {
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": roles})
 }
+
+func ListTypes(c *fiber.Ctx) error {
+	var typ []entity.Type
+	rawQuery := `
+			SELECT * FROM types
+		`
+	if err := entity.DB().Raw(rawQuery).Find(&typ).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": typ})
+}

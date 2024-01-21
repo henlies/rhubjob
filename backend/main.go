@@ -17,6 +17,7 @@ func main() {
 
 	// - เอาไว้เช็คข้อมูล
 	app.Get("/roles", controller.ListRoles)
+	app.Get("/types", controller.ListTypes)
 
 	// - ป้องกันข้อมูล
 	// api := app.Group("")
@@ -41,11 +42,11 @@ func main() {
 	app.Get("/user/:id", controller.GetUser)
 	app.Get("/usersactive", controller.ListUsersActive)
 	app.Get("/usersnonactive", controller.ListUsersNonactive)
-	app.Delete("/serviceprovider/:email", controller.DeleteServiceProvider)
-	app.Delete("/serviceuser/:email", controller.DeleteServiceUser)
+	app.Delete("/serviceprovider/:user", controller.DeleteServiceProvider)
+	app.Delete("/serviceuser/:user", controller.DeleteServiceUser)
 	app.Delete("/userapprove/:id", controller.ApproveUser)
-	app.Delete("/provideractive/:email", controller.ActiveServiceProvider)
-	app.Delete("/useractive/:email", controller.ActiveServiceUser)
+	app.Delete("/provideractive/:user", controller.ActiveServiceProvider)
+	app.Delete("/useractive/:user", controller.ActiveServiceUser)
 	app.Post("/usersigninuse", controller.CreateUserSigninUse)
 	app.Post("/usersigninjob", controller.CreateUserSigninJob)
 
@@ -58,15 +59,25 @@ func main() {
 	app.Delete("/admin/:id", controller.DeleteAdmin)
 
 	// - Post
-	// app.Get("/post/:id", controller.GetPostbyId)
+	app.Get("/getpost/:id", controller.GetPostbyId)
+	app.Get("/posts", controller.GetPostShow)
+	app.Get("/poststatus1/:id", controller.GetPostShowIDstatus1)
+	app.Get("/poststatus2/:id", controller.GetPostShowIDstatus2)
+	app.Get("/poststatus3/:id", controller.GetPostShowIDstatus3)
+	app.Get("/poststatus4/:id", controller.GetPostShowIDstatus4)
+	app.Get("/poststatus5/:id", controller.GetPostShowIDstatus5)
+
 	// app.Get("/poststart", controller.ListPostStart)
 	// app.Get("/poststart/:id", controller.ListPostStartId)
 	// app.Get("/posttrack/:id", controller.ListPostIdTrack)
 	// app.Get("/poststatus/:id", controller.ListPostIdStatus)
-	// app.Post("/post", controller.CreatePost)
-	// app.Patch("/post", controller.UpdatePost)
+	app.Post("/post", controller.CreatePost)
+	app.Patch("/post", controller.UpdatePost)
+	app.Patch("/canclepost", controller.CanclePost)
 	// app.Patch("/postchk", controller.CheckPost)
-	// app.Delete("/post/:id", controller.DeletePost)
+	app.Delete("/post/:id", controller.DeletePost)
+	app.Delete("/acceptpost/:id", controller.AcceptPost)
+	app.Delete("/nonacceptpost/:id", controller.NonAcceptPost)
 
 	app.Listen(":8080")
 

@@ -52,15 +52,11 @@ const Poststatus: React.FC = () => {
                   <div style={{ margin: '12px' }}>
                     <Avatar size={'large'} src={personImage} />
                   </div>
-                  <div style={{ marginRight: '20px' }}>
-                    <Input addonBefore="ชื่อผู้ใช้" value={`${post.User1?.Firstname} ${post.User1?.Lastname}`} />
-                  </div>
+
                   <div>
                     <Input addonBefore="สถานะ" value={`${post.Status?.Name}`} />
                   </div>
-                  <div>
-                    <Input addonBefore="ผู้รับงาน" value={`${post.User2?.Firstname} ${post.User2?.Lastname}`} />
-                  </div>
+
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
                   <Col span={12}>
@@ -79,18 +75,6 @@ const Poststatus: React.FC = () => {
                   <Col span={12}>
                     <div style={{ margin: '24px' }}>
                       <Input value="รายละเอียดสัตว์เลี้ยง" />
-                      <div style={{ marginBottom: '12px', marginTop: '12px' }}>
-                        <Avatar shape="square" size={250} src={post.User1?.Pet?.Pic} />
-                      </div>
-                      <div>
-                        <Input addonBefore="ชื่อ" value={post.User1?.Pet?.Name} />
-                        <Input addonBefore="คำแนะนำ" value={post.User1?.Pet?.Descript} />
-                        <Input addonBefore="ชนิด" value={post.User1?.Pet?.Gene?.Type?.Name} />
-                        <Input addonBefore="สายพันธุ์" value={post.User1?.Pet?.Gene?.Name} />
-                        <Input addonBefore="อาหาร" value={post.User1?.Pet?.Food} />
-                        <Input addonBefore="นิสัย" value={post.User1?.Pet?.Habit} />
-                        <Input addonBefore="ยา" value={post.User1?.Pet?.Pill} />
-                      </div>
                     </div>
                   </Col>
                 </div>

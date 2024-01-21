@@ -1,7 +1,10 @@
 import { SigninInterface } from "../models/Signin";
 import { UserSigninJobInterface, UserSigninUseInterface } from "../models/UserSignin";
 import { UserInterface } from "../models/User";
-import { PostaInterface, PosteInterface, PostsInterface } from "../models/Post";
+import { 
+    PostEInterface,
+    // PostaInterface, 
+    PostsInterface } from "../models/Post";
 
 const apiUrl = "http://localhost:8080";
 const getRequestOptions = {
@@ -137,7 +140,7 @@ async function CreatePost(data: PostsInterface) {
     return res;
 };
 
-async function UpdatePost(data: PosteInterface) {
+async function UpdatePost(data: PostEInterface) {
     const requestOptions = {
         method: "PATCH",
         headers: {
@@ -211,8 +214,8 @@ async function ApproveUser(id?: number) {
     return res;
 };
 
-async function DeleteServiceUser(email?: string) {
-    let res = await fetch(`${apiUrl}/serviceuser/${email}`, deleteRequestOptions)
+async function DeleteServiceUser(user?: string) {
+    let res = await fetch(`${apiUrl}/serviceuser/${user}`, deleteRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -224,8 +227,8 @@ async function DeleteServiceUser(email?: string) {
     return res;
 };
 
-async function DeleteServiceProvider(email?: string) {
-    let res = await fetch(`${apiUrl}/serviceprovider/${email}`, deleteRequestOptions)
+async function DeleteServiceProvider(user?: string) {
+    let res = await fetch(`${apiUrl}/serviceprovider/${user}`, deleteRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -237,8 +240,8 @@ async function DeleteServiceProvider(email?: string) {
     return res;
 };
 
-async function ActiveServiceUser(email?: string) {
-    let res = await fetch(`${apiUrl}/useractive/${email}`, deleteRequestOptions)
+async function ActiveServiceUser(user?: string) {
+    let res = await fetch(`${apiUrl}/useractive/${user}`, deleteRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -250,8 +253,8 @@ async function ActiveServiceUser(email?: string) {
     return res;
 };
 
-async function ActiveServiceProvider(email?: string) {
-    let res = await fetch(`${apiUrl}/provideractive/${email}`, deleteRequestOptions)
+async function ActiveServiceProvider(user?: string) {
+    let res = await fetch(`${apiUrl}/provideractive/${user}`, deleteRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -276,8 +279,99 @@ async function GetRole() {
     return res;
 };
 
+async function GetPostShow() {
+    let res = await fetch(`${apiUrl}/posts`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetPostShowIDstatus1(id?: number) {
+    let res = await fetch(`${apiUrl}/poststatus1/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetPostShowIDstatus2(id?: number) {
+    let res = await fetch(`${apiUrl}/poststatus2/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetPostShowIDstatus3(id?: number) {
+    let res = await fetch(`${apiUrl}/poststatus3/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetPostShowIDstatus4(id?: number) {
+    let res = await fetch(`${apiUrl}/poststatus4/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetPostShowIDstatus5(id?: number) {
+    let res = await fetch(`${apiUrl}/poststatus5/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetType() {
+    let res = await fetch(`${apiUrl}/types`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
 async function GetPostbyId(id?: number) {
-    let res = await fetch(`${apiUrl}/post/${id}`, getRequestOptions)
+    let res = await fetch(`${apiUrl}/getpost/${id}`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -341,27 +435,27 @@ async function GetPostIdStatus(id: string | null) {
     return res;
 };
 
-async function CheckPost(data: PostaInterface) {
-    const requestOptions = {
-        method: "PATCH",
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    }
+// async function CheckPost(data: PostaInterface) {
+//     const requestOptions = {
+//         method: "PATCH",
+//         headers: {
+//             Authorization: `Bearer ${localStorage.getItem("token")}`,
+//             "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(data),
+//     }
 
-    let res = await fetch(`${apiUrl}/postchk`, requestOptions)
-        .then((response) => response.json())
-        .then((res) => {
-            if (res.data) {
-                return res.data;
-            } else {
-                return false;
-            }
-        });
-    return res;
-}
+//     let res = await fetch(`${apiUrl}/postchk`, requestOptions)
+//         .then((response) => response.json())
+//         .then((res) => {
+//             if (res.data) {
+//                 return res.data;
+//             } else {
+//                 return false;
+//             }
+//         });
+//     return res;
+// }
 
 async function DeletePost(id?: number) {
     let res = await fetch(`${apiUrl}/post/${id}`, deleteRequestOptions)
@@ -376,6 +470,66 @@ async function DeletePost(id?: number) {
     return res;
 };
 
+async function AcceptPost(id?: number) {
+    let res = await fetch(`${apiUrl}/acceptpost/${id}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function NonAcceptPost(id?: number) {
+    let res = await fetch(`${apiUrl}/nonacceptpost/${id}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+// async function CanclePost(id?: number) {
+//     let res = await fetch(`${apiUrl}/canclepost/${id}`, deleteRequestOptions)
+//         .then((response) => response.json())
+//         .then((res) => {
+//             if (res.data) {
+//                 return res.data;
+//             } else {
+//                 return false;
+//             }
+//         });
+//     return res;
+// };
+
+async function CanclePost(data: PostEInterface) {
+    const requestOptions = {
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    }
+
+    let res = await fetch(`${apiUrl}/canclepost`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+}
 export {
 
     GetSignin,
@@ -393,11 +547,21 @@ export {
     ActiveServiceUser,
     ActiveServiceProvider,
     GetRole,
+    GetPostShow,
+    GetPostShowIDstatus1,
+    GetPostShowIDstatus2,
+    GetPostShowIDstatus3,
+    GetPostShowIDstatus4,
+    GetPostShowIDstatus5,
+    GetType,
     GetPostbyId,
     GetPostStart,
     GetPostStartId,
     GetPostIdTrack,
     GetPostIdStatus,
-    CheckPost,
+    // CheckPost,
     DeletePost,
+    AcceptPost,
+    NonAcceptPost,
+    CanclePost,
 };
