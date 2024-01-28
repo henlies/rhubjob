@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Card, Col, Input, Layout } from 'antd';
 import personImage from './etc/person.jpg';
-import MapDisplayComponent from './etc/MapDisplay';
-import { PostInterface } from '../../models/Post';
-import { GetPostIdTrack } from '../../services/HttpServices';
+// import MapDisplayComponent from './etc/MapDisplay';
+// import { PostInterface } from '../../models/Post';
+// import { GetPostIdTrack } from '../../services/HttpServices';
 
 const TrackStatus: React.FC = () => {
   const { Content } = Layout;
-  const [post, setPost] = useState<PostInterface[]>([]);
+  // const [post, setPost] = useState<PostInterface[]>([]);
   const id = localStorage.getItem("id");
 
-  const getpoststart = async () => {
-    let res = await GetPostIdTrack(id);
-    if (res) {
-      setPost(res);
-    }
-  };
+  // const getpoststart = async () => {
+  //   let res = await GetPostIdTrack(id);
+  //   if (res) {
+  //     setPost(res);
+  //   }
+  // };
 
   useEffect(() => {
-    getpoststart();
+    // getpoststart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
-        {post.length > 0 ? (
+        {/* {post.length > 0 ? (
           post.map((post) => {
             const startDate = post.Start instanceof Date ? post.Start : new Date();
             const starts: string = startDate.toLocaleDateString(undefined, {
@@ -83,7 +83,7 @@ const TrackStatus: React.FC = () => {
           <div style={{ textAlign: 'center', marginTop: '100px' }}>
             <h2>ยังไม่มีคนรับงานของคุณ</h2>
           </div>
-        )}
+        )} */}
       </Content>
     </Layout>
   );

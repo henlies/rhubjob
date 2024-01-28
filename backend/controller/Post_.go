@@ -20,13 +20,15 @@ func GetPostbyId(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": post})
 }
 
-func GetPostShow(c *fiber.Ctx) error {
+func GetPostbyPId(c *fiber.Ctx) error {
 	var post []entity.Post
+	id := c.Params("id")
 	rawQuery := `
-			SELECT * FROM posts WHERE service_user_id = 0 AND status_id = 1
+			SELECT * FROM posts WHERE id = ?
 		`
-	if err := entity.DB().Preload("ServiceProvider").Preload("Status").
-		Preload("Type").Raw(rawQuery).Find(&post).Error; err != nil {
+	if err := entity.DB().Preload("ServiceProvider.Address.District.Province").Preload("Status").
+		Preload("Type").Preload("ServiceUser.Address.District.Province").Preload("ServiceUser.Pet.Gene.Type").
+		Preload("ServiceUser.Prefix").Preload("ServiceProvider.Prefix").Raw(rawQuery, id).Find(&post).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": post})
@@ -124,22 +126,6 @@ func DeletePost(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
 }
 
-func AcceptPost(c *fiber.Ctx) error {
-	id := c.Params("id")
-	if tx := entity.DB().Exec("UPDATE posts SET status_id = 3 WHERE id = ?", id); tx.RowsAffected == 0 {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
-	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
-}
-
-func NonAcceptPost(c *fiber.Ctx) error {
-	id := c.Params("id")
-	if tx := entity.DB().Exec("UPDATE posts SET status_id = 1 WHERE id = ?", id); tx.RowsAffected == 0 {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
-	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
-}
-
 func CanclePost(c *fiber.Ctx) error {
 	var post entity.Post
 	if err := c.BodyParser(&post); err != nil {
@@ -157,38 +143,18 @@ func CanclePost(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": cp})
 }
 
-func GetPostChart(c *fiber.Ctx) error {
-	rawQuery := `
-			SELECT
-			CASE status_id
-				WHEN 1 THEN 'รอเริ่มงาน'
-				WHEN 2 THEN 'รอการยืนยัน'
-				WHEN 3 THEN 'ดำเนินงาน'
-				WHEN 4 THEN 'งานสิ้นสุด'
-				WHEN 5 THEN 'ยกเลิกงาน'
-				ELSE 'ลบโพส'
-			END AS status,
-			COUNT(*) AS value
-			FROM posts p
-			LEFT JOIN (SELECT DISTINCT name, id FROM statuses) s ON p.status_id = s.id
-			GROUP BY s.name
-			ORDER BY p.status_id
-		`
-	rows, err := entity.DB().Raw(rawQuery).Rows()
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Error executing query"})
+func AcceptPost(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if tx := entity.DB().Exec("UPDATE posts SET status_id = 3 WHERE id = ?", id); tx.RowsAffected == 0 {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
-	defer rows.Close()
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
+}
 
-	var result []map[string]interface{}
-	for rows.Next() {
-		var status string
-		var value int
-		if err := rows.Scan(&status, &value); err != nil {
-			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Error scanning rows"})
-		}
-		result = append(result, map[string]interface{}{"status": status, "value": value})
+func NonAcceptPost(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if tx := entity.DB().Exec("UPDATE posts SET service_user_id = 0, status_id = 1 WHERE id = ?", id); tx.RowsAffected == 0 {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
-
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": result})
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
 }

@@ -7,18 +7,10 @@ import (
 	"github.com/henlies/project/entity"
 )
 
-func ListAddresses(c *fiber.Ctx) error {
-	var addresses []entity.Address
-	if err := entity.DB().Preload("Province").Preload("District").Raw("SELECT * FROM addresses").Find(&addresses).Error; err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": addresses})
-}
-
-func GetAddressUID(c *fiber.Ctx) error {
+func GetAddressID(c *fiber.Ctx) error {
 	var address entity.Address
 	id := c.Params("id")
-	if err := entity.DB().Preload("Province").Preload("District").Raw("SELECT * FROM addresses Where id = (select address_id from users where id = ?)", id).Find(&address).Error; err != nil {
+	if err := entity.DB().Preload("Province").Preload("District").Raw("SELECT * FROM addresses Where id = ?", id).Find(&address).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": address})
@@ -46,6 +38,20 @@ func CreateAddress(c *fiber.Ctx) error {
 	if err := entity.DB().Create(&ca).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
+
+	// ======================================== UPDATE USER ========================================
+	var user entity.ServiceUser
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	uatu := entity.ServiceUser{
+		AddressID: ca.ID,
+	}
+	if err := entity.DB().Where("id = ?", user.ID).Updates(&uatu).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": ca})
 }
 
@@ -71,5 +77,5 @@ func UpdateAddress(c *fiber.Ctx) error {
 	if err := entity.DB().Where("id = ?", address.ID).Updates(&ua).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": ua})
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": address.ID})
 }

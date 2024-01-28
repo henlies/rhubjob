@@ -50,7 +50,7 @@ export interface ServiceUserInterface {
     Address?: AddressInterface;
     Email?: string;
     Line?: string;
-    Birth?: Date;
+    Birth: Date;
     BloodID?: number;
     Blood?: BloodInterface;
     PetID?: number;

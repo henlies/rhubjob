@@ -1,11 +1,8 @@
 import { SigninInterface } from "../models/Signin";
 import { UserSigninJobInterface, UserSigninUseInterface } from "../models/UserSignin";
-import { UserInterface } from "../models/User";
-import {
-    PostEInterface,
-    // PostaInterface, 
-    PostsInterface
-} from "../models/Post";
+import { PostCInterface, PostEInterface } from "../models/Post";
+import { PetInterface } from "../models/Pet";
+import { AddressInterface } from "../models/Address";
 
 const apiUrl = "http://localhost:8080";
 const getRequestOptions = {
@@ -41,13 +38,14 @@ async function GetSignin(data: SigninInterface) {
             }
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("id", res.data.id);
-            localStorage.setItem("user", JSON.stringify(res.data.user));
             localStorage.setItem("role", res.data.role);
             localStorage.setItem("name", res.data.name);
             localStorage.setItem("per", res.data.per);
             localStorage.setItem("active", res.data.active);
             localStorage.setItem("status", res.data.status);
             localStorage.setItem("pic", res.data.pic);
+            localStorage.setItem("petid", res.data.pet);
+            localStorage.setItem("addressid", res.data.address);
             return res.data;
         } else {
             return false;
@@ -55,27 +53,6 @@ async function GetSignin(data: SigninInterface) {
     } catch (error) {
         return false;
     }
-};
-
-async function CreateUser(data: UserInterface) {
-    const requestOptions = {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    };
-    let res = await fetch(`${apiUrl}/user`, requestOptions)
-        .then((response) => response.json())
-        .then((res) => {
-            if (res.data) {
-                return res.data;
-            } else {
-                return false;
-            }
-        });
-    return res;
 };
 
 async function CreateUserSigninUse(data: UserSigninUseInterface) {
@@ -120,7 +97,7 @@ async function CreateUserSigninJob(data: UserSigninJobInterface) {
     return res;
 };
 
-async function CreatePost(data: PostsInterface) {
+async function CreatePost(data: PostCInterface) {
     const requestOptions = {
         method: "POST",
         headers: {
@@ -141,6 +118,50 @@ async function CreatePost(data: PostsInterface) {
     return res;
 };
 
+async function CreatePet(data: PetInterface) {
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    };
+    let res = await fetch(`${apiUrl}/pet`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                localStorage.setItem("petid", res.data.ID);
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function CreateAddress(data: AddressInterface) {
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    };
+    let res = await fetch(`${apiUrl}/address`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                localStorage.setItem("petid", res.data.ID);
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
 async function UpdatePost(data: PostEInterface) {
     const requestOptions = {
         method: "PATCH",
@@ -152,6 +173,98 @@ async function UpdatePost(data: PostEInterface) {
     }
 
     let res = await fetch(`${apiUrl}/post`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+}
+
+async function UpdateServiceDetail(data: PostEInterface) {
+    const requestOptions = {
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    }
+
+    let res = await fetch(`${apiUrl}/serviceuserdetail`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                localStorage.setItem("name", res.data.Firstname)
+                localStorage.setItem("pic", res.data.Pic);
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+}
+
+async function UpdatePet(data: PetInterface) {
+    const requestOptions = {
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    }
+
+    let res = await fetch(`${apiUrl}/pet`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                localStorage.setItem("petid", res.data);
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+}
+
+async function UpdateAddress(data: AddressInterface) {
+    const requestOptions = {
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    }
+
+    let res = await fetch(`${apiUrl}/address`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                localStorage.setItem("addressid", res.data);
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+}
+
+async function CanclePost(data: PostEInterface) {
+    const requestOptions = {
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    }
+
+    let res = await fetch(`${apiUrl}/canclepost`, requestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -189,8 +302,8 @@ async function GetUserListNonActive() {
     return res;
 };
 
-async function GetAdminUID(id: string | null) {
-    let res = await fetch(`${apiUrl}/admin/${id}`, getRequestOptions)
+async function GetServiceUserByUID(id: string | null) {
+    let res = await fetch(`${apiUrl}/serviceuser/${id}`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -202,8 +315,8 @@ async function GetAdminUID(id: string | null) {
     return res;
 };
 
-async function ApproveUser(id?: number) {
-    let res = await fetch(`${apiUrl}/userapprove/${id}`, deleteRequestOptions)
+async function GetPetID(id: string | null) {
+    let res = await fetch(`${apiUrl}/pet/${id}`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -215,8 +328,8 @@ async function ApproveUser(id?: number) {
     return res;
 };
 
-async function DeleteServiceUser(user?: string) {
-    let res = await fetch(`${apiUrl}/serviceuser/${user}`, deleteRequestOptions)
+async function GetAddressID(id: string | null) {
+    let res = await fetch(`${apiUrl}/address/${id}`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -228,8 +341,8 @@ async function DeleteServiceUser(user?: string) {
     return res;
 };
 
-async function DeleteServiceProvider(user?: string) {
-    let res = await fetch(`${apiUrl}/serviceprovider/${user}`, deleteRequestOptions)
+async function GetServiceProviderByUID(id: string | null) {
+    let res = await fetch(`${apiUrl}/serviceprovider/${id}`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -241,8 +354,8 @@ async function DeleteServiceProvider(user?: string) {
     return res;
 };
 
-async function ActiveServiceUser(user?: string) {
-    let res = await fetch(`${apiUrl}/useractive/${user}`, deleteRequestOptions)
+async function GetPrefix() {
+    let res = await fetch(`${apiUrl}/prefixes`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -254,8 +367,8 @@ async function ActiveServiceUser(user?: string) {
     return res;
 };
 
-async function ActiveServiceProvider(user?: string) {
-    let res = await fetch(`${apiUrl}/provideractive/${user}`, deleteRequestOptions)
+async function GetGender() {
+    let res = await fetch(`${apiUrl}/genders`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -267,8 +380,8 @@ async function ActiveServiceProvider(user?: string) {
     return res;
 };
 
-async function GetRole() {
-    let res = await fetch(`${apiUrl}/roles`, getRequestOptions)
+async function GetBlood() {
+    let res = await fetch(`${apiUrl}/bloods`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -280,8 +393,60 @@ async function GetRole() {
     return res;
 };
 
-async function GetPostShow() {
-    let res = await fetch(`${apiUrl}/posts`, getRequestOptions)
+async function GetType() {
+    let res = await fetch(`${apiUrl}/types`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetGene(id?: number) {
+    let res = await fetch(`${apiUrl}/genes/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetProvicne() {
+    let res = await fetch(`${apiUrl}/provinces`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetDistricts(id?: number) {
+    let res = await fetch(`${apiUrl}/districts/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetZipcodeDID(id?: number) {
+    let res = await fetch(`${apiUrl}/zipcode/${id}`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -358,19 +523,6 @@ async function GetPostShowIDstatus5(id?: number) {
     return res;
 };
 
-async function GetType() {
-    let res = await fetch(`${apiUrl}/types`, getRequestOptions)
-        .then((response) => response.json())
-        .then((res) => {
-            if (res.data) {
-                return res.data;
-            } else {
-                return false;
-            }
-        });
-    return res;
-};
-
 async function GetPostbyId(id?: number) {
     let res = await fetch(`${apiUrl}/getpost/${id}`, getRequestOptions)
         .then((response) => response.json())
@@ -384,8 +536,8 @@ async function GetPostbyId(id?: number) {
     return res;
 };
 
-async function GetPostStart() {
-    let res = await fetch(`${apiUrl}/poststart`, getRequestOptions)
+async function GetPostbyPId(id?: number) {
+    let res = await fetch(`${apiUrl}/getposttrack/${id}`, getRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -397,8 +549,9 @@ async function GetPostStart() {
     return res;
 };
 
-async function GetPostStartId(id: string | null) {
-    let res = await fetch(`${apiUrl}/poststart/${id}`, getRequestOptions)
+
+async function ApproveUser(id?: number) {
+    let res = await fetch(`${apiUrl}/userapprove/${id}`, deleteRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -410,8 +563,8 @@ async function GetPostStartId(id: string | null) {
     return res;
 };
 
-async function GetPostIdTrack(id: string | null) {
-    let res = await fetch(`${apiUrl}/posttrack/${id}`, getRequestOptions)
+async function DeleteServiceUser(user?: string) {
+    let res = await fetch(`${apiUrl}/serviceuser/${user}`, deleteRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -423,8 +576,8 @@ async function GetPostIdTrack(id: string | null) {
     return res;
 };
 
-async function GetPostIdStatus(id: string | null) {
-    let res = await fetch(`${apiUrl}/poststatus/${id}`, getRequestOptions)
+async function DeleteServiceProvider(user?: string) {
+    let res = await fetch(`${apiUrl}/serviceprovider/${user}`, deleteRequestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -436,27 +589,31 @@ async function GetPostIdStatus(id: string | null) {
     return res;
 };
 
-// async function CheckPost(data: PostaInterface) {
-//     const requestOptions = {
-//         method: "PATCH",
-//         headers: {
-//             Authorization: `Bearer ${localStorage.getItem("token")}`,
-//             "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(data),
-//     }
+async function ActiveServiceUser(user?: string) {
+    let res = await fetch(`${apiUrl}/useractive/${user}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
 
-//     let res = await fetch(`${apiUrl}/postchk`, requestOptions)
-//         .then((response) => response.json())
-//         .then((res) => {
-//             if (res.data) {
-//                 return res.data;
-//             } else {
-//                 return false;
-//             }
-//         });
-//     return res;
-// }
+async function ActiveServiceProvider(user?: string) {
+    let res = await fetch(`${apiUrl}/provideractive/${user}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
 
 async function DeletePost(id?: number) {
     let res = await fetch(`${apiUrl}/post/${id}`, deleteRequestOptions)
@@ -497,87 +654,48 @@ async function NonAcceptPost(id?: number) {
     return res;
 };
 
-// async function CanclePost(id?: number) {
-//     let res = await fetch(`${apiUrl}/canclepost/${id}`, deleteRequestOptions)
-//         .then((response) => response.json())
-//         .then((res) => {
-//             if (res.data) {
-//                 return res.data;
-//             } else {
-//                 return false;
-//             }
-//         });
-//     return res;
-// };
-
-async function CanclePost(data: PostEInterface) {
-    const requestOptions = {
-        method: "PATCH",
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    }
-
-    let res = await fetch(`${apiUrl}/canclepost`, requestOptions)
-        .then((response) => response.json())
-        .then((res) => {
-            if (res.data) {
-                return res.data;
-            } else {
-                return false;
-            }
-        });
-    return res;
-}
-
-async function ShowChart() {
-    let res = await fetch(`${apiUrl}/postchart`, getRequestOptions)
-        .then((response) => response.json())
-        .then((res) => {
-            if (res.data) {
-                return res.data;
-            } else {
-                return false;
-            }
-        });
-    return res;
-};
-
 export {
-
     GetSignin,
-    CreateUser,
     CreateUserSigninUse,
     CreateUserSigninJob,
     CreatePost,
+    CreatePet,
+    CreateAddress,
+
     UpdatePost,
+    UpdateServiceDetail,
+    UpdatePet,
+    UpdateAddress,
+    CanclePost,
+
     GetUserListActive,
     GetUserListNonActive,
-    GetAdminUID,
-    ApproveUser,
-    DeleteServiceProvider,
-    DeleteServiceUser,
-    ActiveServiceUser,
-    ActiveServiceProvider,
-    GetRole,
-    GetPostShow,
+    GetServiceUserByUID,
+    GetPetID,
+    GetAddressID,
+    GetServiceProviderByUID,
+    GetPrefix,
+    GetGender,
+    GetBlood,
+    GetType,
+    GetGene,
+    GetProvicne,
+    GetDistricts,
+    GetZipcodeDID,
     GetPostShowIDstatus1,
     GetPostShowIDstatus2,
     GetPostShowIDstatus3,
     GetPostShowIDstatus4,
     GetPostShowIDstatus5,
-    GetType,
     GetPostbyId,
-    GetPostStart,
-    GetPostStartId,
-    GetPostIdTrack,
-    GetPostIdStatus,
-    // CheckPost,
+    GetPostbyPId,
+
+    ApproveUser,
+    DeleteServiceUser,
+    DeleteServiceProvider,
+    ActiveServiceUser,
+    ActiveServiceProvider,
     DeletePost,
     AcceptPost,
     NonAcceptPost,
-    CanclePost,
-    ShowChart,
 };

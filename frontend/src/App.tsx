@@ -1,23 +1,33 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Layout } from 'antd';
+
+
+import Homie from './components/Home';
+import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar';
+import Petinfo from './components/Petinfo';
+import Manual from './components/Manual';
+
+import DashboardAdmim from './components/Admin/DashboardAdmin';
 import ControlComment from './components/Admin/ControlComment';
 import ControlPost from './components/Admin/ControlPost';
 import ControlUser from './components/Admin/ControlUser';
-import DashboardAdmim from './components/Admin/DashboardAdmin';
-import DashboardUser from './components/User/DashboardUser';
-import Post from './components/User/Post';
-import Homie from './components/Home';
-import Sidebar from './components/Sidebar';
-import Petinfo from './components/Petinfo';
-import Navbar from './components/Navbar';
-import PostStatus from './components/User/PostStatus';
-import Manual from './components/Manual';
+
+import Profile from './components/User/ServiceUser/Profile';
+import Post from './components/User/ServiceUser/Post';
+import TrackStatus from './components/User/ServiceUser/TrackStatus';
+
+import PostStatus from './components/User/ServiceProvider/PostStatus';
+import Postpro from './components/User/ServiceProvider/Postpro';
+
 import Error403 from './components/403';
-import { Layout } from 'antd';
-import TrackStatus from './components/User/TrackStatus';
-import Postpro from './components/User/Postpro';
+import DashboardUser from './components/User/DashboardUser';
 
 const App: React.FC = () => {
+  const petid = localStorage.getItem("petid")
+  const addressid = localStorage.getItem("addressid")
+
   const [token, setToken] = useState<string>("");
   const [role, setRole] = useState<string>("");
   const [per, setPer] = useState<string>("");
@@ -79,8 +89,13 @@ const App: React.FC = () => {
                 {role === "ผู้ใช้บริการ" && (
                   <>
                     <Route path="/" element={<DashboardUser />} />
-                    <Route path="/post" element={<Post />} />
-                    <Route path="/track-status" element={<TrackStatus />} />
+                    <Route path="/profile" element={<Profile />} />
+                    {(petid !== "0" || addressid !== "0") && (
+                      <>
+                        <Route path="/post" element={<Post />} />
+                        <Route path="/track-status" element={<TrackStatus />} />
+                      </>
+                    )}
                     <Route path="*" element={<Error403 />} />
                   </>
                 )}
@@ -88,7 +103,7 @@ const App: React.FC = () => {
                   <>
                     <Route path="/" element={<DashboardUser />} />
                     <Route path="/post" element={<Postpro />} />
-                    <Route path="/post-status" element={<PostStatus />} />
+                    <Route path="/post-status/:postId" element={<PostStatus />} />
                     <Route path="*" element={<Error403 />} />
                   </>
                 )}

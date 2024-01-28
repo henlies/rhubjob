@@ -12,8 +12,8 @@ import {
 } from '@ant-design/icons';
 
 const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
-  const { Sider } = Layout;
   const location = useLocation();
+  const { Sider } = Layout;
   const [collapsed, setCollapsed] = useState(true);
   const [api, Holder] = message.useMessage();
   const [pic, setPic] = useState<string>("");
@@ -37,7 +37,6 @@ const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
     { key: '1', icon: <HomeOutlined />, label: 'หน้าหลัก', link: '/' },
     { key: '2', icon: <CreditCardOutlined />, label: 'การรับเลี้ยง', link: '/post' },
     { key: '3', icon: <CheckCircleOutlined />, label: 'ติดตามสถานะ', link: '/track-status' },
-    { key: '4', icon: <CheckCircleOutlined />, label: 'แจ้งสถานะ', link: '/post-status' },
   ];
 
   const menuItemsAdmin: MenuItem[] = [
@@ -66,9 +65,12 @@ const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
 
   const avatarMenu = (
     <Menu>
-      {/* <Menu.Item >
-        <Link to="/profile">Profile</Link>
-      </Menu.Item> */}
+      {(role === 'ผู้ใช้บริการ' || role === 'ผู้ให้บริการ') &&
+        <Link to={`/profile`}>
+          <Menu.Item icon={<UserOutlined />}>
+            จัดการโปรไฟล์
+          </Menu.Item>
+        </Link>}
       {Holder}
       <Menu.Item key="logout" onClick={SignOut} icon={<LogoutOutlined />}>
         ออกจากระบบ
@@ -99,7 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
             </>
           )}
           {role === 'ผู้ใช้บริการ' && renderMenuItems([menuItemsUser[0], menuItemsUser[1], menuItemsUser[2]])}
-          {role === 'ผู้ให้บริการ' && renderMenuItems([menuItemsUser[0], menuItemsUser[1], menuItemsUser[3]])}
+          {role === 'ผู้ให้บริการ' && renderMenuItems([menuItemsUser[0], menuItemsUser[1]])}
         </Menu>
       </div>
     </Sider>

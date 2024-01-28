@@ -4,11 +4,12 @@ import { Card, Layout, Button, Modal, Col, Form, Input, Typography, DatePicker, 
 import dayjs, { Dayjs } from 'dayjs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Content } from 'antd/es/layout/layout';
-import { PostCInterface, PostEInterface, PostSInterface } from '../../models/Post';
-import { AcceptPost, CanclePost, CreatePost, DeletePost, GetPostShowIDstatus1, GetPostShowIDstatus2, GetPostShowIDstatus3, GetPostShowIDstatus4, GetPostShowIDstatus5, GetPostbyId, GetType, NonAcceptPost, UpdatePost } from '../../services/HttpServices';
-import { TypeInterface } from '../../models/Type';
+import { PostCInterface, PostEInterface, PostSInterface } from '../../../models/Post';
+import { AcceptPost, CanclePost, CreatePost, DeletePost, GetPostShowIDstatus1, GetPostShowIDstatus2, GetPostShowIDstatus3, GetPostShowIDstatus4, GetPostShowIDstatus5, GetPostbyId, GetType, NonAcceptPost, UpdatePost } from '../../../services/HttpServices';
+import { TypeInterface } from '../../../models/Type';
 import TabPane from 'antd/es/tabs/TabPane';
-import { DashOutlined } from '@ant-design/icons';
+import { DashOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 
 const Postpro: React.FC = () => {
   const { Option } = Select;
@@ -84,32 +85,24 @@ const Postpro: React.FC = () => {
     }
   };
 
-  const MenuOptions1 = (id?: number) => (
-    <Menu>
-      <Menu.Item key="update" onClick={() => openEdit(id)}>
-        อัพเดท
-      </Menu.Item>
-      <Menu.Item key="delete" onClick={() => handleDelete(id)}>
-        ลบ
-      </Menu.Item>
-    </Menu>
-  );
   const MenuOptions2 = (id?: number) => (
     <Menu>
-      <Menu.Item key="update" onClick={() => handleAccept(id)}>
+      <Menu.Item onClick={() => handleAccept(id)}>
         รับงาน
       </Menu.Item>
-      <Menu.Item key="delete" onClick={() => handleNonAccept(id)}>
+      <Menu.Item onClick={() => handleNonAccept(id)}>
         ไม่รับงาน
       </Menu.Item>
     </Menu>
   );
   const MenuOptions3 = (id?: number) => (
     <Menu>
-      {/* <Menu.Item key="update" onClick={() => openReport(id)}>
-        รายงานความคืบหน้า
-      </Menu.Item> */}
-      <Menu.Item key="delete" onClick={() => openCancle(id)}>
+      <Link to={`/post-status/${id}`}>
+        <Menu.Item>
+          รายงานความคืบหน้า
+        </Menu.Item>
+      </Link>
+      <Menu.Item onClick={() => openCancle(id)}>
         ยกเลิกงาน
       </Menu.Item>
     </Menu>
@@ -149,8 +142,16 @@ const Postpro: React.FC = () => {
   }
 
   const handleDelete = async (id?: number) => {
-    await DeletePost(id);
-    getpostshow();
+    // await DeletePost(id);
+    // getpostshow();
+    Modal.confirm({
+      title: 'ยืนยันการลบ',
+      content: 'คุณแน่ใจหรือไม่ที่ต้องการลบโพสนี้ ?',
+      onOk: async () => {
+        await DeletePost(id);
+        getpostshow();
+      },
+    });
   }
 
   const handleAccept = async (id?: number) => {
@@ -206,8 +207,6 @@ const Postpro: React.FC = () => {
     }
   };
 
-  console.log(postc);
-
   useEffect(() => {
     getpostshow();
     gettype();
@@ -217,8 +216,13 @@ const Postpro: React.FC = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
-        <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '24px', alignItems: 'start' }}>
+        <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '24px', alignItems: 'center', justifyContent: 'center' }}>
           <Col span={2}>
+            <div style={{ textAlign: 'center' }}>
+              <Button onClick={() => setPostopen(true)}>
+                สร้างโพส
+              </Button>
+            </div>
           </Col>
           <Col span={20}>
             <div style={{ textAlign: 'center' }}>
@@ -226,11 +230,6 @@ const Postpro: React.FC = () => {
             </div>
           </Col>
           <Col span={2}>
-            <div style={{ textAlign: 'center' }}>
-              <Button onClick={() => setPostopen(true)}>
-                สร้างโพส
-              </Button>
-            </div>
           </Col>
         </div>
         <Tabs defaultActiveKey="1" tabPosition="right">
@@ -252,7 +251,10 @@ const Postpro: React.FC = () => {
                 });
 
                 return (
-                  <Card style={{ marginTop: '8px' }}>
+                  <Card style={{ marginTop: '8px' }} actions={[
+                    <EditOutlined style={{ color: 'orange' }} onClick={() => openEdit(posts1.ID)} />,
+                    <DeleteOutlined style={{ color: 'red' }} onClick={() => handleDelete(posts1.ID)} />,
+                  ]}>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
                       <div style={{ margin: '12px' }}>
                         <Avatar size={'large'} src={posts1.ServiceProvider?.Pic} />
@@ -262,13 +264,6 @@ const Postpro: React.FC = () => {
                       </div>
                       <div>
                         <Input addonBefore="สถานะ" value={`${posts1.Status?.Name}`} />
-                      </div>
-                      <div style={{ marginLeft: 'auto' }}>
-                        <Dropdown overlay={() => MenuOptions1(posts1.ID)} trigger={['click']}>
-                          <Space>
-                            <DashOutlined />
-                          </Space>
-                        </Dropdown>
                       </div>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>

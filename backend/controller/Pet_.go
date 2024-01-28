@@ -7,21 +7,13 @@ import (
 	"github.com/henlies/project/entity"
 )
 
-func ListPets(c *fiber.Ctx) error {
-	var pets []entity.Pet
-	if err := entity.DB().Preload("Type").Preload("Gene").Raw("SELECT * FROM pets").Find(&pets).Error; err != nil {
+func GetPetID(c *fiber.Ctx) error {
+	var pets entity.Pet
+	id := c.Params("id")
+	if err := entity.DB().Preload("Type").Preload("Gene").Raw("SELECT * FROM pets WHERE id = ?", id).Find(&pets).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": pets})
-}
-
-func GetPetUID(c *fiber.Ctx) error {
-	var pet entity.Pet
-	id := c.Params("id")
-	if err := entity.DB().Preload("Type").Preload("Gene").Raw("SELECT * FROM pets Where id = (select pet_id from users where id = ?)", id).Find(&pet).Error; err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": pet})
 }
 
 func CreatePet(c *fiber.Ctx) error {
@@ -51,6 +43,20 @@ func CreatePet(c *fiber.Ctx) error {
 	if err := entity.DB().Create(&cp).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
+
+	// ======================================== UPDATE USER ========================================
+	var user entity.ServiceUser
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	uptu := entity.ServiceUser{
+		PetID: cp.ID,
+	}
+	if err := entity.DB().Where("id = ?", user.ID).Updates(&uptu).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": cp})
 }
 
@@ -81,5 +87,5 @@ func UpdatePet(c *fiber.Ctx) error {
 	if err := entity.DB().Where("id = ?", pet.ID).Updates(&up).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"data": up})
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": pet.ID})
 }
