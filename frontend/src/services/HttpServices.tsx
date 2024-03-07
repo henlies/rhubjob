@@ -510,19 +510,6 @@ async function GetPostShowIDstatus4(id?: number) {
     return res;
 };
 
-async function GetPostShowIDstatus5(id?: number) {
-    let res = await fetch(`${apiUrl}/poststatus5/${id}`, getRequestOptions)
-        .then((response) => response.json())
-        .then((res) => {
-            if (res.data) {
-                return res.data;
-            } else {
-                return false;
-            }
-        });
-    return res;
-};
-
 async function GetPostbyId(id?: number) {
     let res = await fetch(`${apiUrl}/getpost/${id}`, getRequestOptions)
         .then((response) => response.json())
@@ -628,6 +615,19 @@ async function DeletePost(id?: number) {
     return res;
 };
 
+async function FinishPost(id?: number) {
+    let res = await fetch(`${apiUrl}/finishpost/${id}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
 async function AcceptPost(id?: number) {
     let res = await fetch(`${apiUrl}/acceptpost/${id}`, deleteRequestOptions)
         .then((response) => response.json())
@@ -686,7 +686,6 @@ export {
     GetPostShowIDstatus2,
     GetPostShowIDstatus3,
     GetPostShowIDstatus4,
-    GetPostShowIDstatus5,
     GetPostbyId,
     GetPostbyPId,
 
@@ -696,6 +695,7 @@ export {
     ActiveServiceUser,
     ActiveServiceProvider,
     DeletePost,
+    FinishPost,
     AcceptPost,
     NonAcceptPost,
 };

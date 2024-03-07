@@ -1,43 +1,73 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Layout, Button, Modal, Col, Form, Input, Typography, DatePicker, Select, Avatar, Tabs, Menu, Dropdown, Space } from 'antd';
-
+import React, {
+  useEffect,
+  useState
+} from 'react';
+import {
+  Col,
+  Card,
+  Form,
+  Tabs,
+  Modal,
+  Input,
+  Layout,
+  Button,
+  Select,
+  Avatar,
+  Tooltip,
+  Typography,
+  DatePicker,
+} from 'antd';
+import {
+  PostEInterface,
+  PostSInterface
+} from '../../../models/Post';
+import {
+  GetType,
+  UpdatePost,
+  AcceptPost,
+  CanclePost,
+  FinishPost,
+  GetPostbyId,
+  NonAcceptPost,
+  GetPostShowIDstatus2,
+  GetPostShowIDstatus3,
+  GetPostShowIDstatus4,
+} from '../../../services/HttpServices';
+import {
+  StopOutlined,
+  FileAddOutlined,
+  CheckSquareOutlined,
+  CloseSquareOutlined,
+} from '@ant-design/icons';
+import { TypeInterface } from '../../../models/Type';
+import { useNavigate } from 'react-router-dom';
+import TabPane from 'antd/es/tabs/TabPane';
 import dayjs, { Dayjs } from 'dayjs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Content } from 'antd/es/layout/layout';
-import { PostCInterface, PostEInterface, PostSInterface } from '../../../models/Post';
-import { AcceptPost, CanclePost, CreatePost, DeletePost, GetPostShowIDstatus1, GetPostShowIDstatus2, GetPostShowIDstatus3, GetPostShowIDstatus4, GetPostShowIDstatus5, GetPostbyId, GetType, NonAcceptPost, UpdatePost } from '../../../services/HttpServices';
-import { TypeInterface } from '../../../models/Type';
-import TabPane from 'antd/es/tabs/TabPane';
-import { DashOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
 
 const Postpro: React.FC = () => {
   const { Option } = Select;
   const { Title } = Typography;
   const { RangePicker } = DatePicker;
+
   const id = localStorage.getItem("id")
   const numId: number | undefined = id !== null ? parseInt(id, 10) : undefined;
 
-  const [posts1, setPosts1] = useState<PostSInterface[]>([]);
+  const navigate = useNavigate();
+
   const [posts2, setPosts2] = useState<PostSInterface[]>([]);
   const [posts3, setPosts3] = useState<PostSInterface[]>([]);
   const [posts4, setPosts4] = useState<PostSInterface[]>([]);
-  const [posts5, setPosts5] = useState<PostSInterface[]>([]);
-  const [postc, setPostc] = useState<Partial<PostCInterface>>({});
   const [poste, setPoste] = useState<Partial<PostEInterface>>({});
 
   const [type, setType] = useState<TypeInterface[]>([]);
 
-  const [postopen, setPostopen] = useState(false);
   const [postedit, setPostedit] = useState(false);
   const [postcancle, setPostCancle] = useState(false);
 
 
   const getpostshow = async () => {
-    let res1 = await GetPostShowIDstatus1(numId);
-    if (res1) {
-      setPosts1(res1);
-    }
     let res2 = await GetPostShowIDstatus2(numId);
     if (res2) {
       setPosts2(res2);
@@ -50,10 +80,6 @@ const Postpro: React.FC = () => {
     if (res4) {
       setPosts4(res4);
     }
-    let res5 = await GetPostShowIDstatus5(numId);
-    if (res5) {
-      setPosts5(res5);
-    }
   };
 
   const gettype = async () => {
@@ -63,19 +89,8 @@ const Postpro: React.FC = () => {
     }
   };
 
-  const handleSelectChangeCreate = (value?: number) => {
-    setPostc({ ...postc, TypeID: value });
-  };
-
   const handleSelectChangeEdit = (value?: number) => {
     setPoste({ ...poste, TypeID: value });
-  };
-
-  const handleRangeDateChangeCreate = (dates: RangeValue<Dayjs> | null) => {
-    if (dates) {
-      const [startFormatted, endFormatted] = dates.map((date) => date?.toDate());
-      setPostc((prevPost) => ({ ...prevPost, Start: startFormatted, End: endFormatted }));
-    }
   };
 
   const handleRangeDateChangEedit = (dates: RangeValue<Dayjs> | null) => {
@@ -84,37 +99,6 @@ const Postpro: React.FC = () => {
       setPoste((prevPost) => ({ ...prevPost, Start: startFormatted, End: endFormatted }));
     }
   };
-
-  const MenuOptions2 = (id?: number) => (
-    <Menu>
-      <Menu.Item onClick={() => handleAccept(id)}>
-        รับงาน
-      </Menu.Item>
-      <Menu.Item onClick={() => handleNonAccept(id)}>
-        ไม่รับงาน
-      </Menu.Item>
-    </Menu>
-  );
-  const MenuOptions3 = (id?: number) => (
-    <Menu>
-      <Link to={`/post-status/${id}`}>
-        <Menu.Item>
-          รายงานความคืบหน้า
-        </Menu.Item>
-      </Link>
-      <Menu.Item onClick={() => openCancle(id)}>
-        ยกเลิกงาน
-      </Menu.Item>
-    </Menu>
-  );
-
-  const openEdit = async (id?: number) => {
-    let res = await GetPostbyId(id);
-    if (res) {
-      setPoste(res);
-    }
-    setPostedit(true);
-  }
 
   const handleEdit = async () => {
     let data = {
@@ -141,27 +125,37 @@ const Postpro: React.FC = () => {
     getpostshow();
   }
 
-  const handleDelete = async (id?: number) => {
-    // await DeletePost(id);
-    // getpostshow();
+  const handleAccept = async (id?: number) => {
     Modal.confirm({
-      title: 'ยืนยันการลบ',
-      content: 'คุณแน่ใจหรือไม่ที่ต้องการลบโพสนี้ ?',
+      title: 'ยืนยันการรับงาน',
+      content: 'คุณแน่ใจหรือไม่ที่จะรับงานนี้ ?',
       onOk: async () => {
-        await DeletePost(id);
+        await AcceptPost(id);
         getpostshow();
       },
     });
   }
 
-  const handleAccept = async (id?: number) => {
-    await AcceptPost(id);
-    getpostshow();
+  const handleNonAccept = async (id?: number) => {
+    Modal.confirm({
+      title: 'ยกเลิกการยืนยัน',
+      content: 'คุณแน่ใจหรือไม่ที่จะยกเลิกการรับงานนี้ ?',
+      onOk: async () => {
+        await NonAcceptPost(id);
+        getpostshow();
+      },
+    });
   }
 
-  const handleNonAccept = async (id?: number) => {
-    await NonAcceptPost(id);
-    getpostshow();
+  const Finish = async (id?: number) => {
+    Modal.confirm({
+      title: 'ยืนยันการสำเร็จงาน',
+      content: 'งานนี้สำเร็จแล้วใช่หรือไม่ ?',
+      onOk: async () => {
+        await FinishPost(id);
+        getpostshow();
+      },
+    });
   }
 
   const openCancle = async (id?: number) => {
@@ -171,6 +165,10 @@ const Postpro: React.FC = () => {
     }
     setPostCancle(true);
   }
+
+  const gotostatuspage = (id?: number) => {
+    navigate(`/post-status/${id}`);
+  };
 
   const handleCanclePost = async () => {
     let note: string | undefined
@@ -190,23 +188,6 @@ const Postpro: React.FC = () => {
     }
   }
 
-  const submit = async () => {
-    let data = {
-      Descript: postc.Descript,
-      Start: postc.Start,
-      End: postc.End,
-      Price: postc.Price,
-      TypeID: postc.TypeID,
-      Service_ProviderID: numId,
-      StatusID: 1,
-    };
-    let res = await CreatePost(data);
-    if (res) {
-      setPostopen(!postopen)
-      getpostshow();
-    }
-  };
-
   useEffect(() => {
     getpostshow();
     gettype();
@@ -217,77 +198,15 @@ const Postpro: React.FC = () => {
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
         <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '24px', alignItems: 'center', justifyContent: 'center' }}>
-          <Col span={2}>
-            <div style={{ textAlign: 'center' }}>
-              <Button onClick={() => setPostopen(true)}>
-                สร้างโพส
-              </Button>
-            </div>
-          </Col>
           <Col span={20}>
             <div style={{ textAlign: 'center' }}>
               <Title level={3}>รายการรับเลี้ยงของคุณ</Title>
             </div>
           </Col>
-          <Col span={2}>
+          <Col span={4}>
           </Col>
         </div>
-        <Tabs defaultActiveKey="1" tabPosition="right">
-          <TabPane tab="รอเริ่มงาน" key="1">
-            {posts1.length > 0 ? (
-              posts1.map((posts1) => {
-                const startDate = new Date(posts1.Start);
-                const start = startDate.toLocaleDateString('th-TH', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                });
-
-                const endDate = new Date(posts1.End);
-                const end = endDate.toLocaleDateString('th-TH', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                });
-
-                return (
-                  <Card style={{ marginTop: '8px' }} actions={[
-                    <EditOutlined style={{ color: 'orange' }} onClick={() => openEdit(posts1.ID)} />,
-                    <DeleteOutlined style={{ color: 'red' }} onClick={() => handleDelete(posts1.ID)} />,
-                  ]}>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                      <div style={{ margin: '12px' }}>
-                        <Avatar size={'large'} src={posts1.ServiceProvider?.Pic} />
-                      </div>
-                      <div style={{ marginRight: '20px' }}>
-                        <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts1.ServiceProvider?.Firstname} ${posts1.ServiceProvider?.Lastname}`} />
-                      </div>
-                      <div>
-                        <Input addonBefore="สถานะ" value={`${posts1.Status?.Name}`} />
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                      <Col span={12}>
-                        <div style={{ margin: '24px' }}>
-                          <Input value="รายละเอียดการใช้บริการ" />
-                          <div>
-                            <Input addonBefore="คำแนะนำ" value={`${posts1.Descript}`} />
-                            <Input addonBefore="วันที่" value={`${start} ถึงวันที่ ${end}`} />
-                            <Input addonBefore="ราคา" value={`${posts1.Price} / วัน`} />
-                            <Input addonBefore="รับเลี้ยง" value={posts1.Type?.Name} />
-                          </div>
-                        </div>
-                      </Col>
-                    </div>
-                  </Card>
-                );
-              })
-            ) : (
-              <div style={{ textAlign: 'center', marginTop: '100px' }}>
-                <Title level={4}>ยังไม่มีโพสสำหรับการรอรับเลี้ยง</Title>
-              </div>
-            )}
-          </TabPane>
+        <Tabs defaultActiveKey="2" tabPosition="right">
 
           <TabPane tab="รอการยืนยัน" key="2">
             {posts2.length > 0 ? (
@@ -307,7 +226,14 @@ const Postpro: React.FC = () => {
                 });
 
                 return (
-                  <Card style={{ marginTop: '8px' }}>
+                  <Card style={{ marginTop: '8px' }} actions={[
+                    <Tooltip title="รับงาน" placement="bottom">
+                      <CheckSquareOutlined style={{ color: 'green' }} onClick={() => handleAccept(posts2.ID)} />,
+                    </Tooltip>,
+                    <Tooltip title="ไม่รับงาน" placement="bottom">
+                      <CloseSquareOutlined style={{ color: 'red' }} onClick={() => handleNonAccept(posts2.ID)} />,
+                    </Tooltip>,
+                  ]}>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
                       <div style={{ margin: '12px' }}>
                         <Avatar size={'large'} src={posts2.ServiceProvider?.Pic} />
@@ -317,13 +243,6 @@ const Postpro: React.FC = () => {
                       </div>
                       <div>
                         <Input addonBefore="สถานะ" value={`${posts2.Status?.Name}`} />
-                      </div>
-                      <div style={{ marginLeft: 'auto' }}>
-                        <Dropdown overlay={() => MenuOptions2(posts2.ID)} trigger={['click']}>
-                          <Space>
-                            <DashOutlined />
-                          </Space>
-                        </Dropdown>
                       </div>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
@@ -367,7 +286,17 @@ const Postpro: React.FC = () => {
                 });
 
                 return (
-                  <Card style={{ marginTop: '8px' }}>
+                  <Card style={{ marginTop: '8px' }} actions={[
+                    <Tooltip title="เสร็จสิ้นงาน" placement="bottom">
+                      <CheckSquareOutlined style={{ color: 'green' }} onClick={() => Finish(posts3.ID)} />
+                    </Tooltip>,
+                    <Tooltip title="อัพเดทสเตตัส" placement="bottom">
+                      <FileAddOutlined style={{ color: 'orange' }} onClick={() => gotostatuspage(posts3.ID)} />,
+                    </Tooltip>,
+                    <Tooltip title="ยกเลิกงาน" placement="bottom">
+                      <StopOutlined style={{ color: 'red' }} onClick={() => openCancle(posts3.ID)} />,
+                    </Tooltip>,
+                  ]}>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
                       <div style={{ margin: '12px' }}>
                         <Avatar size={'large'} src={posts3.ServiceProvider?.Pic} />
@@ -377,13 +306,6 @@ const Postpro: React.FC = () => {
                       </div>
                       <div>
                         <Input addonBefore="สถานะ" value={`${posts3.Status?.Name}`} />
-                      </div>
-                      <div style={{ marginLeft: 'auto' }}>
-                        <Dropdown overlay={() => MenuOptions3(posts3.ID)} trigger={['click']}>
-                          <Space>
-                            <DashOutlined />
-                          </Space>
-                        </Dropdown>
                       </div>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
@@ -409,7 +331,7 @@ const Postpro: React.FC = () => {
             )}
           </TabPane>
 
-          <TabPane tab="งานสิ้นสุด" key="4">
+          <TabPane tab="งานที่สิ้นสุดแล้ว" key="4">
             {posts4.length > 0 ? (
               posts4.map((posts4) => {
                 const startDate = new Date(posts4.Start);
@@ -461,120 +383,7 @@ const Postpro: React.FC = () => {
               </div>
             )}
           </TabPane>
-
-          <TabPane tab="ยกเลิกงาน" key="5">
-            {posts5.length > 0 ? (
-              posts5.map((posts5) => {
-                const startDate = new Date(posts5.Start);
-                const start = startDate.toLocaleDateString('th-TH', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                });
-
-                const endDate = new Date(posts5.End);
-                const end = endDate.toLocaleDateString('th-TH', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                });
-
-                return (
-                  <Card style={{ marginTop: '8px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                      <div style={{ margin: '12px' }}>
-                        <Avatar size={'large'} src={posts5.ServiceProvider?.Pic} />
-                      </div>
-                      <div style={{ marginRight: '20px' }}>
-                        <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts5.ServiceProvider?.Firstname} ${posts5.ServiceProvider?.Lastname}`} />
-                      </div>
-                      <div>
-                        <Input addonBefore="สถานะ" value={`${posts5.Status?.Name}`} />
-                      </div>
-                      <div>
-                        <Input addonBefore="หมายเหตุ" value={`${posts5.Note}`} />
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                      <Col span={12}>
-                        <div style={{ margin: '24px' }}>
-                          <Input value="รายละเอียดการใช้บริการ" />
-                          <div>
-                            <Input addonBefore="คำแนะนำ" value={`${posts5.Descript}`} />
-                            <Input addonBefore="วันที่" value={`${start} ถึงวันที่ ${end}`} />
-                            <Input addonBefore="ราคา" value={`${posts5.Price} / วัน`} />
-                            <Input addonBefore="รับเลี้ยง" value={posts5.Type?.Name} />
-                          </div>
-                        </div>
-                      </Col>
-                    </div>
-                  </Card>
-                );
-              })
-            ) : (
-              <div style={{ textAlign: 'center', marginTop: '100px' }}>
-                <Title level={4}>ยังไม่มีโพสสำหรับการยกเลิกงาน</Title>
-              </div>
-            )}
-          </TabPane>
         </Tabs>
-
-        <Modal
-          centered
-          open={postopen}
-          onCancel={() => {
-            setPostopen(false);
-          }}
-          footer={null}
-        >
-          <Col>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={2}>สร้างโพส</Title>
-            </div>
-            <Form
-              initialValues={{ remember: true }}
-              style={{ maxWidth: '300px', margin: 'auto' }}
-            >
-              <Input
-                placeholder="คำอธิบาย"
-                onChange={(e) => {
-                  setPostc({ ...postc, Descript: e.target.value });
-                }}
-              />
-              <div style={{ marginTop: '10px' }}>
-                <RangePicker
-                  placeholder={['วันที่เริ่มต้น', 'วันที่สิ้นสุด']}
-                  onChange={(date) => handleRangeDateChangeCreate(date)}
-                />
-              </div>
-              <Input
-                style={{ marginTop: '10px' }}
-                placeholder="ราคา"
-                onChange={(e) => {
-                  const price = parseInt(e.target.value);
-                  setPostc({ ...postc, Price: price });
-                }}
-              />
-              <Select
-                style={{ marginTop: '10px' }}
-                placeholder="พันธุ์สัตว์เลี้ยง"
-                onChange={(handleSelectChangeCreate)}
-              >
-                {type.map((item: TypeInterface) => (
-                  <Option value={item.ID}>{item.Name}</Option>
-                ))}
-              </Select>
-              <Button
-                style={{ marginTop: '10px', width: '100%' }}
-                type="primary"
-                htmlType="submit"
-                onClick={submit}
-              >
-                โพส
-              </Button>
-            </Form>
-          </Col>
-        </Modal>
 
         <Modal
           centered

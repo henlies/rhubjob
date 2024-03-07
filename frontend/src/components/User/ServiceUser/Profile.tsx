@@ -1,20 +1,54 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Anchor, Button, Col, Form, Input, Upload, Layout, Select, Typography, message, DatePickerProps, DatePicker, Switch, Row } from 'antd';
 import { Link } from 'react-router-dom';
-import { UserInterface } from '../../../models/User';
-import { CreateAddress, CreatePet, GetAddressID, GetBlood, GetDistricts, GetGender, GetGene, GetPetID, GetPrefix, GetProvicne, GetServiceUserByUID, GetType, GetZipcodeDID, UpdateAddress, UpdatePet, UpdateServiceDetail } from '../../../services/HttpServices';
-import type { UploadProps } from 'antd';
-import { PrefixInterface } from '../../../models/Prefix';
-import { GenderInterface } from '../../../models/Gender';
-import { BloodInterface } from '../../../models/Blood';
-import dayjs from 'dayjs';
+import {
+  Col,
+  Row,
+  Form,
+  Input,
+  Anchor,
+  Switch,
+  Button,
+  Upload,
+  Layout,
+  Select,
+  message,
+  DatePicker,
+  Typography,
+  DatePickerProps,
+} from 'antd';
+import {
+  GetGene,
+  GetType,
+  GetBlood,
+  GetPetID,
+  CreatePet,
+  GetGender,
+  UpdatePet,
+  GetPrefix,
+  GetProvicne,
+  GetDistricts,
+  GetAddressID,
+  CreateAddress,
+  GetZipcodeDID,
+  UpdateAddress,
+  UpdateServiceDetail,
+  GetServiceUserByUID,
+} from '../../../services/HttpServices';
 import { PetInterface } from '../../../models/Pet';
-import { TypeInterface } from '../../../models/Type';
+import { UserInterface } from '../../../models/User';
 import { GeneInterface } from '../../../models/Gene';
+import { TypeInterface } from '../../../models/Type';
+import { BloodInterface } from '../../../models/Blood';
+import { GenderInterface } from '../../../models/Gender';
+import { PrefixInterface } from '../../../models/Prefix';
 import { AddressInterface } from '../../../models/Address';
 import { ProvinceInterface } from '../../../models/Province';
 import { DistrictInterface } from '../../../models/District';
+import dayjs from 'dayjs';
+import type { UploadProps } from 'antd';
 
 type FileType = Parameters<NonNullable<UploadProps['beforeUpload']>>[0];
 
@@ -98,7 +132,6 @@ const Profile: React.FC = () => {
       getprovince();
 
       setZipcode(res.Address.District.Zipcode);
-
     }
   }
 
@@ -337,7 +370,6 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     fetchinfoall();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(zipcode);
@@ -514,10 +546,10 @@ const Profile: React.FC = () => {
                     onChange={handleChangeServiceUser}
                   >
                     {imageUrl ? (
-                      <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
+                      <img src={imageUrl} style={{ width: '100%' }} />
                     ) : (
                       <div>
-                        <img src={useru.Pic} alt="avatar" style={{ width: '100%' }} />
+                        <img src={useru.Pic} style={{ width: '100%' }} />
                       </div>
                     )}
                   </Upload>
@@ -601,7 +633,7 @@ const Profile: React.FC = () => {
                 />
                 <div style={{ margin: '4px' }}>
                   <Upload
-                    name="avatar"
+                    // name="avatar"
                     listType="picture-card"
                     className="avatar-uploader"
                     showUploadList={false}
@@ -610,10 +642,10 @@ const Profile: React.FC = () => {
                     onChange={handleChangePet}
                   >
                     {imageUrlpet ? (
-                      <img src={imageUrlpet} alt="avatar" style={{ width: '100%' }} />
+                      <img src={imageUrlpet} style={{ width: '100%' }} />
                     ) : (
                       <div>
-                        <img src={petu.Pic} alt="avatar" style={{ width: '100%' }} />
+                        <img src={petu.Pic} style={{ width: '100%' }} />
                       </div>
                     )}
                   </Upload>

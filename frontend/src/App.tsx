@@ -22,7 +22,8 @@ import PostStatus from './components/User/ServiceProvider/PostStatus';
 import Postpro from './components/User/ServiceProvider/Postpro';
 
 import Error403 from './components/403';
-import DashboardUser from './components/User/DashboardUser';
+import DashboardUser from './components/User/ServiceUser/DashboardUser';
+import DashboardPro from './components/User/ServiceProvider/DashboardPro';
 
 const App: React.FC = () => {
   const petid = localStorage.getItem("petid")
@@ -101,7 +102,7 @@ const App: React.FC = () => {
                 )}
                 {role === "ผู้ให้บริการ" && (
                   <>
-                    <Route path="/" element={<DashboardUser />} />
+                    <Route path="/" element={<DashboardPro />} />
                     <Route path="/post" element={<Postpro />} />
                     <Route path="/post-status/:postId" element={<PostStatus />} />
                     <Route path="*" element={<Error403 />} />

@@ -15,16 +15,16 @@ import {
 } from 'antd';
 import {
   GetBlood,
-  GetGender,
   GetPrefix,
-  UpdateServiceDetail,
+  GetGender,
   GetServiceUserByUID,
+  UpdateServiceDetail,
   GetServiceProviderByUID,
-} from '../../services/HttpServices';
-import { UserInterface } from '../../models/User';
-import { BloodInterface } from '../../models/Blood';
-import { GenderInterface } from '../../models/Gender';
-import { PrefixInterface } from '../../models/Prefix';
+} from '../../../services/HttpServices';
+import { UserInterface } from '../../../models/User';
+import { BloodInterface } from '../../../models/Blood';
+import { GenderInterface } from '../../../models/Gender';
+import { PrefixInterface } from '../../../models/Prefix';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import type { UploadProps } from 'antd';
 
@@ -203,7 +203,7 @@ const DashboardUser: React.FC = () => {
           <Col span={2}>
           </Col>
         </div>
-        <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '24px', alignItems: 'start' }}>
+        {/* <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '24px', alignItems: 'start' }}>
           <Col span={12}>
             <div style={{ textAlign: 'center' }}>
               <Title level={4}>ความคืบหน้า</Title>
@@ -216,7 +216,7 @@ const DashboardUser: React.FC = () => {
               <div id="chartdiv" style={{ width: '909px', height: '404px' }}></div>
             </div>
           </Col>
-        </div>
+        </div> */}
 
         <Modal
           centered

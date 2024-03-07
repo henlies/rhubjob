@@ -74,7 +74,7 @@ const Poststatus: React.FC = () => {
                   <Card style={{ marginTop: '8px' }}>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
                       <div style={{ margin: '12px' }}>
-                        <Image style={{ borderRadius: '50%' }} width={50} src={post.ServiceProvider?.Pic}/>
+                        <Image style={{ borderRadius: '50%' }} width={50} src={post.ServiceProvider?.Pic} />
                       </div>
                       <div style={{ marginRight: '20px' }}>
                         <Input addonBefore="ชื่อผู้ให้บริการ" value={`${post.ServiceProvider?.Prefix?.Name} ${post.ServiceProvider?.Firstname} ${post.ServiceProvider?.Lastname}`} />
@@ -106,10 +106,10 @@ const Poststatus: React.FC = () => {
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
                       <Col span={12}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                          <div style={{ marginBottom: '16px' }}>
-                            <Image style={{ borderRadius: '50%' }} width={95} src={post.ServiceUser?.Pic}/>
-                          </div>
                           <Input addonBefore="ชื่อผู้ใช้บริการ" value={`${post.ServiceUser?.Prefix?.Name} ${post.ServiceUser?.Firstname} ${post.ServiceUser?.Lastname}`} />
+                          <div style={{ marginBottom: '8px', marginTop: '8px' }}>
+                            <Image style={{ borderRadius: '50%' }} width={95} src={post.ServiceUser?.Pic} />
+                          </div>
                           <Input addonBefore="เจ้าของ" value={`${post.ServiceUser?.Pet?.Name}`} />
                           <Input addonBefore="วันเกิด" value={`${birth}`} />
                           <Input addonBefore="สถานะ" value={`${post.ServiceUser?.Descript}`} />
@@ -118,7 +118,7 @@ const Poststatus: React.FC = () => {
                       <Col span={12}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
                           <div>
-                            <div style={{ marginBottom: "16px" }}>
+                            <div style={{ marginBottom: "16px"}}>
                               <Input value="ช่องทางการติดต่อ" />
                             </div>
                             <Input addonBefore="ที่อยู่" value={`${post.ServiceUser?.Address?.Descript} ต.  ${post.ServiceUser?.Address?.District?.Name} จ.${post.ServiceUser?.Address?.District?.Province?.Name} รหัสไปรษณี ${post.ServiceUser?.Address?.District?.Zipcode}`} />
@@ -142,7 +142,7 @@ const Poststatus: React.FC = () => {
                             <Input addonBefore="ชื่อ" value={`${post.ServiceUser?.Pet?.Name}`} />
                           </div>
                           <div>
-                            <Image width={100} src={post.ServiceUser?.Pet?.Pic}/>
+                            <Image width={100} src={post.ServiceUser?.Pet?.Pic} />
                           </div>
                         </div>
                       </Col>

@@ -72,12 +72,12 @@ func main() {
 	app.Get("/poststatus2/:id", controller.GetPostShowIDstatus2)
 	app.Get("/poststatus3/:id", controller.GetPostShowIDstatus3)
 	app.Get("/poststatus4/:id", controller.GetPostShowIDstatus4)
-	app.Get("/poststatus5/:id", controller.GetPostShowIDstatus5)
 
 	app.Post("/post", controller.CreatePost)
 	app.Patch("/post", controller.UpdatePost)
 	app.Delete("/post/:id", controller.DeletePost)
 	app.Patch("/canclepost", controller.CanclePost)
+	app.Delete("/finishpost/:id", controller.FinishPost)
 	app.Delete("/acceptpost/:id", controller.AcceptPost)
 	app.Delete("/nonacceptpost/:id", controller.NonAcceptPost)
 
