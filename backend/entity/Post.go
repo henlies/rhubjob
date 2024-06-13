@@ -21,4 +21,6 @@ type Post struct {
 	StatusID           uint            `json:"StatusID"`
 	Status             Status          `gorm:"references:ID" json:"Status"`
 	Note               string          `json:"Note"`
+	Notify             []Notify        `gorm:"foreignKey:Post_ID"`
+	Rate               int             `json:"Rate"`
 }

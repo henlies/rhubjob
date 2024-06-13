@@ -3,6 +3,7 @@ import { UserSigninJobInterface, UserSigninUseInterface } from "../models/UserSi
 import { PostCInterface, PostEInterface } from "../models/Post";
 import { PetInterface } from "../models/Pet";
 import { AddressInterface } from "../models/Address";
+import { NotifyInterface } from "../models/Notify";
 
 const apiUrl = "http://localhost:8080";
 const getRequestOptions = {
@@ -154,6 +155,27 @@ async function CreateAddress(data: AddressInterface) {
         .then((res) => {
             if (res.data) {
                 localStorage.setItem("petid", res.data.ID);
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function CreateNotify (data: NotifyInterface) {
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    };
+    let res = await fetch(`${apiUrl}/createnotify`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
                 return res.data;
             } else {
                 return false;
@@ -536,6 +558,57 @@ async function GetPostbyPId(id?: number) {
     return res;
 };
 
+async function GetNotifyNow (id?: number) {
+    let res = await fetch(`${apiUrl}/notifynow/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function ShowNotifyHistoryByID (id?: number) {
+    let res = await fetch(`${apiUrl}/notifyhistorypro/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function ShowNotifyCheckHistoryByID (id?: number) {
+    let res = await fetch(`${apiUrl}/notifycheckhistorypro/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function listserviceprovider (id?: number) {
+    let res = await fetch(`${apiUrl}/listserviceprovider`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
 
 async function ApproveUser(id?: number) {
     let res = await fetch(`${apiUrl}/userapprove/${id}`, deleteRequestOptions)
@@ -654,6 +727,19 @@ async function NonAcceptPost(id?: number) {
     return res;
 };
 
+async function SelectPost(id?: number, uid?: number) {
+    let res = await fetch(`${apiUrl}/selectpost/${id}/${uid}`, deleteRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
 export {
     GetSignin,
     CreateUserSigninUse,
@@ -661,6 +747,7 @@ export {
     CreatePost,
     CreatePet,
     CreateAddress,
+    CreateNotify,
 
     UpdatePost,
     UpdateServiceDetail,
@@ -688,6 +775,10 @@ export {
     GetPostShowIDstatus4,
     GetPostbyId,
     GetPostbyPId,
+    GetNotifyNow,
+    ShowNotifyHistoryByID,
+    ShowNotifyCheckHistoryByID,
+    listserviceprovider,
 
     ApproveUser,
     DeleteServiceUser,
@@ -698,4 +789,5 @@ export {
     FinishPost,
     AcceptPost,
     NonAcceptPost,
+    SelectPost,
 };

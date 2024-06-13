@@ -116,9 +116,9 @@ const Navbar: React.FC = () => {
         } else if (signinuserjob.Pass !== checkpass) {
             openAlert('error', 'รหัสผ่านไม่ตรงกัน');
         } else if ((signinuserjob.Phone && !isValidPhone(signinuserjob.Phone)) || (!signinuserjob.Phone || signinuserjob.Phone === '')) {
-            openAlert('error', 'กรุณาใส่อีเมลที่ถูกต้อง');
-        } else if ((signinuserjob.Email && !isValidEmail(signinuserjob.Email)) || (!signinuserjob.Email || signinuserjob.Email === '')) {
             openAlert('error', 'กรุณาใส่เบอร์โทรศัพท์ 10 ตัว');
+        } else if ((signinuserjob.Email && !isValidEmail(signinuserjob.Email)) || (!signinuserjob.Email || signinuserjob.Email === '')) {
+            openAlert('error', 'กรุณาใส่อีเมลที่ถูกต้อง');
         } else {
             let data = {
                 User: signinuserjob.User,
@@ -342,6 +342,7 @@ const Navbar: React.FC = () => {
                                     <Input
                                         prefix={<PhoneOutlined />}
                                         placeholder="เบอร์โทรศัพท์"
+                                        type='number'
                                         onChange={(e) => {
                                             setSigninUserJob({ ...signinuserjob, Phone: e.target.value })
                                         }}

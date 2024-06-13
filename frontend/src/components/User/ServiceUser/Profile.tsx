@@ -126,11 +126,8 @@ const Profile: React.FC = () => {
       getprefix();
       getgender();
       getblood();
-
       gettype();
-
       getprovince();
-
       setZipcode(res.Address.District.Zipcode);
     }
   }
@@ -372,16 +369,14 @@ const Profile: React.FC = () => {
     fetchinfoall();
   }, []);
 
-  console.log(zipcode);
-
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
-        <div style={{ display: 'flex', marginBottom: '64px', marginTop: '64px', marginLeft: '24px', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', marginBottom: '32px', marginTop: '32px', marginLeft: '24px', alignItems: 'center', justifyContent: 'center' }}>
           <Col span={2}>
             <div style={{ textAlign: 'center' }}>
               <Link to={`/`}>
-                <Button>
+                <Button style={{ background: '#999999', color: 'white' }}>
                   กลับ
                 </Button>
               </Link>
@@ -389,335 +384,315 @@ const Profile: React.FC = () => {
           </Col>
           <Col span={20}>
             <div style={{ textAlign: 'center' }}>
-              <Title level={3}>แจ้งสถานะความคืบหน้า</Title>
+              <Title level={3}>แก้ไขข้อมูลส่วนตัว</Title>
             </div>
           </Col>
           <Col span={2}>
           </Col>
         </div>
         <div>
-          <Anchor
-            direction="horizontal"
-            items={[
-              {
-                key: 'detail',
-                href: '#detail',
-                title: 'ข้อมูลส่วนตัว',
-              },
-              {
-                key: 'pet',
-                href: '#pet',
-                title: 'ข้อมูลสัตว์เลี้ยง',
-              },
-              {
-                key: 'address',
-                href: '#address',
-                title: 'ข้อมูลที่อยู่',
-              },
-            ]}
-          />
-        </div>
-        <div>
-          <Layout id="detail" style={{ minHeight: '100vh' }}>
-            <Content style={{ margin: '16px' }}>
-              <Row>
-                <Col span={12} offset={6}>
-                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: '4px' }}>
-                    <Title level={3}>ข้อมูลส่วนตัว</Title>
-                    <Switch onChange={ChangeDisabled1} />
-                  </div>
-                </Col>
-              </Row>
-              <Form
-                initialValues={{ remember: true }}
-                style={{ maxWidth: '300px', margin: 'auto' }}
-                disabled={disabled1}
-              >
-                <Input
-                  style={{ margin: '4px' }}
-                  value={useru.PersonalID}
-                  placeholder="รหัสบัตรประชาชน"
-                  onChange={(e) => {
-                    const personal = parseInt(e.target.value);
-                    setUseru({ ...useru, PersonalID: personal });
-                  }}
-                />
-                <Select
-                  style={{ margin: '4px' }}
-                  value={useru.PrefixID}
-                  placeholder="คำนำหน้าชื่อ"
-                  onChange={(handleSelectPrefix)}
+          <Row gutter={24}>
+            <Col span={8}>
+              <Content style={{ margin: '16px' }}>
+                <Row>
+                  <Col span={12} offset={6}>
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: '4px' }}>
+                      <Title level={3}>ข้อมูลส่วนตัว</Title>
+                      <Switch onChange={ChangeDisabled1} />
+                    </div>
+                  </Col>
+                </Row>
+                <Form
+                  initialValues={{ remember: true }}
+                  style={{ maxWidth: '300px', margin: 'auto' }}
+                  disabled={disabled1}
                 >
-                  {prefix.map((item: PrefixInterface) => (
-                    <Option value={item.ID}>{item.Name}</Option>
-                  ))}
-                </Select>
-                <Input
-                  style={{ margin: '4px' }}
-                  value={useru.Firstname}
-                  placeholder="ชื่อจริง"
-                  onChange={(e) => {
-                    setUseru({ ...useru, Firstname: e.target.value });
-                  }}
-                />
-                <Input
-                  style={{ margin: '4px' }}
-                  value={useru.Lastname}
-                  placeholder="นามสกุล"
-                  onChange={(e) => {
-                    setUseru({ ...useru, Lastname: e.target.value });
-                  }}
-                />
-                <Input
-                  style={{ margin: '4px' }}
-                  value={useru.Nickname}
-                  placeholder="ชื่อเล่น"
-                  onChange={(e) => {
-                    setUseru({ ...useru, Nickname: e.target.value });
-                  }}
-                />
-                <Select
-                  style={{ margin: '4px' }}
-                  value={useru.GenderID}
-                  placeholder="เพศ"
-                  onChange={(handleSelectGender)}
-                >
-                  {gender.map((item: GenderInterface) => (
-                    <Option value={item.ID}>{item.Name}</Option>
-                  ))}
-                </Select>
-                <Input
-                  style={{ margin: '4px' }}
-                  value={useru.Phone}
-                  placeholder="เบอร์โทร"
-                  onChange={(e) => {
-                    setUseru({ ...useru, Phone: e.target.value });
-                  }}
-                />
-                <Input
-                  style={{ margin: '4px' }}
-                  value={useru.Email}
-                  placeholder="อีเมล"
-                  onChange={(e) => {
-                    setUseru({ ...useru, Email: e.target.value });
-                  }}
-                />
-                <Input
-                  style={{ margin: '4px' }}
-                  value={useru.Line}
-                  placeholder="ไลน์"
-                  onChange={(e) => {
-                    setUseru({ ...useru, Line: e.target.value });
-                  }}
-                />
-                <div style={{ margin: '4px' }}>
-                  <DatePicker
-                    value={useru.Birth ? dayjs(useru.Birth) : null}
-                    placeholder="วันเกิด"
-                    onChange={onChangeDate}
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={useru.PersonalID}
+                    placeholder="รหัสบัตรประชาชน"
+                    onChange={(e) => {
+                      const personal = parseInt(e.target.value);
+                      setUseru({ ...useru, PersonalID: personal });
+                    }}
                   />
-                </div>
-                <Select
-                  style={{ margin: '4px' }}
-                  value={useru.BloodID}
-                  placeholder="กรุ๊ปเลือด"
-                  onChange={(handleSelectBlood)}
-                >
-                  {blood.map((item: BloodInterface) => (
-                    <Option value={item.ID}>{item.Name}</Option>
-                  ))}
-                </Select>
-                <Input
-                  style={{ margin: '4px' }}
-                  value={useru.Descript}
-                  placeholder="หมายเหตุ"
-                  onChange={(e) => {
-                    setUseru({ ...useru, Descript: e.target.value });
-                  }}
-                />
-                <div style={{ margin: '4px' }}>
-                  <Upload
-                    name="avatar"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                    beforeUpload={beforeUpload}
-                    onChange={handleChangeServiceUser}
+                  <Select
+                    style={{ margin: '4px' }}
+                    value={useru.PrefixID}
+                    placeholder="คำนำหน้าชื่อ"
+                    onChange={(handleSelectPrefix)}
                   >
-                    {imageUrl ? (
-                      <img src={imageUrl} style={{ width: '100%' }} />
-                    ) : (
-                      <div>
-                        <img src={useru.Pic} style={{ width: '100%' }} />
-                      </div>
-                    )}
-                  </Upload>
-                </div>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  onClick={submitdetail}
-                >
-                  ยืนยัน
-                </Button>
-              </Form>
-            </Content>
-          </Layout>
-          <Layout id="pet" style={{ minHeight: '100vh' }}>
-            <Content style={{ margin: '16px' }}>
-              <Row>
-                <Col span={12} offset={6}>
-                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: '4px' }}>
-                    <Title level={3}>ข้อมูลสัตว์เลี้ยง</Title>
-                    <Switch onChange={ChangeDisabled2} />
-                  </div>
-                </Col>
-              </Row>
-              <Form
-                initialValues={{ remember: true }}
-                style={{ maxWidth: '300px', margin: 'auto' }}
-                disabled={disabled2}
-              >
-                <Input
-                  style={{ margin: '4px' }}
-                  value={petu.Name}
-                  placeholder="ชื่อ"
-                  onChange={(e) => {
-                    setPetu({ ...petu, Name: e.target.value });
-                  }}
-                />
-                <Select
-                  style={{ margin: '4px' }}
-                  value={petu.TypeID}
-                  placeholder="ชนิด"
-                  onChange={(handleSelectType)}
-                >
-                  {type.map((item: TypeInterface) => (
-                    <Option value={item.ID}>{item.Name}</Option>
-                  ))}
-                </Select>
-                <Select
-                  style={{ margin: '4px' }}
-                  value={petu.GeneID}
-                  placeholder="สายพันธุ์"
-                  onChange={(handleSelectGene)}
-                >
-                  {gene.map((item: GeneInterface) => (
-                    <Option value={item.ID}>{item.Name}</Option>
-                  ))}
-                </Select>
-                <Input
-                  style={{ margin: '4px' }}
-                  value={petu.Food}
-                  placeholder="อาหาร"
-                  onChange={(e) => {
-                    setPetu({ ...petu, Food: e.target.value });
-                  }}
-                />
-                <Input
-                  style={{ margin: '4px' }}
-                  value={petu.Habit}
-                  placeholder="นิสัย"
-                  onChange={(e) => {
-                    setPetu({ ...petu, Habit: e.target.value });
-                  }}
-                />
-                <Input
-                  style={{ margin: '4px' }}
-                  value={petu.Descript}
-                  placeholder="คำแนะนำ"
-                  onChange={(e) => {
-                    setPetu({ ...petu, Descript: e.target.value });
-                  }}
-                />
-                <div style={{ margin: '4px' }}>
-                  <Upload
-                    // name="avatar"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                    beforeUpload={beforeUpload}
-                    onChange={handleChangePet}
+                    {prefix.map((item: PrefixInterface) => (
+                      <Option value={item.ID}>{item.Name}</Option>
+                    ))}
+                  </Select>
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={useru.Firstname}
+                    placeholder="ชื่อจริง"
+                    onChange={(e) => {
+                      setUseru({ ...useru, Firstname: e.target.value });
+                    }}
+                  />
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={useru.Lastname}
+                    placeholder="นามสกุล"
+                    onChange={(e) => {
+                      setUseru({ ...useru, Lastname: e.target.value });
+                    }}
+                  />
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={useru.Nickname}
+                    placeholder="ชื่อเล่น"
+                    onChange={(e) => {
+                      setUseru({ ...useru, Nickname: e.target.value });
+                    }}
+                  />
+                  <Select
+                    style={{ margin: '4px' }}
+                    value={useru.GenderID}
+                    placeholder="เพศ"
+                    onChange={(handleSelectGender)}
                   >
-                    {imageUrlpet ? (
-                      <img src={imageUrlpet} style={{ width: '100%' }} />
-                    ) : (
-                      <div>
-                        <img src={petu.Pic} style={{ width: '100%' }} />
-                      </div>
-                    )}
-                  </Upload>
-                </div>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  onClick={submitpet}
-                >
-                  ยืนยัน
-                </Button>
-              </Form>
-            </Content>
-          </Layout>
-          <Layout id="address" style={{ minHeight: '100vh' }}>
-            <Content style={{ margin: '16px' }}>
-              <Row>
-                <Col span={12} offset={6}>
-                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: '4px' }}>
-                    <Title level={3}>ข้อมูลที่อยู่</Title>
-                    <Switch onChange={ChangeDisabled3} />
+                    {gender.map((item: GenderInterface) => (
+                      <Option value={item.ID}>{item.Name}</Option>
+                    ))}
+                  </Select>
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={useru.Phone}
+                    placeholder="เบอร์โทร"
+                    onChange={(e) => {
+                      setUseru({ ...useru, Phone: e.target.value });
+                    }}
+                  />
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={useru.Email}
+                    placeholder="อีเมล"
+                    onChange={(e) => {
+                      setUseru({ ...useru, Email: e.target.value });
+                    }}
+                  />
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={useru.Line}
+                    placeholder="ไลน์"
+                    onChange={(e) => {
+                      setUseru({ ...useru, Line: e.target.value });
+                    }}
+                  />
+                  <div style={{ margin: '4px' }}>
+                    <DatePicker
+                      value={useru.Birth ? dayjs(useru.Birth) : null}
+                      placeholder="วันเกิด"
+                      onChange={onChangeDate}
+                    />
                   </div>
-                </Col>
-              </Row>
-              <Form
-                initialValues={{ remember: true }}
-                style={{ maxWidth: '300px', margin: 'auto' }}
-                disabled={disabled3}
-              >
-                <Input
-                  style={{ margin: '4px' }}
-                  value={addressu.Descript}
-                  placeholder="บ้านเลขที่ หมู่บ้าน ชื่อบ้าน"
-                  onChange={(e) => {
-                    setAddressu({ ...addressu, Descript: e.target.value });
-                  }}
-                />
-                <Select
-                  style={{ margin: '4px' }}
-                  value={addressu.DistrictID}
-                  placeholder="อำเภอ"
-                  onChange={(handleSelectDistrict)}
+                  <Select
+                    style={{ margin: '4px' }}
+                    value={useru.BloodID}
+                    placeholder="กรุ๊ปเลือด"
+                    onChange={(handleSelectBlood)}
+                  >
+                    {blood.map((item: BloodInterface) => (
+                      <Option value={item.ID}>{item.Name}</Option>
+                    ))}
+                  </Select>
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={useru.Descript}
+                    placeholder="หมายเหตุ"
+                    onChange={(e) => {
+                      setUseru({ ...useru, Descript: e.target.value });
+                    }}
+                  />
+                  <div style={{ margin: '20px 4px' }}>
+                    <Upload
+                      name="avatar"
+                      listType="picture-card"
+                      className="avatar-uploader"
+                      showUploadList={false}
+                      action="https://run.mocky.io/v3/fbff9f74-4608-4cc3-b380-3cb87ac32806"
+                      beforeUpload={beforeUpload}
+                      onChange={handleChangeServiceUser}
+                    >
+                      {imageUrl ? (
+                        <img src={imageUrl} style={{ width: '100%' }} />
+                      ) : (
+                        <div>
+                          <img src={useru.Pic} style={{ width: '100%' }} />
+                        </div>
+                      )}
+                    </Upload>
+                  </div>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={submitdetail}
+                  >
+                    ยืนยัน
+                  </Button>
+                </Form>
+              </Content>
+            </Col>
+            <Col span={8}>
+              <Content style={{ margin: '16px' }}>
+                <Row>
+                  <Col span={12} offset={6}>
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: '4px' }}>
+                      <Title level={3}>ข้อมูลสัตว์เลี้ยง</Title>
+                      <Switch onChange={ChangeDisabled2} />
+                    </div>
+                  </Col>
+                </Row>
+                <Form
+                  initialValues={{ remember: true }}
+                  style={{ maxWidth: '300px', margin: 'auto' }}
+                  disabled={disabled2}
                 >
-                  {district.map((item: DistrictInterface) => (
-                    <Option value={item.ID}>{item.Name}</Option>
-                  ))}
-                </Select>
-                <Select
-                  style={{ margin: '4px' }}
-                  value={addressu.ProvinceID}
-                  placeholder="จังหวัด"
-                  onChange={(handleSelectProvince)}
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={petu.Name}
+                    placeholder="ชื่อ"
+                    onChange={(e) => {
+                      setPetu({ ...petu, Name: e.target.value });
+                    }}
+                  />
+                  <Select
+                    style={{ margin: '4px' }}
+                    value={petu.TypeID}
+                    placeholder="ชนิด"
+                    onChange={(handleSelectType)}
+                  >
+                    {type.map((item: TypeInterface) => (
+                      <Option value={item.ID}>{item.Name}</Option>
+                    ))}
+                  </Select>
+                  <Select
+                    style={{ margin: '4px' }}
+                    value={petu.GeneID}
+                    placeholder="สายพันธุ์"
+                    onChange={(handleSelectGene)}
+                  >
+                    {gene.map((item: GeneInterface) => (
+                      <Option value={item.ID}>{item.Name}</Option>
+                    ))}
+                  </Select>
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={petu.Food}
+                    placeholder="อาหาร"
+                    onChange={(e) => {
+                      setPetu({ ...petu, Food: e.target.value });
+                    }}
+                  />
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={petu.Habit}
+                    placeholder="นิสัย"
+                    onChange={(e) => {
+                      setPetu({ ...petu, Habit: e.target.value });
+                    }}
+                  />
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={petu.Descript}
+                    placeholder="คำแนะนำ"
+                    onChange={(e) => {
+                      setPetu({ ...petu, Descript: e.target.value });
+                    }}
+                  />
+                  <div style={{ margin: '40px 4px' }}>
+                    <Upload
+                      // name="avatar"
+                      listType="picture-card"
+                      className="avatar-uploader"
+                      showUploadList={false}
+                      action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                      beforeUpload={beforeUpload}
+                      onChange={handleChangePet}
+                    >
+                      {imageUrlpet ? (
+                        <img src={imageUrlpet} style={{ width: '100%' }} />
+                      ) : (
+                        <div>
+                          <img src={petu.Pic} style={{ width: '100%' }} />
+                        </div>
+                      )}
+                    </Upload>
+                  </div>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={submitpet}
+                  >
+                    ยืนยัน
+                  </Button>
+                </Form>
+              </Content>
+            </Col>
+            <Col span={8}>
+              <Content style={{ margin: '16px' }}>
+                <Row>
+                  <Col span={12} offset={6}>
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: '4px' }}>
+                      <Title level={3}>ข้อมูลที่อยู่</Title>
+                      <Switch onChange={ChangeDisabled3} />
+                    </div>
+                  </Col>
+                </Row>
+                <Form
+                  initialValues={{ remember: true }}
+                  style={{ maxWidth: '300px', margin: 'auto' }}
+                  disabled={disabled3}
                 >
-                  {province.map((item: ProvinceInterface) => (
-                    <Option value={item.ID}>{item.Name}</Option>
-                  ))}
-                </Select>
-                <Input
-                  style={{ margin: '4px' }}
-                  value={zipcode}
-                  placeholder="รหัสไปรษณี"
-                />
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  onClick={submitaddress}
-                >
-                  ยืนยัน
-                </Button>
-              </Form>
-            </Content>
-          </Layout>
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={addressu.Descript}
+                    placeholder="บ้านเลขที่ หมู่บ้าน ชื่อบ้าน"
+                    onChange={(e) => {
+                      setAddressu({ ...addressu, Descript: e.target.value });
+                    }}
+                  />
+                  <Select
+                    style={{ margin: '4px' }}
+                    value={addressu.ProvinceID}
+                    placeholder="จังหวัด"
+                    onChange={(handleSelectProvince)}
+                  >
+                    {province.map((item: ProvinceInterface) => (
+                      <Option value={item.ID}>{item.Name}</Option>
+                    ))}
+                  </Select>
+                  <Select
+                    style={{ margin: '4px' }}
+                    value={addressu.DistrictID}
+                    placeholder="อำเภอ"
+                    onChange={(handleSelectDistrict)}
+                  >
+                    {district.map((item: DistrictInterface) => (
+                      <Option value={item.ID}>{item.Name}</Option>
+                    ))}
+                  </Select>
+                  <Input
+                    style={{ margin: '4px' }}
+                    value={zipcode}
+                    placeholder="รหัสไปรษณี"
+                  />
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={submitaddress}
+                  >
+                    ยืนยัน
+                  </Button>
+                </Form>
+              </Content>
+            </Col>
+          </Row>
         </div>
       </Content>
     </Layout>

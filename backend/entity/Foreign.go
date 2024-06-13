@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -83,4 +85,15 @@ type Status struct {
 	gorm.Model
 	Name string `json:"Name"`
 	Post []Post `gorm:"foreignKey:StatusID"`
+}
+
+// ===== Use in Post =====
+type Notify struct {
+	gorm.Model
+	Text    string    `json:"Text"`
+	Date    time.Time `json:"Date"`
+	Health  string    `json:"Health"`
+	Clean   string    `json:"Clean"`
+	Post_ID uint      `json:"Post_ID"`
+	Post    Post      `gorm:"references:ID" json:"Post"`
 }

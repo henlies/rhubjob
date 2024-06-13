@@ -38,6 +38,7 @@ import {
   FileAddOutlined,
   CheckSquareOutlined,
   CloseSquareOutlined,
+  HistoryOutlined,
 } from '@ant-design/icons';
 import { TypeInterface } from '../../../models/Type';
 import { useNavigate } from 'react-router-dom';
@@ -45,6 +46,7 @@ import TabPane from 'antd/es/tabs/TabPane';
 import dayjs, { Dayjs } from 'dayjs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Content } from 'antd/es/layout/layout';
+import './styles.css';
 
 const Postpro: React.FC = () => {
   const { Option } = Select;
@@ -66,6 +68,9 @@ const Postpro: React.FC = () => {
   const [postedit, setPostedit] = useState(false);
   const [postcancle, setPostCancle] = useState(false);
 
+  const date = new Date();
+
+  // const [isDisabled, setIsDisabled] = useState(false);
 
   const getpostshow = async () => {
     let res2 = await GetPostShowIDstatus2(numId);
@@ -166,6 +171,10 @@ const Postpro: React.FC = () => {
     setPostCancle(true);
   }
 
+  const history = async (id?: number) => {
+    navigate(`/history-post/${id}`);
+  };
+
   const gotostatuspage = (id?: number) => {
     navigate(`/post-status/${id}`);
   };
@@ -191,20 +200,21 @@ const Postpro: React.FC = () => {
   useEffect(() => {
     getpostshow();
     gettype();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
-        <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '24px', alignItems: 'center', justifyContent: 'center' }}>
-          <Col span={20}>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={3}>รายการรับเลี้ยงของคุณ</Title>
-            </div>
-          </Col>
-          <Col span={4}>
-          </Col>
+        <div style={{ background: '#fff', textAlign: 'center', borderRadius: 8, }}>
+          <div style={{ display: 'flex', marginBottom: '64px', marginTop: '64px', alignItems: 'center', justifyContent: 'center' }}>
+            <Col>
+              <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                <Title level={3}>รายการรับเลี้ยงของคุณ</Title>
+              </div>
+            </Col>
+          </div>
         </div>
         <Tabs defaultActiveKey="2" tabPosition="right">
 
@@ -226,44 +236,50 @@ const Postpro: React.FC = () => {
                 });
 
                 return (
-                  <Card style={{ marginTop: '8px' }} actions={[
-                    <Tooltip title="รับงาน" placement="bottom">
-                      <CheckSquareOutlined style={{ color: 'green' }} onClick={() => handleAccept(posts2.ID)} />,
-                    </Tooltip>,
-                    <Tooltip title="ไม่รับงาน" placement="bottom">
-                      <CloseSquareOutlined style={{ color: 'red' }} onClick={() => handleNonAccept(posts2.ID)} />,
-                    </Tooltip>,
-                  ]}>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                      <div style={{ margin: '12px' }}>
-                        <Avatar size={'large'} src={posts2.ServiceProvider?.Pic} />
-                      </div>
-                      <div style={{ marginRight: '20px' }}>
-                        <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts2.ServiceProvider?.Firstname} ${posts2.ServiceProvider?.Lastname}`} />
-                      </div>
-                      <div>
-                        <Input addonBefore="สถานะ" value={`${posts2.Status?.Name}`} />
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                      <Col span={12}>
-                        <div style={{ margin: '24px' }}>
-                          <Input value="รายละเอียดการใช้บริการ" />
-                          <div>
-                            <Input addonBefore="คำแนะนำ" value={`${posts2.Descript}`} />
-                            <Input addonBefore="วันที่" value={`${start} ถึงวันที่ ${end}`} />
-                            <Input addonBefore="ราคา" value={`${posts2.Price} / วัน`} />
-                            <Input addonBefore="รับเลี้ยง" value={posts2.Type?.Name} />
-                          </div>
+                  <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                    <Card style={{ marginTop: '8px' }} bordered={false} actions={[
+                      <Tooltip title="รับงาน" placement="bottom">
+                        <CheckSquareOutlined style={{ color: 'green' }} onClick={() => handleAccept(posts2.ID)} />,
+                      </Tooltip>,
+                      <Tooltip title="ไม่รับงาน" placement="bottom">
+                        <CloseSquareOutlined style={{ color: 'red' }} onClick={() => handleNonAccept(posts2.ID)} />,
+                      </Tooltip>,
+                    ]}>
+                      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
+                        <div style={{ margin: '12px' }}>
+                          <Avatar size={'large'} src={posts2.ServiceProvider?.Pic} />
                         </div>
-                      </Col>
-                    </div>
-                  </Card>
+                        <div style={{ marginRight: '20px' }}>
+                          <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts2.ServiceProvider?.Firstname} ${posts2.ServiceProvider?.Lastname}`} />
+                        </div>
+                        <div>
+                          <Input addonBefore="สถานะ" value={`${posts2.Status?.Name}`} />
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
+                        <Col span={12}>
+                          <div style={{ margin: '24px' }}>
+                            <Input value="รายละเอียดการใช้บริการ" />
+                            <div>
+                              <Input addonBefore="คำแนะนำ" value={`${posts2.Descript}`} />
+                              <Input addonBefore="วันที่" value={`${start} ถึง วันที่ ${end}`} />
+                              <Input addonBefore="ราคา" value={`${posts2.Price} / วัน`} />
+                              <Input addonBefore="รับเลี้ยง" value={posts2.Type?.Name} />
+                            </div>
+                          </div>
+                        </Col>
+                      </div>
+                    </Card>
+                  </div>
                 );
               })
             ) : (
-              <div style={{ textAlign: 'center', marginTop: '100px' }}>
-                <Title level={4}>ยังไม่มีโพสสำหรับการรอการยืนยัน</Title>
+              <div style={{ display: 'flex', marginTop: '64px', marginLeft: '160px', alignItems: 'center', justifyContent: 'center' }}>
+                <Col>
+                  <div style={{ textAlign: 'center' }}>
+                    <Title level={4}>ยังไม่มีโพสสำหรับการรอการยืนยัน</Title>
+                  </div>
+                </Col>
               </div>
             )}
           </TabPane>
@@ -285,48 +301,123 @@ const Postpro: React.FC = () => {
                   year: 'numeric',
                 });
 
+                const monthMapping: { [key: string]: number } = {
+                  Jan: 1,
+                  Feb: 2,
+                  Mar: 3,
+                  Apr: 4,
+                  May: 5,
+                  Jun: 6,
+                  Jul: 7,
+                  Aug: 8,
+                  Sep: 9,
+                  Oct: 10,
+                  Nov: 11,
+                  Dec: 12
+                };
+
+                const dateNow = date.toDateString().split(' ');
+                const monthNow = dateNow[1]; // Jun
+                const dayNow = dateNow[2];   // 11
+                const yearNow = dateNow[3];  // 2024
+                const monthIntNow = monthMapping[monthNow];
+                const dayIntNow = +dayNow;
+                const yearIntNow = +yearNow;
+
+                // =========================================================
+
+                const dateEnd = endDate.toDateString().split(' ');
+                const monthEnd = dateEnd[1]; // Dec
+                const dayEnd = dateEnd[2];   // 07
+                const yearEnd = dateEnd[3];  // 2023
+                const monthIntEnd = monthMapping[monthEnd];
+                const dayIntEnd = +dayEnd;
+                const yearIntEnd = +yearEnd;
+
+                let isDisabledFinish = true;
+                if (yearIntNow > yearIntEnd) {
+                  isDisabledFinish = false;
+                } else if (yearIntNow === yearIntEnd) {
+                  if (monthIntNow > monthIntEnd) {
+                    isDisabledFinish = false;
+                  } else if (monthIntNow === monthIntEnd) {
+                    if (dayIntNow >= dayIntEnd) {
+                      isDisabledFinish = false;
+                    }
+                  }
+                }
+
+                const dateStart = startDate.toDateString().split(' ');
+                const monthStart = dateStart[1]; // Dec
+                const dayStart = dateStart[2];   // 07
+                const yearStart = dateStart[3];  // 2023
+                const monthIntStart = monthMapping[monthStart];
+                const dayIntStart = +dayStart;
+                const yearIntStart = +yearStart;
+
+                let isDisabledCancle = true;
+                if (yearIntNow <= yearIntStart) {
+                  if (monthIntNow <= monthIntStart) {
+                    if (dayIntNow <= dayIntStart) {
+                      isDisabledCancle = false;
+                    }
+                  }
+                }
+
                 return (
-                  <Card style={{ marginTop: '8px' }} actions={[
-                    <Tooltip title="เสร็จสิ้นงาน" placement="bottom">
-                      <CheckSquareOutlined style={{ color: 'green' }} onClick={() => Finish(posts3.ID)} />
-                    </Tooltip>,
-                    <Tooltip title="อัพเดทสเตตัส" placement="bottom">
-                      <FileAddOutlined style={{ color: 'orange' }} onClick={() => gotostatuspage(posts3.ID)} />,
-                    </Tooltip>,
-                    <Tooltip title="ยกเลิกงาน" placement="bottom">
-                      <StopOutlined style={{ color: 'red' }} onClick={() => openCancle(posts3.ID)} />,
-                    </Tooltip>,
-                  ]}>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                      <div style={{ margin: '12px' }}>
-                        <Avatar size={'large'} src={posts3.ServiceProvider?.Pic} />
-                      </div>
-                      <div style={{ marginRight: '20px' }}>
-                        <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts3.ServiceProvider?.Firstname} ${posts3.ServiceProvider?.Lastname}`} />
-                      </div>
-                      <div>
-                        <Input addonBefore="สถานะ" value={`${posts3.Status?.Name}`} />
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                      <Col span={12}>
-                        <div style={{ margin: '24px' }}>
-                          <Input value="รายละเอียดการใช้บริการ" />
-                          <div>
-                            <Input addonBefore="คำแนะนำ" value={`${posts3.Descript}`} />
-                            <Input addonBefore="วันที่" value={`${start} ถึงวันที่ ${end}`} />
-                            <Input addonBefore="ราคา" value={`${posts3.Price} / วัน`} />
-                            <Input addonBefore="รับเลี้ยง" value={posts3.Type?.Name} />
-                          </div>
+                  <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                    <Card style={{ marginTop: '8px' }} bordered={false} actions={[
+                      <Tooltip title="เสร็จสิ้นงาน" placement="bottom">
+                        <CheckSquareOutlined
+                          style={{ color: isDisabledFinish ? 'grey' : 'green' }}
+                          onClick={() => !isDisabledFinish && Finish(posts3.ID)}
+                        />
+                      </Tooltip>,
+                      <Tooltip title="อัพเดทสเตตัส" placement="bottom">
+                        <FileAddOutlined style={{ color: 'orange' }} onClick={() => gotostatuspage(posts3.ID)} />,
+                      </Tooltip>,
+                      <Tooltip title="ยกเลิกงาน" placement="bottom">
+                        <StopOutlined
+                          style={{ color: isDisabledCancle ? 'grey' : 'red' }}
+                          onClick={() => !isDisabledCancle && openCancle(posts3.ID)}
+                        />,
+                      </Tooltip>,
+                    ]}>
+                      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
+                        <div style={{ margin: '12px' }}>
+                          <Avatar size={'large'} src={posts3.ServiceProvider?.Pic} />
                         </div>
-                      </Col>
-                    </div>
-                  </Card>
+                        <div style={{ marginRight: '20px' }}>
+                          <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts3.ServiceProvider?.Firstname} ${posts3.ServiceProvider?.Lastname}`} />
+                        </div>
+                        <div>
+                          <Input addonBefore="สถานะ" value={`${posts3.Status?.Name}`} />
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
+                        <Col span={12}>
+                          <div style={{ margin: '24px' }}>
+                            <Input value="รายละเอียดการใช้บริการ" />
+                            <div>
+                              <Input addonBefore="คำแนะนำ" value={`${posts3.Descript}`} />
+                              <Input addonBefore="วันที่" value={`${start} ถึง วันที่ ${end}`} />
+                              <Input addonBefore="ราคา" value={`${posts3.Price} / วัน`} />
+                              <Input addonBefore="รับเลี้ยง" value={posts3.Type?.Name} />
+                            </div>
+                          </div>
+                        </Col>
+                      </div>
+                    </Card>
+                  </div>
                 );
               })
             ) : (
-              <div style={{ textAlign: 'center', marginTop: '100px' }}>
-                <Title level={4}>ยังไม่มีโพสสำหรับการดำเนินงาน</Title>
+              <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '160px', alignItems: 'center', justifyContent: 'center' }}>
+                <Col>
+                  <div style={{ textAlign: 'center' }}>
+                    <Title level={4}>ยังไม่มีโพสสำหรับการดำเนินงาน</Title>
+                  </div>
+                </Col>
               </div>
             )}
           </TabPane>
@@ -349,37 +440,47 @@ const Postpro: React.FC = () => {
                 });
 
                 return (
-                  <Card style={{ marginTop: '8px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                      <div style={{ margin: '12px' }}>
-                        <Avatar size={'large'} src={posts4.ServiceProvider?.Pic} />
-                      </div>
-                      <div style={{ marginRight: '20px' }}>
-                        <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts4.ServiceProvider?.Firstname} ${posts4.ServiceProvider?.Lastname}`} />
-                      </div>
-                      <div>
-                        <Input addonBefore="สถานะ" value={`${posts4.Status?.Name}`} />
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                      <Col span={12}>
-                        <div style={{ margin: '24px' }}>
-                          <Input value="รายละเอียดการใช้บริการ" />
-                          <div>
-                            <Input addonBefore="คำแนะนำ" value={`${posts4.Descript}`} />
-                            <Input addonBefore="วันที่" value={`${start} ถึงวันที่ ${end}`} />
-                            <Input addonBefore="ราคา" value={`${posts4.Price} / วัน`} />
-                            <Input addonBefore="รับเลี้ยง" value={posts4.Type?.Name} />
-                          </div>
+                  <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                    <Card style={{ marginTop: '8px' }} bordered={false} actions={[
+                      <Tooltip title="ดูรายละเอียด" placement="bottom">
+                        <HistoryOutlined style={{ color: 'orange' }} onClick={() => history(posts4.ID)} />,
+                      </Tooltip>,
+                    ]}>
+                      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
+                        <div style={{ margin: '12px' }}>
+                          <Avatar size={'large'} src={posts4.ServiceProvider?.Pic} />
                         </div>
-                      </Col>
-                    </div>
-                  </Card>
+                        <div style={{ marginRight: '20px' }}>
+                          <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts4.ServiceProvider?.Firstname} ${posts4.ServiceProvider?.Lastname}`} />
+                        </div>
+                        <div>
+                          <Input addonBefore="สถานะ" value={`${posts4.Status?.Name}`} />
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
+                        <Col span={12}>
+                          <div style={{ margin: '24px' }}>
+                            <Input value="รายละเอียดการใช้บริการ" />
+                            <div>
+                              <Input addonBefore="คำแนะนำ" value={`${posts4.Descript}`} />
+                              <Input addonBefore="วันที่" value={`${start} ถึง วันที่ ${end}`} />
+                              <Input addonBefore="ราคา" value={`${posts4.Price} / วัน`} />
+                              <Input addonBefore="รับเลี้ยง" value={posts4.Type?.Name} />
+                            </div>
+                          </div>
+                        </Col>
+                      </div>
+                    </Card>
+                  </div>
                 );
               })
             ) : (
-              <div style={{ textAlign: 'center', marginTop: '100px' }}>
-                <Title level={4}>ยังไม่มีโพสสำหรับงานที่สิ้นสุด</Title>
+              <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '160px', alignItems: 'center', justifyContent: 'center' }}>
+                <Col>
+                  <div style={{ textAlign: 'center' }}>
+                    <Title level={4}>ยังไม่มีโพสสำหรับงานที่สิ้นสุด</Title>
+                  </div>
+                </Col>
               </div>
             )}
           </TabPane>

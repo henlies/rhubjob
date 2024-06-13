@@ -39,6 +39,14 @@ func main() {
 	app.Post("/pet", controller.CreatePet)
 	app.Patch("/pet", controller.UpdatePet)
 
+	// - Notify
+
+	app.Get("/notifynow/:id", controller.ShowNotifyCaseByUID)
+	// app.Get("/notifyhistory/:id", controller.ShowNotifyHistoryByUID)
+	app.Get("/notifyhistorypro/:id", controller.ShowNotifyHistoryByID)
+	app.Get("/notifycheckhistorypro/:id", controller.ShowNotifyCheckHistoryByID)
+	app.Post("/createnotify", controller.CreateNotify)
+
 	// - User
 
 	app.Get("/usersactive", controller.ListUsersActive)
@@ -50,6 +58,7 @@ func main() {
 	app.Delete("/serviceuser/:user", controller.DeleteServiceUser)
 	app.Delete("/useractive/:user", controller.ActiveServiceUser)
 
+	app.Get("/listserviceprovider", controller.ListServiceProvider)
 	app.Get("/serviceprovider/:id", controller.GetServiceProviderByUID)
 	app.Post("/usersigninjob", controller.CreateUserSigninJob)
 	app.Delete("/serviceprovider/:user", controller.DeleteServiceProvider)
@@ -80,6 +89,7 @@ func main() {
 	app.Delete("/finishpost/:id", controller.FinishPost)
 	app.Delete("/acceptpost/:id", controller.AcceptPost)
 	app.Delete("/nonacceptpost/:id", controller.NonAcceptPost)
+	app.Delete("/selectpost/:id/:uid", controller.SelectPost)
 
 	app.Listen(":8080")
 

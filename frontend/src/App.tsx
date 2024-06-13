@@ -17,6 +17,7 @@ import ControlUser from './components/Admin/ControlUser';
 import Profile from './components/User/ServiceUser/Profile';
 import Post from './components/User/ServiceUser/Post';
 import TrackStatus from './components/User/ServiceUser/TrackStatus';
+import HistoryPost from './components/User/ServiceUser/HistoryPost';
 
 import PostStatus from './components/User/ServiceProvider/PostStatus';
 import Postpro from './components/User/ServiceProvider/Postpro';
@@ -24,6 +25,7 @@ import Postpro from './components/User/ServiceProvider/Postpro';
 import Error403 from './components/403';
 import DashboardUser from './components/User/ServiceUser/DashboardUser';
 import DashboardPro from './components/User/ServiceProvider/DashboardPro';
+import HistoryP from './components/User/ServiceProvider/HistoryP';
 
 const App: React.FC = () => {
   const petid = localStorage.getItem("petid")
@@ -95,6 +97,7 @@ const App: React.FC = () => {
                       <>
                         <Route path="/post" element={<Post />} />
                         <Route path="/track-status" element={<TrackStatus />} />
+                        <Route path="/history-post" element={<HistoryPost />} />
                       </>
                     )}
                     <Route path="*" element={<Error403 />} />
@@ -105,6 +108,7 @@ const App: React.FC = () => {
                     <Route path="/" element={<DashboardPro />} />
                     <Route path="/post" element={<Postpro />} />
                     <Route path="/post-status/:postId" element={<PostStatus />} />
+                    <Route path="/history-post/:postId" element={<HistoryP />} />
                     <Route path="*" element={<Error403 />} />
                   </>
                 )}

@@ -10,13 +10,13 @@ import (
 func ListUsersActive(c *fiber.Ctx) error {
 	var users []entity.ServiceUser
 	rawQuery := `
-			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
-				   role_id, prefix_id, firstname, lastname, nickname, 
+			SELECT id, 
+			role_id, prefix_id, firstname, lastname, nickname, 
 				   gender_id, phone, email, birth, blood_id, status, 
 				   active, user
 			FROM service_users WHERE active = 1 
 			UNION 
-			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
+			SELECT id, 
 				   role_id, prefix_id, firstname, lastname, nickname, 
 				   gender_id, phone, email, birth, blood_id, status, 
 				   active, user
@@ -32,13 +32,13 @@ func ListUsersActive(c *fiber.Ctx) error {
 func ListUsersNonactive(c *fiber.Ctx) error {
 	var users []entity.ServiceUser
 	rawQuery := `
-			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
+			SELECT id, 
 				   role_id, prefix_id, firstname, lastname, nickname, 
 				   gender_id, phone, email, birth, blood_id, status, 
 				   active, user
 			FROM service_users WHERE active = 0 
 			UNION 
-			SELECT ROW_NUMBER() OVER (ORDER BY firstname) AS id, 
+			SELECT id, 
 				   role_id, prefix_id, firstname, lastname, nickname, 
 				   gender_id, phone, email, birth, blood_id, status, 
 				   active, user

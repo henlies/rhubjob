@@ -14,6 +14,7 @@ import {
   Card,
   Avatar,
   Tooltip,
+  message,
 } from 'antd';
 import { PostCInterface, PostEInterface, PostSInterface } from '../../../models/Post';
 import { CreatePost, DeletePost, GetPostShowIDstatus1, GetPostbyId, GetType, UpdatePost } from '../../../services/HttpServices';
@@ -61,15 +62,49 @@ const DashboardUser: React.FC = () => {
   };
 
   const handleRangeDateChangEedit = (dates: RangeValue<Dayjs> | null) => {
+    const currentDate = dayjs();
+
     if (dates) {
       const [startFormatted, endFormatted] = dates.map((date) => date?.toDate());
+      const startDate = dayjs(startFormatted);
+      const endDate = dayjs(endFormatted);
+
+      if (startDate.isBefore(currentDate)) {
+        message.error('วันที่ต้องการเริ่มงานต้องไม่น้อยกว่าปัจจุบัน');
+        setPoste((prevPost) => ({ ...prevPost, Start: undefined, End: undefined }));
+        return;
+      }
+
+      if (endDate.isBefore(currentDate)) {
+        message.error('วันที่ต้องการสิ้นสุดงานต้องไม่น้อยกว่าปัจจุบัน');
+        setPoste((prevPost) => ({ ...prevPost, Start: undefined, End: undefined }));
+        return;
+      }
+
       setPoste((prevPost) => ({ ...prevPost, Start: startFormatted, End: endFormatted }));
     }
   };
 
   const handleRangeDateChangeCreate = (dates: RangeValue<Dayjs> | null) => {
+    const currentDate = dayjs();
+
     if (dates) {
       const [startFormatted, endFormatted] = dates.map((date) => date?.toDate());
+      const startDate = dayjs(startFormatted);
+      const endDate = dayjs(endFormatted);
+
+      if (startDate.isBefore(currentDate)) {
+        message.error('วันที่ต้องการเริ่มงานต้องไม่น้อยกว่าปัจจุบัน');
+        setPostc((prevPost) => ({ ...prevPost, Start: undefined, End: undefined }));
+        return;
+      }
+
+      if (endDate.isBefore(currentDate)) {
+        message.error('วันที่ต้องการสิ้นสุดงานต้องไม่น้อยกว่าปัจจุบัน');
+        setPostc((prevPost) => ({ ...prevPost, Start: undefined, End: undefined }));
+        return;
+      }
+
       setPostc((prevPost) => ({ ...prevPost, Start: startFormatted, End: endFormatted }));
     }
   };
@@ -93,6 +128,7 @@ const DashboardUser: React.FC = () => {
     setPostedit(true);
   }
 
+
   const submit = async () => {
     let data = {
       Descript: postc.Descript,
@@ -103,10 +139,21 @@ const DashboardUser: React.FC = () => {
       Service_ProviderID: numId,
       StatusID: 1,
     };
-    let res = await CreatePost(data);
-    if (res) {
-      setPostopen(!postopen)
-      getpost();
+
+    console.log(data.Price);
+
+    if (data.Start === undefined || data.End === undefined) {
+      message.error('วันที่ไม่ถูกต้อง');
+    } else if (data.Price === undefined) {
+      message.error('กรุณาใส่ราคาต่อวัน');
+    } else if (data.TypeID === undefined) {
+      message.error('กรุณาเลือกชนิดสัตว์เลี้ยง');
+    } else {
+      let res = await CreatePost(data);
+      if (res) {
+        setPostopen(!postopen)
+        getpost();
+      }
     }
   };
 
@@ -119,10 +166,15 @@ const DashboardUser: React.FC = () => {
       Price: poste.Price,
       TypeID: poste.TypeID,
     };
-    let res = await UpdatePost(data);
-    if (res) {
-      setPostedit(!postedit)
-      getpost();
+
+    if (data.Start === undefined || data.End === undefined) {
+      message.error('วันที่ไม่ถูกต้อง');
+    } else {
+      let res = await UpdatePost(data);
+      if (res) {
+        setPostedit(!postedit)
+        getpost();
+      }
     }
   };
 
@@ -144,21 +196,23 @@ const DashboardUser: React.FC = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
-        <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '24px', alignItems: 'start' }}>
-          <Col span={2}>
-            <div style={{ textAlign: 'center' }}>
-              <Button onClick={() => setPostopen(true)}>
-                สร้างโพส
-              </Button>
-            </div>
-          </Col>
-          <Col span={20}>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={3}>หน้าหลัก</Title>
-            </div>
-          </Col>
-          <Col span={2}>
-          </Col>
+        <div style={{ background: '#fff', textAlign: 'center', borderRadius: 8, }}>
+          <div style={{ display: 'flex', marginBottom: '64px', marginTop: '64px', alignItems: 'center', justifyContent: 'center' }}>
+            <Col span={2}>
+              <div style={{ textAlign: 'center', }}>
+                <Button onClick={() => setPostopen(true)} style={{ background: '#1677ff', color: 'white' }}>
+                  สร้างโพส
+                </Button>
+              </div>
+            </Col>
+            <Col span={20}>
+              <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                <Title level={3}>หน้าหลัก</Title>
+              </div>
+            </Col>
+            <Col span={2}>
+            </Col>
+          </div>
         </div>
 
         {posts.length > 0 ? (
@@ -178,39 +232,41 @@ const DashboardUser: React.FC = () => {
             });
 
             return (
-              <Card style={{ marginTop: '8px' }} actions={[
-                <Tooltip title="แก้ไขงาน" placement="bottom">
-                  <EditOutlined style={{ color: 'orange' }} onClick={() => openEdit(posts.ID)} />,
-                </Tooltip>,
-                <Tooltip title="ลบงาน" placement="bottom">
-                  <DeleteOutlined style={{ color: 'red' }} onClick={() => handleDelete(posts.ID)} />,
-                </Tooltip>,
-              ]}>
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                  <div style={{ margin: '12px' }}>
-                    <Avatar size={'large'} src={posts.ServiceProvider?.Pic} />
-                  </div>
-                  <div style={{ marginRight: '20px' }}>
-                    <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts.ServiceProvider?.Firstname} ${posts.ServiceProvider?.Lastname}`} />
-                  </div>
-                  <div>
-                    <Input addonBefore="สถานะ" value={`${posts.Status?.Name}`} />
-                  </div>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                  <Col span={12}>
-                    <div style={{ margin: '24px' }}>
-                      <Input value="รายละเอียดการใช้บริการ" />
-                      <div>
-                        <Input addonBefore="คำแนะนำ" value={`${posts.Descript}`} />
-                        <Input addonBefore="วันที่" value={`${start} ถึงวันที่ ${end}`} />
-                        <Input addonBefore="ราคา" value={`${posts.Price} / วัน`} />
-                        <Input addonBefore="รับเลี้ยง" value={posts.Type?.Name} />
-                      </div>
+              <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                <Card style={{ marginTop: '8px' }} bordered={false} actions={[
+                  <Tooltip title="แก้ไขงาน" placement="bottom">
+                    <EditOutlined style={{ color: 'orange' }} onClick={() => openEdit(posts.ID)} />,
+                  </Tooltip>,
+                  <Tooltip title="ลบงาน" placement="bottom">
+                    <DeleteOutlined style={{ color: 'red' }} onClick={() => handleDelete(posts.ID)} />,
+                  </Tooltip>,
+                ]}>
+                  <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
+                    <div style={{ margin: '12px' }}>
+                      <Avatar size={'large'} src={posts.ServiceProvider?.Pic} />
                     </div>
-                  </Col>
-                </div>
-              </Card>
+                    <div style={{ marginRight: '20px' }}>
+                      <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts.ServiceProvider?.Firstname} ${posts.ServiceProvider?.Lastname}`} />
+                    </div>
+                    <div>
+                      <Input addonBefore="สถานะ" value={`${posts.Status?.Name}`} />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
+                    <Col span={12}>
+                      <div style={{ margin: '24px' }}>
+                        <Input value="รายละเอียดการใช้บริการ" />
+                        <div>
+                          <Input addonBefore="คำแนะนำ" value={`${posts.Descript}`} />
+                          <Input addonBefore="วันที่" value={`${start} ถึงวันที่ ${end}`} />
+                          <Input addonBefore="ราคา" value={`${posts.Price} / วัน`} />
+                          <Input addonBefore="รับเลี้ยง" value={posts.Type?.Name} />
+                        </div>
+                      </div>
+                    </Col>
+                  </div>
+                </Card>
+              </div>
             );
           })
         ) : (
@@ -248,7 +304,8 @@ const DashboardUser: React.FC = () => {
               </div>
               <Input
                 style={{ marginTop: '10px' }}
-                placeholder="ราคา"
+                type="number"
+                placeholder="ราคาต่อวัน"
                 onChange={(e) => {
                   const price = parseInt(e.target.value);
                   setPostc({ ...postc, Price: price });
@@ -310,7 +367,8 @@ const DashboardUser: React.FC = () => {
               </div>
               <Input
                 style={{ marginTop: '10px' }}
-                placeholder="ราคา"
+                type="number"
+                placeholder="ราคาต่อวัน"
                 value={poste.Price}
                 onChange={(e) => {
                   const price = parseInt(e.target.value);

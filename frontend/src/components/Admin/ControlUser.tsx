@@ -55,9 +55,7 @@ const ControlUser: React.FC = () => {
   };
 
   const handleDelete = async (rolename?: string, user?: string) => {
-    if (confirmation === admin) {
-      console.log(user);
-      
+    if (confirmation === admin) {      
       if (rolename === 'ผู้ให้บริการ') {
         await DeleteServiceProvider(user);
         getuserlistactive();
@@ -81,7 +79,7 @@ const ControlUser: React.FC = () => {
       openAlert('error', 'ชื่อไม่ตรง ไม่สามารถยืนยันได้');
     }
   };
-
+  
   const handalActive = async (rolename?: string, user?: string) => {
     if (confirmation === admin) {
       if (rolename === 'ผู้ให้บริการ') {
@@ -364,7 +362,7 @@ const ControlUser: React.FC = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
-        <div style={{ padding: 12, background: '#fff', minHeight: 360, textAlign: 'center' }}>
+      <div style={{ padding: 12, background: '#fff', textAlign: 'center', borderRadius: 8, }}>
           <Title level={3}>ตารางรายชื่อผู้ใช้งานระบบ</Title>
           <div style={{ display: 'flex', justifyContent: 'flex-start', marginLeft: '39px' }}>
             <Popover content={content} trigger="click" visible={visible} onVisibleChange={setVisible}>

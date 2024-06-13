@@ -8,12 +8,22 @@ import (
 )
 
 // In Use
+func ListServiceProvider(c *fiber.Ctx) error {
+	var user []entity.ServiceUser
+	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").
+		Preload("Pet.Type").Preload("Pet.Gene").Preload("Role").Preload("Address.Province").
+		Preload("Address.District").Raw("SELECT * FROM service_providers WHERE status = 1").Find(&user).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": user})
+}
+
 func GetServiceProviderByUID(c *fiber.Ctx) error {
 	var user entity.ServiceUser
 	id := c.Params("id")
 	if err := entity.DB().Preload("Prefix").Preload("Gender").Preload("Blood").
 		Preload("Pet.Type").Preload("Pet.Gene").Preload("Role").Preload("Address.Province").
-		Preload("Address.District").Raw("SELECT * FROM service_users WHERE id = ?", id).Find(&user).Error; err != nil {
+		Preload("Address.District").Raw("SELECT * FROM service_providers WHERE id = ?", id).Find(&user).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": user})
@@ -44,7 +54,7 @@ func ActiveServiceProvider(c *fiber.Ctx) error {
 }
 
 func CreateUserSigninJob(c *fiber.Ctx) error {
-	var user entity.ServiceUser
+	var user entity.ServiceProvider
 	var role entity.Role
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -53,7 +63,7 @@ func CreateUserSigninJob(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Role not found"})
 	}
 
-	cus := entity.ServiceUser{
+	cus := entity.ServiceProvider{
 		User:       user.User,
 		Pass:       SetupPasswordHash(user.Pass),
 		Firstname:  user.Firstname,

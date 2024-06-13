@@ -12,6 +12,8 @@ import {
   DatePicker,
   Typography,
   DatePickerProps,
+  Card,
+  Image,
 } from 'antd';
 import {
   GetBlood,
@@ -20,8 +22,9 @@ import {
   GetServiceUserByUID,
   UpdateServiceDetail,
   GetServiceProviderByUID,
+  listserviceprovider,
 } from '../../../services/HttpServices';
-import { UserInterface } from '../../../models/User';
+import { ServiceProviderInterface, UserInterface } from '../../../models/User';
 import { BloodInterface } from '../../../models/Blood';
 import { GenderInterface } from '../../../models/Gender';
 import { PrefixInterface } from '../../../models/Prefix';
@@ -66,6 +69,8 @@ const DashboardUser: React.FC = () => {
   const [prefix, setPrefix] = useState<PrefixInterface[]>([]);
   const [gender, setGender] = useState<GenderInterface[]>([]);
   const [blood, setBlood] = useState<BloodInterface[]>([]);
+  const [provider, setProvider] = useState<ServiceProviderInterface[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [modaluser, setModalUser] = useState(false);
   const [modalprovider, setModalProvider] = useState(false);
 
@@ -109,6 +114,13 @@ const DashboardUser: React.FC = () => {
     }
   }
 
+  const getserviceprovider = async () => {
+    let res = await listserviceprovider();
+    if (res) {
+      setProvider(res);
+    }
+  };
+
   const handleSelectPrefix = (value?: number) => {
     setUseru({ ...useru, PrefixID: value });
   };
@@ -124,6 +136,18 @@ const DashboardUser: React.FC = () => {
 
   const handleSelectBlood = (value?: number) => {
     setUseru({ ...useru, BloodID: value });
+  };
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
   };
 
   const submit = async () => {
@@ -173,6 +197,7 @@ const DashboardUser: React.FC = () => {
   );
 
   useEffect(() => {
+    getserviceprovider();
 
     if (role === 'ผู้ใช้บริการ') {
       if (name === '') {
@@ -192,31 +217,40 @@ const DashboardUser: React.FC = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
-        <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '24px', alignItems: 'start' }}>
-          <Col span={2}>
-          </Col>
-          <Col span={20}>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={3}>ข้อมูลการรับเลี้ยง</Title>
-            </div>
-          </Col>
-          <Col span={2}>
-          </Col>
+        <div style={{ background: '#fff', textAlign: 'center', borderRadius: 8, }}>
+          <div style={{ display: 'flex', marginBottom: '64px', marginTop: '64px', alignItems: 'center', justifyContent: 'center' }}>
+            <Col >
+              <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                <Title level={3}>ข้อมูลการรับเลี้ยง</Title>
+              </div>
+            </Col>
+          </div>
         </div>
-        {/* <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '24px', alignItems: 'start' }}>
-          <Col span={12}>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={4}>ความคืบหน้า</Title>
-              <div id="chartpiediv" style={{ width: '909px', height: '404px' }}></div>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={4}>สถานะทั้งหมด</Title>
-              <div id="chartdiv" style={{ width: '909px', height: '404px' }}></div>
-            </div>
-          </Col>
-        </div> */}
+        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          {provider.map((prov) => (
+            <Card
+              title={`${prov.Prefix?.Name} ${prov.Firstname} ${prov.Lastname}`}
+              bordered={false}
+              style={{ width: 300, textAlign: 'center', cursor: 'pointer' }}
+              onClick={showModal}
+            >
+              <Image
+                width={200}
+                src={prov.Pic}
+                preview={false}
+              />
+            </Card>
+          ))}
+        </div>
+        <Modal
+          title="รายละเอียดสัตว์เลี้ยง"
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <p>ข้อมูลเพิ่มเติมเกี่ยวกับสัตว์เลี้ยง...</p>
+          <p>คุณสามารถเพิ่มรายละเอียดต่างๆ ที่นี่</p>
+        </Modal>
 
         <Modal
           centered

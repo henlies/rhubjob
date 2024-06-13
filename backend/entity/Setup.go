@@ -26,13 +26,6 @@ func SetupDatabase() {
 	}
 
 	database.AutoMigrate(
-		// &Method{},
-		// &Chat{},
-		// &Comment{},
-		// &Payment{},
-		// &UserChat{},
-		// &UserComment{},
-		// &User{},
 		&Admin{},
 		&Per{},
 		ServiceUser{},
@@ -49,6 +42,7 @@ func SetupDatabase() {
 		&Province{},
 		&Post{},
 		&Status{},
+		&Notify{},
 	)
 	db = database
 

@@ -173,3 +173,12 @@ func NonAcceptPost(c *fiber.Ctx) error {
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
 }
+
+func SelectPost(c *fiber.Ctx) error {
+	uid := c.Params("uid")
+	id := c.Params("id")
+	if tx := entity.DB().Exec("UPDATE posts SET status_id = 2, service_user_id = ? WHERE id = ?", uid, id); tx.RowsAffected == 0 {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
+}
