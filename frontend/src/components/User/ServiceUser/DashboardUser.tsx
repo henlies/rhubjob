@@ -7,13 +7,17 @@ import {
   Button,
   Layout,
   Select,
-  Upload,
-  message,
   DatePicker,
   Typography,
   DatePickerProps,
   Card,
+  Flex,
+  Rate,
+  Avatar,
   Image,
+  Row,
+  Upload,
+  message,
 } from 'antd';
 import {
   GetBlood,
@@ -23,39 +27,21 @@ import {
   UpdateServiceDetail,
   GetServiceProviderByUID,
   listserviceprovider,
+  AllofProvider,
+  AllofPostDog,
+  AllofPostCat,
+  RateID,
+  CountID,
 } from '../../../services/HttpServices';
 import { ServiceProviderInterface, UserInterface } from '../../../models/User';
 import { BloodInterface } from '../../../models/Blood';
 import { GenderInterface } from '../../../models/Gender';
 import { PrefixInterface } from '../../../models/Prefix';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import type { UploadProps } from 'antd';
-
-// picture
-type FileType = Parameters<NonNullable<UploadProps['beforeUpload']>>[0];
-
-const getBase64 = (img: FileType, callback: (url: string) => void) => {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result as string));
-  reader.readAsDataURL(img);
-};
-
-const beforeUpload = (file: FileType) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!');
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error('Image must be smaller than 2MB!');
-  }
-  return isJpgOrPng && isLt2M;
-};
-
+import { PetInterface } from '../../../models/Pet';
+import { PostSInterface } from '../../../models/Post';
+import { UploadOutlined } from '@ant-design/icons';
+import './DashboardUser.css'
 const DashboardUser: React.FC = () => {
-  // picture
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>();
 
   const { Option } = Select;
   const { Content } = Layout;
@@ -73,6 +59,60 @@ const DashboardUser: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modaluser, setModalUser] = useState(false);
   const [modalprovider, setModalProvider] = useState(false);
+
+  const [providernum, setProvidernum] = useState<UserInterface[]>([]);
+  const [dog, setDog] = useState<PetInterface[]>([]);
+  const [cat, setCat] = useState<PetInterface[]>([]);
+
+  const [rate, setRate] = useState(0);
+  const [count, setCount] = useState<PostSInterface[]>([]);
+
+  const [api, Holder] = message.useMessage();
+
+  const openAlert = (type: 'success' | 'error', content: string) => {
+    api.open({
+      type,
+      content,
+      duration: 5,
+    });
+  };
+
+  const [base64Image, setBase64Image] = useState<string | null>(null);
+
+  const handleUpload = (info: any) => {
+    const reader = new FileReader();
+
+    reader.onload = (event: ProgressEvent<FileReader>) => {
+      if (event.target && event.target.result && typeof event.target.result === 'string') {
+        setBase64Image(event.target.result);
+      }
+    };
+
+    if (info.file.originFileObj) {
+      reader.readAsDataURL(info.file.originFileObj);
+    }
+  };
+
+  const getuser = async () => {
+    let res = await AllofProvider();
+    if (res) {
+      setProvidernum(res);
+    }
+  };
+
+  const getdog = async () => {
+    let res = await AllofPostDog();
+    if (res) {
+      setDog(res);
+    }
+  };
+
+  const getcat = async () => {
+    let res = await AllofPostCat();
+    if (res) {
+      setCat(res);
+    }
+  };
 
   const getserviceuserbyuid = async () => {
     let res = await GetServiceUserByUID(uid);
@@ -138,12 +178,16 @@ const DashboardUser: React.FC = () => {
     setUseru({ ...useru, BloodID: value });
   };
 
-  const showModal = () => {
+  const showModal = async (id?: number) => {
     setIsModalVisible(true);
-  };
-
-  const handleOk = () => {
-    setIsModalVisible(false);
+    let res1 = await RateID(id);
+    if (res1) {
+      setRate(res1.total_rate);
+    }
+    let res2 = await CountID(id);
+    if (res2) {
+      setCount(res2);
+    }
   };
 
   const handleCancel = () => {
@@ -151,52 +195,50 @@ const DashboardUser: React.FC = () => {
   };
 
   const submit = async () => {
-    let data = {
-      ID: useru.ID,
-      PersonalID: useru.PersonalID,
-      PrefixID: useru.PrefixID,
-      Firstname: useru.Firstname,
-      Lastname: useru.Lastname,
-      Nickname: useru.Nickname,
-      GenderID: useru.GenderID,
-      Phone: useru.Phone,
-      Email: useru.Email,
-      Line: useru.Line,
-      Birth: useru.Birth,
-      BloodID: useru.BloodID,
-      Descript: useru.Descript,
-      Pic: useru.Pic,
-    };
-    let res = await UpdateServiceDetail(data);
-    if (res) {
-      setModalUser(!modaluser)
-      window.location.reload();
-    }
-  }
-
-  // picture
-  const handleChange: UploadProps['onChange'] = (info) => {
-    if (info.file.status === 'uploading') {
-      setLoading(true);
-      return;
-    }
-    if (info.file.status === 'done') {
-      getBase64(info.file.originFileObj as FileType, (url) => {
-        setLoading(false);
-        setImageUrl(url);
-        setUseru({ ...useru, Pic: url });
-      });
+    if (
+      useru.PersonalID &&
+      useru.PrefixID &&
+      useru.Firstname &&
+      useru.Lastname &&
+      useru.Nickname &&
+      useru.GenderID &&
+      useru.Phone &&
+      useru.Email &&
+      useru.Line &&
+      useru.Birth &&
+      useru.BloodID &&
+      useru.Descript
+    ) {
+      let data = {
+        ID: useru.ID,
+        PersonalID: useru.PersonalID,
+        PrefixID: useru.PrefixID,
+        Firstname: useru.Firstname,
+        Lastname: useru.Lastname,
+        Nickname: useru.Nickname,
+        GenderID: useru.GenderID,
+        Phone: useru.Phone,
+        Email: useru.Email,
+        Line: useru.Line,
+        Birth: useru.Birth,
+        BloodID: useru.BloodID,
+        Descript: useru.Descript,
+        Pic: useru.Pic,
+      };
+      let res = await UpdateServiceDetail(data);
+      if (res) {
+        setModalUser(!modaluser)
+        window.location.reload();
+      }
+    } else {
+      openAlert('error', 'กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง!');
     }
   };
 
-  const uploadButton = (
-    <button style={{ border: 0, background: 'none' }} type="button">
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </button>
-  );
-
   useEffect(() => {
+    getuser();
+    getdog();
+    getcat();
     getserviceprovider();
 
     if (role === 'ผู้ใช้บริการ') {
@@ -210,7 +252,6 @@ const DashboardUser: React.FC = () => {
         getserviceproviderbyuid();
       }
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -218,7 +259,7 @@ const DashboardUser: React.FC = () => {
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
         <div style={{ background: '#fff', textAlign: 'center', borderRadius: 8, }}>
-          <div style={{ display: 'flex', marginBottom: '64px', marginTop: '64px', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', marginBottom: '64px', marginTop: '64px', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', borderRadius: 8 }}>
             <Col >
               <div style={{ textAlign: 'center', marginBottom: 24 }}>
                 <Title level={3}>ข้อมูลการรับเลี้ยง</Title>
@@ -226,30 +267,56 @@ const DashboardUser: React.FC = () => {
             </Col>
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ textAlign: 'center', borderRadius: '10px' }}>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Card style={{ boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }} title="จำนวนผู้รับเลี้ยง" bordered={false}>
+                <p style={{ fontSize: '24px', textAlign: 'center', margin: 0 }}>{providernum.length}</p>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card style={{ boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }} title="จำนวนโพสเกี่ยวกับสุนัข" bordered={false}>
+                <p style={{ fontSize: '24px', textAlign: 'center', margin: 0 }}>{dog.length}</p>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card style={{ boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }} title="จำนวนโพสเกี่ยวกับแมว" bordered={false}>
+                <p style={{ fontSize: '24px', textAlign: 'center', margin: 0 }}>{cat.length}</p>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px', marginTop: 24 }}>
           {provider.map((prov) => (
             <Card
               title={`${prov.Prefix?.Name} ${prov.Firstname} ${prov.Lastname}`}
               bordered={false}
-              style={{ width: 300, textAlign: 'center', cursor: 'pointer' }}
-              onClick={showModal}
+              style={{ width: 300, textAlign: 'center', cursor: 'pointer', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}
+              onClick={() => showModal(prov.ID)}
             >
-              <Image
-                width={200}
+              <Avatar
+                size={200}
                 src={prov.Pic}
-                preview={false}
               />
             </Card>
           ))}
         </div>
         <Modal
-          title="รายละเอียดสัตว์เลี้ยง"
+          title="คะแนนการให้บริการของผู้รับเลี้ยง"
           visible={isModalVisible}
-          onOk={handleOk}
           onCancel={handleCancel}
+          footer={[
+            <Button onClick={handleCancel}>
+              ปิด
+            </Button>
+          ]}
         >
-          <p>ข้อมูลเพิ่มเติมเกี่ยวกับสัตว์เลี้ยง...</p>
-          <p>คุณสามารถเพิ่มรายละเอียดต่างๆ ที่นี่</p>
+          <Flex gap="middle" vertical>
+            <div style={{ textAlign: 'center', marginTop: 32, marginBottom: 16 }}>
+              <Rate disabled value={rate / count.length} />
+              <p>คะแนนเฉลี่ย: {rate / count.length}</p>
+            </div>
+          </Flex>
         </Modal>
 
         <Modal
@@ -258,123 +325,153 @@ const DashboardUser: React.FC = () => {
           footer={null}
           closeIcon={null}
         >
-          <Col>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={2}>เพิ่มข้อมูล (ผู้ใช้บริการ)</Title>
-              <Col>
-                <Form
-                  initialValues={{ remember: true }}
-                  style={{ maxWidth: '300px', margin: 'auto' }}
+          {Holder}
+          <div style={{ textAlign: 'center' }}>
+            <Title level={2}>เพิ่มข้อมูลของท่านเพื่อเข้าใช้ระบบ</Title>
+            <Form
+              initialValues={{ remember: true }}
+              style={{ maxWidth: '300px', margin: 'auto' }}
+            >
+              <div style={{ margin: '10px 4px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                {base64Image ? (
+                  <Image src={base64Image} style={{ width: 100, marginBottom: 8 }} />
+                ) : (
+                  <div style={{ margin: '10px 4px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                    <Image src={useru.Pic} style={{ width: 100, marginBottom: 8 }} />
+                  </div>
+                )}
+                <Upload onChange={handleUpload} showUploadList={false}>
+                  <Button icon={<UploadOutlined />}>เลือกรูปภาพ</Button>
+                </Upload>
+              </div>
+              <Form.Item>
+                <Input
+                  type='number'
+                  placeholder="รหัสบัตรประชาชน"
+                  onChange={(e) => {
+                    const inputPersonalID = e.target.value;
+                    const personalID = parseInt(inputPersonalID);
+                    if (personalID.toString().length <= 13) {
+                      setUseru({ ...useru, PersonalID: personalID });
+                    }
+
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Select
+                  placeholder="คำนำหน้าชื่อ"
+                  onChange={handleSelectPrefix}
                 >
-                  <Input
-                    placeholder="รหัสบัตรประชาชน"
-                    onChange={(e) => {
-                      const personal = parseInt(e.target.value);
-                      setUseru({ ...useru, PersonalID: personal });
-                    }}
-                  />
-                  <Select
-                    style={{ marginTop: '10px', marginBottom: '10px' }}
-                    placeholder="คำนำหน้าชื่อ"
-                    onChange={(handleSelectPrefix)}
-                  >
-                    {prefix.map((item: PrefixInterface) => (
-                      <Option value={item.ID}>{item.Name}</Option>
-                    ))}
-                  </Select>
-                  <Input
-                    placeholder="ชื่อจริง"
-                    onChange={(e) => {
-                      setUseru({ ...useru, Firstname: e.target.value });
-                    }}
-                  />
-                  <Input
-                    placeholder="นามสกุล"
-                    onChange={(e) => {
-                      setUseru({ ...useru, Lastname: e.target.value });
-                    }}
-                  />
-                  <Input
-                    placeholder="ชื่อเล่น"
-                    onChange={(e) => {
-                      setUseru({ ...useru, Nickname: e.target.value });
-                    }}
-                  />
-                  <Select
-                    style={{ marginTop: '10px', marginBottom: '10px' }}
-                    placeholder="เพศ"
-                    onChange={(handleSelectGender)}
-                  >
-                    {gender.map((item: GenderInterface) => (
-                      <Option value={item.ID}>{item.Name}</Option>
-                    ))}
-                  </Select>
-                  <Input
-                    placeholder="เบอร์โทร"
-                    onChange={(e) => {
-                      setUseru({ ...useru, Phone: e.target.value });
-                    }}
-                  />
-                  <Input
-                    placeholder="อีเมล"
-                    onChange={(e) => {
-                      setUseru({ ...useru, Email: e.target.value });
-                    }}
-                  />
-                  <Input
-                    placeholder="ไลน์"
-                    onChange={(e) => {
-                      setUseru({ ...useru, Line: e.target.value });
-                    }}
-                  />
-                  <div style={{ marginTop: '10px' }}>
-                    <DatePicker
-                      placeholder="วันเกิด"
-                      onChange={onChangeDate}
-                    />
-                  </div>
-                  <Select
-                    style={{ marginTop: '10px' }}
-                    placeholder="กรุ๊ปเลือด"
-                    onChange={(handleSelectBlood)}
-                  >
-                    {blood.map((item: BloodInterface) => (
-                      <Option value={item.ID}>{item.Name}</Option>
-                    ))}
-                  </Select>
-                  <Input
-                    style={{ marginTop: '10px', marginBottom: '10px' }}
-                    placeholder="หมายเหตุ"
-                    onChange={(e) => {
-                      setUseru({ ...useru, Descript: e.target.value });
-                    }}
-                  />
-                  <Upload
-                    name="avatar"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                    beforeUpload={beforeUpload}
-                    onChange={handleChange}
-                  >
-                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                  </Upload>
-                  <div>
-                    <Button
-                      style={{ marginTop: '10px', width: '100%' }}
-                      type="primary"
-                      htmlType="submit"
-                      onClick={submit}
-                    >
-                      เพิ่มข้อมูล
-                    </Button>
-                  </div>
-                </Form>
-              </Col>
-            </div>
-          </Col>
+                  {prefix.map((item: PrefixInterface) => (
+                    <Option key={item.ID} value={item.ID}>{item.Name}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item>
+                <Input
+                  placeholder="ชื่อจริง"
+                  onChange={(e) => {
+                    setUseru({ ...useru, Firstname: e.target.value });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Input
+                  placeholder="นามสกุล"
+                  onChange={(e) => {
+                    setUseru({ ...useru, Lastname: e.target.value });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Input
+                  placeholder="ชื่อเล่น"
+                  onChange={(e) => {
+                    setUseru({ ...useru, Nickname: e.target.value });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Select
+                  placeholder="เพศ"
+                  onChange={handleSelectGender}
+                >
+                  {gender.map((item: GenderInterface) => (
+                    <Option key={item.ID} value={item.ID}>{item.Name}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item>
+                <Input
+                  type='number'
+                  placeholder="เบอร์โทร"
+                  onChange={(e) => {
+                    const inputPhone = e.target.value;
+                    if (inputPhone.length === 10) {
+                      setUseru({ ...useru, Phone: inputPhone });
+                    }
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Input
+                  placeholder="อีเมล"
+                  onChange={(e) => {
+                    const inputEmail = e.target.value;
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (emailRegex.test(inputEmail)) {
+                      setUseru({ ...useru, Email: inputEmail });
+                    }
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Input
+                  placeholder="ไลน์"
+                  onChange={(e) => {
+                    setUseru({ ...useru, Line: e.target.value });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <DatePicker
+                  style={{ width: '100%' }}
+                  placeholder="วันเกิด"
+                  onChange={onChangeDate}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Select
+                  placeholder="กรุ๊ปเลือด"
+                  onChange={handleSelectBlood}
+                >
+                  {blood.map((item: BloodInterface) => (
+                    <Option key={item.ID} value={item.ID}>{item.Name}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item>
+                <Input.TextArea
+                  placeholder="หมายเหตุ"
+                  onChange={(e) => {
+                    setUseru({ ...useru, Descript: e.target.value });
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  style={{ width: '100%' }}
+                  type="primary"
+                  onClick={submit}
+                >
+                  เพิ่มข้อมูล
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
         </Modal>
+
 
         <Modal
           centered

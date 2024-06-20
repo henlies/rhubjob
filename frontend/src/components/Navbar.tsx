@@ -14,7 +14,7 @@ import {
     LoginOutlined,
     UserAddOutlined,
     InfoCircleOutlined,
-    ToolOutlined,
+    // ToolOutlined,
     PhoneOutlined,
     GoogleOutlined,
     EditOutlined
@@ -140,7 +140,7 @@ const Navbar: React.FC = () => {
     const menuItemsSignin: MenuItem[] = [
         { key: '1', icon: <HomeOutlined />, label: 'หน้าหลัก', link: '/' },
         { key: '2', icon: <InfoCircleOutlined />, label: 'ข้อมูลสัตว์เลี้ยง', link: '/petinfo' },
-        { key: '3', icon: <ToolOutlined />, label: 'คู่มือการใช้งาน', link: '/manual' },
+        // { key: '3', icon: <ToolOutlined />, label: 'คู่มือการใช้งาน', link: '/manual' },
     ];
 
     const renderMenuItems = (items: MenuItem[]) => {
@@ -242,8 +242,8 @@ const Navbar: React.FC = () => {
                     >
                         <Form.Item style={{ textAlign: 'center' }}>
                             <Radio.Group onChange={onChange} defaultValue={1}>
-                                <Radio value={1}>ผู้ใช้บริการ</Radio>
-                                <Radio value={2}>ผู้ให้บริการ</Radio>
+                                <Radio value={1}>ลูกค้า</Radio>
+                                <Radio value={2}>ผู้รับเลี้ยง</Radio>
                             </Radio.Group>
                         </Form.Item>
                         {userType === 1 && (

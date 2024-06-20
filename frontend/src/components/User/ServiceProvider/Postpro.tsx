@@ -11,8 +11,8 @@ import {
   Input,
   Layout,
   Button,
+  Image,
   Select,
-  Avatar,
   Tooltip,
   Typography,
   DatePicker,
@@ -46,7 +46,7 @@ import TabPane from 'antd/es/tabs/TabPane';
 import dayjs, { Dayjs } from 'dayjs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Content } from 'antd/es/layout/layout';
-import './styles.css';
+import './Postpro.css';
 
 const Postpro: React.FC = () => {
   const { Option } = Select;
@@ -208,7 +208,7 @@ const Postpro: React.FC = () => {
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
         <div style={{ background: '#fff', textAlign: 'center', borderRadius: 8, }}>
-          <div style={{ display: 'flex', marginBottom: '64px', marginTop: '64px', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', marginBottom: '64px', marginTop: '64px', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', borderRadius: 8 }}>
             <Col>
               <div style={{ textAlign: 'center', marginBottom: 24 }}>
                 <Title level={3}>รายการรับเลี้ยงของคุณ</Title>
@@ -221,23 +221,10 @@ const Postpro: React.FC = () => {
           <TabPane tab="รอการยืนยัน" key="2">
             {posts2.length > 0 ? (
               posts2.map((posts2) => {
-                const startDate = new Date(posts2.Start);
-                const start = startDate.toLocaleDateString('th-TH', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                });
-
-                const endDate = new Date(posts2.End);
-                const end = endDate.toLocaleDateString('th-TH', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                });
 
                 return (
                   <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
-                    <Card style={{ marginTop: '8px' }} bordered={false} actions={[
+                    <Card style={{ marginTop: '8px', borderRadius: '8px', width: '100%', maxWidth: '550px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }} bordered={false} actions={[
                       <Tooltip title="รับงาน" placement="bottom">
                         <CheckSquareOutlined style={{ color: 'green' }} onClick={() => handleAccept(posts2.ID)} />,
                       </Tooltip>,
@@ -245,27 +232,23 @@ const Postpro: React.FC = () => {
                         <CloseSquareOutlined style={{ color: 'red' }} onClick={() => handleNonAccept(posts2.ID)} />,
                       </Tooltip>,
                     ]}>
-                      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                        <div style={{ margin: '12px' }}>
-                          <Avatar size={'large'} src={posts2.ServiceProvider?.Pic} />
-                        </div>
-                        <div style={{ marginRight: '20px' }}>
-                          <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts2.ServiceProvider?.Firstname} ${posts2.ServiceProvider?.Lastname}`} />
-                        </div>
-                        <div>
-                          <Input addonBefore="สถานะ" value={`${posts2.Status?.Name}`} />
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                        <Image style={{ borderRadius: '50%' }} width={75} src={posts2.ServiceUser?.Pic} />
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginLeft: 32 }}>
+                          <Input readOnly addonBefore="ชื่อลูกค้า" value={`${posts2.ServiceUser?.Firstname} ${posts2.ServiceUser?.Lastname}`} style={{ flex: 1 }} />
                         </div>
                       </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                        <Image width={100} src={posts2.ServiceUser?.Pet?.Pic} />
+                      </div>
                       <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                        <Col span={12}>
-                          <div style={{ margin: '24px' }}>
-                            <Input value="รายละเอียดการใช้บริการ" />
-                            <div>
-                              <Input addonBefore="คำแนะนำ" value={`${posts2.Descript}`} />
-                              <Input addonBefore="วันที่" value={`${start} ถึง วันที่ ${end}`} />
-                              <Input addonBefore="ราคา" value={`${posts2.Price} / วัน`} />
-                              <Input addonBefore="รับเลี้ยง" value={posts2.Type?.Name} />
-                            </div>
+                        <Col span={24}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <Input value="รายละเอียดสัตว์เลี้ยง" readOnly style={{ background: '#f5f5f5', color: '#000', fontWeight: 'bold', textAlign: 'center' }} />
+                            <Input readOnly addonBefore="ชื่อสัตว์เลี้ยง" value={`${posts2.ServiceUser.Pet?.Name}`} />
+                            <Input readOnly addonBefore="ลักษณะนิสัย" value={`${posts2.ServiceUser.Pet?.Habit}`} />
+                            <Input readOnly addonBefore="สายพันธุ์" value={`${posts2.ServiceUser?.Pet?.Gene?.Name}`} />
+                            <Input readOnly addonBefore="คำแนะนำ" value={posts2.ServiceUser.Pet?.Descript} />
                           </div>
                         </Col>
                       </div>
@@ -277,7 +260,7 @@ const Postpro: React.FC = () => {
               <div style={{ display: 'flex', marginTop: '64px', marginLeft: '160px', alignItems: 'center', justifyContent: 'center' }}>
                 <Col>
                   <div style={{ textAlign: 'center' }}>
-                    <Title level={4}>ยังไม่มีโพสสำหรับการรอการยืนยัน</Title>
+                    <Title level={4}>ยังไม่มีลูกค้าเลือกงานของคุณ</Title>
                   </div>
                 </Col>
               </div>
@@ -288,18 +271,7 @@ const Postpro: React.FC = () => {
             {posts3.length > 0 ? (
               posts3.map((posts3) => {
                 const startDate = new Date(posts3.Start);
-                const start = startDate.toLocaleDateString('th-TH', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                });
-
                 const endDate = new Date(posts3.End);
-                const end = endDate.toLocaleDateString('th-TH', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                });
 
                 const monthMapping: { [key: string]: number } = {
                   Jan: 1,
@@ -366,7 +338,7 @@ const Postpro: React.FC = () => {
 
                 return (
                   <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
-                    <Card style={{ marginTop: '8px' }} bordered={false} actions={[
+                    <Card style={{ marginTop: '8px', borderRadius: '8px', width: '100%', maxWidth: '550px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }} bordered={false} actions={[
                       <Tooltip title="เสร็จสิ้นงาน" placement="bottom">
                         <CheckSquareOutlined
                           style={{ color: isDisabledFinish ? 'grey' : 'green' }}
@@ -383,27 +355,23 @@ const Postpro: React.FC = () => {
                         />,
                       </Tooltip>,
                     ]}>
-                      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                        <div style={{ margin: '12px' }}>
-                          <Avatar size={'large'} src={posts3.ServiceProvider?.Pic} />
-                        </div>
-                        <div style={{ marginRight: '20px' }}>
-                          <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts3.ServiceProvider?.Firstname} ${posts3.ServiceProvider?.Lastname}`} />
-                        </div>
-                        <div>
-                          <Input addonBefore="สถานะ" value={`${posts3.Status?.Name}`} />
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                        <Image style={{ borderRadius: '50%' }} width={75} src={posts3.ServiceUser?.Pic} />
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginLeft: 32 }}>
+                          <Input readOnly addonBefore="ชื่อลูกค้า" value={`${posts3.ServiceUser?.Firstname} ${posts3.ServiceUser?.Lastname}`} style={{ flex: 1 }} />
                         </div>
                       </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                        <Image width={100} src={posts3.ServiceUser?.Pet?.Pic} />
+                      </div>
                       <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                        <Col span={12}>
-                          <div style={{ margin: '24px' }}>
-                            <Input value="รายละเอียดการใช้บริการ" />
-                            <div>
-                              <Input addonBefore="คำแนะนำ" value={`${posts3.Descript}`} />
-                              <Input addonBefore="วันที่" value={`${start} ถึง วันที่ ${end}`} />
-                              <Input addonBefore="ราคา" value={`${posts3.Price} / วัน`} />
-                              <Input addonBefore="รับเลี้ยง" value={posts3.Type?.Name} />
-                            </div>
+                        <Col span={24}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <Input value="รายละเอียดสัตว์เลี้ยง" readOnly style={{ background: '#f5f5f5', color: '#000', fontWeight: 'bold', textAlign: 'center' }} />
+                            <Input readOnly addonBefore="ชื่อสัตว์เลี้ยง" value={`${posts3.ServiceUser.Pet?.Name}`} />
+                            <Input readOnly addonBefore="ลักษณะนิสัย" value={`${posts3.ServiceUser.Pet?.Habit}`} />
+                            <Input readOnly addonBefore="สายพันธุ์" value={`${posts3.ServiceUser?.Pet?.Gene?.Name}`} />
+                            <Input readOnly addonBefore="คำแนะนำ" value={posts3.ServiceUser.Pet?.Descript} />
                           </div>
                         </Col>
                       </div>
@@ -415,7 +383,7 @@ const Postpro: React.FC = () => {
               <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '160px', alignItems: 'center', justifyContent: 'center' }}>
                 <Col>
                   <div style={{ textAlign: 'center' }}>
-                    <Title level={4}>ยังไม่มีโพสสำหรับการดำเนินงาน</Title>
+                    <Title level={4}>ยังไม่มีงานที่กำลังดำเนิน</Title>
                   </div>
                 </Col>
               </div>
@@ -425,48 +393,31 @@ const Postpro: React.FC = () => {
           <TabPane tab="งานที่สิ้นสุดแล้ว" key="4">
             {posts4.length > 0 ? (
               posts4.map((posts4) => {
-                const startDate = new Date(posts4.Start);
-                const start = startDate.toLocaleDateString('th-TH', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                });
-
-                const endDate = new Date(posts4.End);
-                const end = endDate.toLocaleDateString('th-TH', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                });
-
                 return (
                   <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
-                    <Card style={{ marginTop: '8px' }} bordered={false} actions={[
+                    <Card style={{ marginTop: '8px', borderRadius: '8px', width: '100%', maxWidth: '550px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }} bordered={false} actions={[
                       <Tooltip title="ดูรายละเอียด" placement="bottom">
                         <HistoryOutlined style={{ color: 'orange' }} onClick={() => history(posts4.ID)} />,
                       </Tooltip>,
                     ]}>
-                      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                        <div style={{ margin: '12px' }}>
-                          <Avatar size={'large'} src={posts4.ServiceProvider?.Pic} />
-                        </div>
-                        <div style={{ marginRight: '20px' }}>
-                          <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts4.ServiceProvider?.Firstname} ${posts4.ServiceProvider?.Lastname}`} />
-                        </div>
-                        <div>
-                          <Input addonBefore="สถานะ" value={`${posts4.Status?.Name}`} />
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                        <Image style={{ borderRadius: '50%' }} width={75} src={posts4.ServiceUser?.Pic} />
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginLeft: 32 }}>
+                          <Input readOnly addonBefore="ชื่อลูกค้า" value={`${posts4.ServiceUser?.Firstname} ${posts4.ServiceUser?.Lastname}`} style={{ flex: 1 }} />
+                          <Input readOnly addonBefore="สถานะงาน" value={`${posts4.Status?.Name}`} style={{ flex: 1 }} />
                         </div>
                       </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                        <Image width={100} src={posts4.ServiceUser?.Pet?.Pic} />
+                      </div>
                       <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                        <Col span={12}>
-                          <div style={{ margin: '24px' }}>
-                            <Input value="รายละเอียดการใช้บริการ" />
-                            <div>
-                              <Input addonBefore="คำแนะนำ" value={`${posts4.Descript}`} />
-                              <Input addonBefore="วันที่" value={`${start} ถึง วันที่ ${end}`} />
-                              <Input addonBefore="ราคา" value={`${posts4.Price} / วัน`} />
-                              <Input addonBefore="รับเลี้ยง" value={posts4.Type?.Name} />
-                            </div>
+                        <Col span={24}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <Input value="รายละเอียดสัตว์เลี้ยง" readOnly style={{ background: '#f5f5f5', color: '#000', fontWeight: 'bold', textAlign: 'center' }} />
+                            <Input readOnly addonBefore="ชื่อสัตว์เลี้ยง" value={`${posts4.ServiceUser.Pet?.Name}`} />
+                            <Input readOnly addonBefore="ลักษณะนิสัย" value={`${posts4.ServiceUser.Pet?.Habit}`} />
+                            <Input readOnly addonBefore="สายพันธุ์" value={`${posts4.ServiceUser?.Pet?.Gene?.Name}`} />
+                            <Input readOnly addonBefore="คำแนะนำ" value={posts4.ServiceUser.Pet?.Descript} />
                           </div>
                         </Col>
                       </div>
@@ -478,7 +429,7 @@ const Postpro: React.FC = () => {
               <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', marginLeft: '160px', alignItems: 'center', justifyContent: 'center' }}>
                 <Col>
                   <div style={{ textAlign: 'center' }}>
-                    <Title level={4}>ยังไม่มีโพสสำหรับงานที่สิ้นสุด</Title>
+                    <Title level={4}>ยังไม่มีงานที่สิ้นสุด</Title>
                   </div>
                 </Col>
               </div>
@@ -570,7 +521,7 @@ const Postpro: React.FC = () => {
         >
           <Col>
             <div style={{ textAlign: 'center' }}>
-              <Title level={2}>ยกเลิกงาน</Title>
+              <Title style={{ marginBottom: 36 }} level={2}>ยกเลิกงาน</Title>
             </div>
             <Form
               initialValues={{ remember: true }}
@@ -618,7 +569,7 @@ const Postpro: React.FC = () => {
               />
               <div>
                 <Button
-                  style={{ marginTop: '10px', width: '100%' }}
+                  style={{ marginTop: '24px', width: '100%' }}
                   type="primary"
                   htmlType="submit"
                   onClick={handleCanclePost}
@@ -626,7 +577,7 @@ const Postpro: React.FC = () => {
                   ยืนยัน
                 </Button>
                 <Button
-                  style={{ marginTop: '10px', width: '100%' }}
+                  style={{ marginTop: '10px', marginBottom: 8, width: '100%' }}
                   type="primary" danger
                   htmlType="submit"
                   onClick={handleCancle}

@@ -1,6 +1,6 @@
 import { SigninInterface } from "../models/Signin";
 import { UserSigninJobInterface, UserSigninUseInterface } from "../models/UserSignin";
-import { PostCInterface, PostEInterface } from "../models/Post";
+import { PostCInterface, PostEInterface, PostRInterface } from "../models/Post";
 import { PetInterface } from "../models/Pet";
 import { AddressInterface } from "../models/Address";
 import { NotifyInterface } from "../models/Notify";
@@ -287,6 +287,28 @@ async function CanclePost(data: PostEInterface) {
     }
 
     let res = await fetch(`${apiUrl}/canclepost`, requestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+}
+
+async function RateAfterJobDone(data: PostRInterface) {
+    const requestOptions = {
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    }
+
+    let res = await fetch(`${apiUrl}/gotrate`, requestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -610,6 +632,162 @@ async function listserviceprovider (id?: number) {
     return res;
 };
 
+async function GetPostByUid(id: string | null) {
+    let res = await fetch(`${apiUrl}/getpostuid/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetHistoryByPid(id?: number) {
+    let res = await fetch(`${apiUrl}/notifyhistory/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function GetPostinCase(uid?: number) {
+    let res = await fetch(`${apiUrl}/getpostincase/${uid}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function AllofUser() {
+    let res = await fetch(`${apiUrl}/allofuser`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function AllofUserr() {
+    let res = await fetch(`${apiUrl}/allofuserr`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function AllofDog() {
+    let res = await fetch(`${apiUrl}/allofdog`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function AllofCat() {
+    let res = await fetch(`${apiUrl}/allofcat`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function AllofProvider() {
+    let res = await fetch(`${apiUrl}/allofprovider`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function AllofPostDog() {
+    let res = await fetch(`${apiUrl}/allofpostdog`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function AllofPostCat() {
+    let res = await fetch(`${apiUrl}/allofpostcat`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function RateID(id?: number) {
+    let res = await fetch(`${apiUrl}/rate/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
+async function CountID(id?: number) {
+    let res = await fetch(`${apiUrl}/count/${id}`, getRequestOptions)
+        .then((response) => response.json())
+        .then((res) => {
+            if (res.data) {
+                return res.data;
+            } else {
+                return false;
+            }
+        });
+    return res;
+};
+
 async function ApproveUser(id?: number) {
     let res = await fetch(`${apiUrl}/userapprove/${id}`, deleteRequestOptions)
         .then((response) => response.json())
@@ -754,6 +932,7 @@ export {
     UpdatePet,
     UpdateAddress,
     CanclePost,
+    RateAfterJobDone,
 
     GetUserListActive,
     GetUserListNonActive,
@@ -779,6 +958,18 @@ export {
     ShowNotifyHistoryByID,
     ShowNotifyCheckHistoryByID,
     listserviceprovider,
+    GetPostByUid,
+    GetHistoryByPid,
+    GetPostinCase,
+    AllofUser,
+    AllofUserr,
+    AllofDog,
+    AllofCat,
+    AllofProvider,
+    AllofPostDog,
+    AllofPostCat,
+    RateID,
+    CountID,
 
     ApproveUser,
     DeleteServiceUser,

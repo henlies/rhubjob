@@ -4,7 +4,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { SidebarProps, MenuItem } from '../models/Signin';
 import {
   CheckCircleOutlined,
-  CommentOutlined,
   CreditCardOutlined,
   DeleteOutlined,
   HistoryOutlined,
@@ -25,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
   const uid = localStorage.getItem("id")
 
   const [user, setUser] = useState<UserInterface | null>(null);
-
+    
   const getuser = async () => {
     let res = null;
 
@@ -57,8 +56,8 @@ const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
 
   const menuItemsAdmin: MenuItem[] = [
     { key: '1', icon: <HomeOutlined />, label: 'หน้าหลัก', link: '/' },
-    { key: '2', icon: <CreditCardOutlined />, label: 'ควบคุมโพสรับเลี้ยง', link: '/control-post' },
-    { key: '3', icon: <CommentOutlined />, label: 'ควบคุมความคิดเห็น', link: '/control-comment' },
+    // { key: '2', icon: <CreditCardOutlined />, label: 'ควบคุมโพสรับเลี้ยง', link: '/control-post' },
+    // { key: '3', icon: <CommentOutlined />, label: 'ควบคุมความคิดเห็น', link: '/control-comment' },
     { key: '4', icon: <UserOutlined />, label: 'ควบคุมผู้ใช้งานระบบ', link: '/control-user' },
   ];
 
@@ -146,7 +145,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, per }) => {
               <Avatar
                 size={60}
                 src={pic}
-                style={{ cursor: 'pointer', marginTop: '20px', marginRight: '20px' }}
+                style={{ cursor: 'pointer', marginTop: '10px', marginRight: '10px' }}
               />
             </Dropdown>
           </div>

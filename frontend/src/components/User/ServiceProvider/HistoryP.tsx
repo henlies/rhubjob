@@ -16,8 +16,9 @@ const HistoryP: React.FC = () => {
   const [notifycheck, setNotifyCheck] = useState<Partial<NotifyInterface>>({});
 
   const intstatus = notifycheck.Post?.Status?.ID || 0;
+
   const targetLink = ((intstatus > 3) || intstatus === 0) ? '/post' : `/post-status/${postIDparams}`;
-  
+
   const getnotify = async () => {
     let res = await ShowNotifyHistoryByID(postIDparams);
     if (res) {
@@ -26,6 +27,8 @@ const HistoryP: React.FC = () => {
     getchecknotify();
   };
 
+  console.log(intstatus);
+  
   const getchecknotify = async () => {
     let res = await ShowNotifyCheckHistoryByID(postIDparams);
     if (res) {
@@ -35,12 +38,12 @@ const HistoryP: React.FC = () => {
 
   const columnnotify: ColumnsType<NotifyInterface> = [
     {
-      title: 'เวลาที่แจ้ง',
+      title: 'วัน/เวลาที่แจ้ง',
       dataIndex: 'Date',
       width: '10%',
       align: "center",
       render: (date: Date) => date && moment(date).toISOString() !== "0001-01-01T00:00:00.000Z" ?
-        moment(date).format('DD/MM/YYYY') : null,
+        moment(date).format('DD/MM/YYYY HH:mm:ss') : null,
     },
     {
       title: 'สุขภา่พ',
@@ -70,11 +73,10 @@ const HistoryP: React.FC = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
-        <div style={{ padding: 12, background: '#fff', textAlign: 'center', borderRadius: 8, }}>
-          <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ background: '#fff', textAlign: 'center', borderRadius: 8, }}>
+          <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', borderRadius: 8 }}>
             <Col span={4}>
               <div style={{ textAlign: 'center' }}>
-                {/* <Link to={`/post-status/${postIDparams}`}> */}
                 <Link to={targetLink}>
                   <Button style={{ background: '#999999', color: 'white' }}>
                     กลับ
@@ -90,10 +92,15 @@ const HistoryP: React.FC = () => {
             <Col span={4}>
             </Col>
           </div>
-          <Table columns={columnnotify} dataSource={notify} />
         </div>
+        <Col>
+          <div style={{ textAlign: 'center', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', marginTop: 32 }}>
+            <Table columns={columnnotify} dataSource={notify} />
+          </div>
+        </Col>
+
       </Content>
-    </Layout>
+    </Layout >
   );
 };
 

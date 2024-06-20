@@ -10,18 +10,18 @@ import (
 // in case service_user
 func ShowNotifyCaseByUID(c *fiber.Ctx) error {
 	id := c.Params("id")
-	var notify entity.Notify
-	if err := entity.DB().Preload("Post").Raw("SELECT * FROM notifies WHERE post_id = (SELECT id from posts WHERE status_id = 3 and service_user_id = ?)", id).Find(&notify).Error; err != nil {
+	var notify []entity.Notify
+	if err := entity.DB().Preload("Post").Raw("SELECT * FROM notifies WHERE post_id = (SELECT id FROM posts WHERE service_user_id = ? AND (status_id = 3 OR (status_id = 4 AND rate = 0) OR (status_id = 5 AND rate = 0)))", id).Find(&notify).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": notify})
 }
 
 // history service_user
-func ShowNotifyHistoryByUID(c *fiber.Ctx) error {
+func ShowHistoryByID(c *fiber.Ctx) error {
 	id := c.Params("id")
-	var notify entity.Notify
-	if err := entity.DB().Preload("Post").Raw("SELECT * FROM notifies WHERE post_id = (SELECT id from posts WHERE status_id != 3 and service_user_id = ?)", id).Find(&notify).Error; err != nil {
+	var notify []entity.Notify
+	if err := entity.DB().Raw("SELECT * FROM notifies WHERE post_id = ?", id).Find(&notify).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": notify})

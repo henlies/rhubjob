@@ -15,6 +15,19 @@ func main() {
 	// - signin
 	app.Post("/signin", controller.Signin)
 
+	// - interface
+	app.Get("/allofuser", controller.ListAllofUser)
+
+	app.Get("/allofuserr", controller.ListAllofuser)
+	app.Get("/allofdog", controller.ListAllofDog)
+	app.Get("/allofcat", controller.ListAllofCat)
+
+	app.Get("/allofprovider", controller.ListAllofprovider)
+	app.Get("/allofpostdog", controller.ListAllofPostDog)
+	app.Get("/allofpostcat", controller.ListAllofPostCat)
+	app.Get("/rate/:id", controller.RateID)
+	app.Get("/count/:id", controller.CountID)
+
 	// - foreign
 	app.Get("/prefixes", controller.ListPrefixes)
 	app.Get("/genders", controller.ListGenders)
@@ -40,15 +53,13 @@ func main() {
 	app.Patch("/pet", controller.UpdatePet)
 
 	// - Notify
-
 	app.Get("/notifynow/:id", controller.ShowNotifyCaseByUID)
-	// app.Get("/notifyhistory/:id", controller.ShowNotifyHistoryByUID)
+	app.Get("/notifyhistory/:id", controller.ShowHistoryByID)
 	app.Get("/notifyhistorypro/:id", controller.ShowNotifyHistoryByID)
 	app.Get("/notifycheckhistorypro/:id", controller.ShowNotifyCheckHistoryByID)
 	app.Post("/createnotify", controller.CreateNotify)
 
 	// - User
-
 	app.Get("/usersactive", controller.ListUsersActive)
 	app.Get("/usersnonactive", controller.ListUsersNonactive)
 
@@ -74,8 +85,10 @@ func main() {
 	// app.Delete("/admin/:id", controller.DeleteAdmin)
 
 	// - Post
+	app.Get("/getpostuid/:uid", controller.GetPostbyUid)
 	app.Get("/getpost/:id", controller.GetPostbyId)
 	app.Get("/getposttrack/:id", controller.GetPostbyPId)
+	app.Get("/getpostincase/:uid", controller.GetPostInCaseByuid)
 
 	app.Get("/poststatus1/:id", controller.GetPostShowIDstatus1)
 	app.Get("/poststatus2/:id", controller.GetPostShowIDstatus2)
@@ -86,6 +99,7 @@ func main() {
 	app.Patch("/post", controller.UpdatePost)
 	app.Delete("/post/:id", controller.DeletePost)
 	app.Patch("/canclepost", controller.CanclePost)
+	app.Patch("/gotrate", controller.RateAfterJobDone)
 	app.Delete("/finishpost/:id", controller.FinishPost)
 	app.Delete("/acceptpost/:id", controller.AcceptPost)
 	app.Delete("/nonacceptpost/:id", controller.NonAcceptPost)

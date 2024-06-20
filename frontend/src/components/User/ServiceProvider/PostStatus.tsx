@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Col, Form, Input, Layout, Row, Typography } from 'antd';
+import { Button, Card, Col, Form, Input, Layout, Modal, Row, Typography, message } from 'antd';
 import { PostSInterface } from '../../../models/Post';
 import { CreateNotify, GetPostbyPId } from '../../../services/HttpServices';
 import { Link, useParams } from 'react-router-dom';
@@ -18,6 +18,15 @@ const Poststatus: React.FC = () => {
   const date = new Date();
   const [health, setHealth] = useState(1);
   const [clean, setClean] = useState(1);
+  const [api, Holder] = message.useMessage();
+
+  const openAlert = (type: 'success' | 'error', content: string) => {
+    api.open({
+      type,
+      content,
+      duration: 5,
+    });
+  };
 
   const getpost = async () => {
     let res = await GetPostbyPId(postIDparams);
@@ -58,7 +67,13 @@ const Poststatus: React.FC = () => {
 
     let res = await CreateNotify(data);
     if (res) {
-      window.location.reload();
+      Modal.confirm({
+        title: 'ยืนยันการแจ้งสถานะความคืบหน้า',
+        content: 'คุณแน่ใจหรือไม่ที่ต้องการจะแจ้งสถานะความคืบหน้า ?',
+        onOk: async () => {
+          openAlert('success', 'แจ้งสถานะความคืบหน้าเรียบร้อยแล้ว');
+        },
+      });
     }
   }
 
@@ -71,7 +86,7 @@ const Poststatus: React.FC = () => {
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
         <div style={{ background: '#fff', textAlign: 'center', borderRadius: 8, }}>
-          <div style={{ display: 'flex', marginRight: '60px', marginBottom: '24px', marginTop: '64px', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', marginBottom: '24px', marginTop: '64px', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', borderRadius: 8 }}>
             <Col span={4}>
               <div style={{ textAlign: 'center' }}>
                 <Link to={`/post`}>
@@ -87,7 +102,7 @@ const Poststatus: React.FC = () => {
               </div>
             </Col>
             <Col span={4}>
-              <div style={{ textAlign: 'center' }}>
+              <div style={{ textAlign: 'left' }}>
                 <Link to={`/history-post/${postIDparams}`}>
                   <Button style={{ background: 'orange', color: 'white' }}>
                     ประวัติความคืบหน้า
@@ -113,36 +128,33 @@ const Poststatus: React.FC = () => {
               year: 'numeric',
             });
 
-            const birthDate = new Date(post.ServiceUser?.Birth);
-            const birth = birthDate.toLocaleDateString('th-TH', {
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric',
-            });
-
             return (
               <div>
                 <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', justifyContent: 'center' }}>
                   <Row gutter={[16, 16]}>
-                    <Col span={13}>
+
+                    <Col span={12}>
+                      {Holder}
                       <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
-                        <Card bordered={false} style={{ marginTop: '8px', minHeight: '36vh' }}>
+                        <Card bordered={false} style={{ marginTop: '8px', borderRadius: '8px', width: '100%', height: 375, maxWidth: '550px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBottom: '20px' }}>
-                            <Title level={4}>แจ้งความคืบหน้า</Title>
+                            <Title style={{ marginBottom: 24 }} level={4}>แจ้งสถานะความคืบหน้า</Title>
                             <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
                               <Form
                                 initialValues={{ remember: true }}
                                 style={{ maxWidth: '300px', margin: 'auto' }}
                               >
-                                <Radio.Group style={{ marginBottom: '8px' }} onChange={onChangeClean} value={clean}>
-                                  <Radio value={1}>สะอาด</Radio>
-                                  <Radio value={2}>ปกติ</Radio>
-                                  <Radio value={3}>สกปรก</Radio>
-                                </Radio.Group>
-                                <Radio.Group style={{ marginBottom: '8px' }} onChange={onChangeHealth} value={health}>
-                                  <Radio value={1}>สุขภาพดี</Radio>
-                                  <Radio value={2}>สุขภาพไม่ดี</Radio>
-                                </Radio.Group>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '12px' }}>
+                                  <Radio.Group style={{ marginBottom: '4px' }} onChange={onChangeClean} value={clean}>
+                                    <Radio value={1}>สะอาด</Radio>
+                                    <Radio value={2}>ปกติ</Radio>
+                                    <Radio value={3}>สกปรก</Radio>
+                                  </Radio.Group>
+                                  <Radio.Group style={{ marginBottom: '4px' }} onChange={onChangeHealth} value={health}>
+                                    <Radio value={1}>สุขภาพดี</Radio>
+                                    <Radio value={2}>สุขภาพไม่ดี</Radio>
+                                  </Radio.Group>
+                                </div>
                                 {health === 2 && (
                                   <Input
                                     style={{ marginBottom: '8px' }}
@@ -164,7 +176,7 @@ const Poststatus: React.FC = () => {
                                   type="primary"
                                   htmlType="submit"
                                   onClick={submit}
-                                  style={{}}
+                                  style={{ marginTop: '54px', width: '100%' }}
                                 >
                                   ยืนยัน
                                 </Button>
@@ -174,102 +186,85 @@ const Poststatus: React.FC = () => {
                         </Card>
                       </div>
                     </Col>
-                    <Col span={11}>
-                      <Card bordered={false} style={{ marginTop: '8px', minHeight: '36vh' }}>
-                        <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                          <div style={{ margin: '12px' }}>
-                            <Image style={{ borderRadius: '50%' }} width={50} src={post.ServiceProvider?.Pic} />
-                          </div>
-                          <div style={{ marginRight: '20px' }}>
-                            <Input addonBefore="ชื่อผู้ให้บริการ" value={`${post.ServiceProvider?.Prefix?.Name} ${post.ServiceProvider?.Firstname} ${post.ServiceProvider?.Lastname}`} />
-                          </div>
-                          <div>
-                            <Input addonBefore="สถานะ" value={`${post.Status?.Name}`} />
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                          <Col span={12}>
-                            <div style={{ margin: '24px' }}>
-                              <Input value="รายละเอียดการให้บริการ" />
-                              <div>
-                                <Input addonBefore="คำแนะนำ" value={`${post.Descript}`} />
-                                <Input addonBefore="วันที่" value={`${start} ถึง วันที่ ${end}`} />
-                                <Input addonBefore="ราคา" value={`${post.Price} / วัน`} />
-                                <Input addonBefore="รับเลี้ยง" value={post.Type?.Name} />
-                              </div>
-                            </div>
-                          </Col>
-                        </div>
-                      </Card>
-                    </Col>
-                    <Col span={13}>
-                      <Card bordered={false} style={{ marginTop: '8px', minHeight: '36vh' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBottom: '20px' }}>
-                          <Title level={4}>ข้อมูลผู้ใช้บริการ</Title>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                          <Col span={12}>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                              <Input addonBefore="ชื่อผู้ใช้บริการ" value={`${post.ServiceUser?.Prefix?.Name} ${post.ServiceUser?.Firstname} ${post.ServiceUser?.Lastname}`} />
-                              <div style={{ marginBottom: '8px', marginTop: '8px' }}>
-                                <Image style={{ borderRadius: '50%' }} width={95} src={post.ServiceUser?.Pic} />
-                              </div>
-                              <Input addonBefore="เจ้าของ" value={`${post.ServiceUser?.Pet?.Name}`} />
-                              <Input addonBefore="วันเกิด" value={`${birth}`} />
-                              <Input addonBefore="สถานะ" value={`${post.ServiceUser?.Descript}`} />
-                            </div>
-                          </Col>
-                          <Col span={12}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-                              <div>
-                                <div style={{ marginBottom: "16px" }}>
-                                  <Input value="ช่องทางการติดต่อ" />
-                                </div>
-                                <Input addonBefore="ที่อยู่" value={`${post.ServiceUser?.Address?.Descript} ต.${post.ServiceUser?.Address?.District?.Name} จ.${post.ServiceUser?.Address?.District?.Province?.Name} รหัสไปรษณี ${post.ServiceUser?.Address?.District?.Zipcode}`} />
-                                <Input addonBefore="อีเมล" value={`${post.ServiceUser?.Email}`} />
-                                <Input addonBefore="ไลน์" value={`${post.ServiceUser?.Line}`} />
-                                <Input addonBefore="เบอร์โทรศัพท์" value={`${post.ServiceUser?.Phone}`} />
-                              </div>
-                            </div>
-                          </Col>
-                        </div>
-                      </Card>
-                    </Col>
-                    <Col span={11}>
-                      <Card bordered={false} style={{ marginTop: '8px', minHeight: '36vh', paddingBottom: '10px' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBottom: '20px' }}>
-                          <Title level={4}>ข้อมูลสัตว์เลี้ยง</Title>
-                        </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
-                          <Col span={12}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-                              <div>
-                                <Input addonBefore="ชื่อ" value={`${post.ServiceUser?.Pet?.Name}`} />
-                              </div>
-                              <div>
-                                <Image width={100} src={post.ServiceUser?.Pet?.Pic} />
-                              </div>
+                    <Col span={12}>
+                      <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                        <Card bordered={false} style={{ marginTop: '8px', borderRadius: '8px', width: '100%', height: 375, maxWidth: '550px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
+                          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                            <Image style={{ borderRadius: '50%' }} width={75} src={post.ServiceProvider?.Pic} />
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                              <Input readOnly addonBefore="ชื่อผู้รับเลี้ยง" value={`${post.ServiceProvider?.Firstname} ${post.ServiceProvider?.Lastname}`} style={{ flex: 1 }} />
                             </div>
-                          </Col>
-                          <Col span={12}>
-                            <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
-                              <div>
-                                <div style={{ marginBottom: "16px" }}>
-                                  <Input value="รายละเอียดสัตว์เลี้ยง" />
-                                </div>
-                                <Input addonBefore="รายละเอียด" value={`${post.ServiceUser?.Pet?.Descript}`} />
-                                <Input addonBefore="ชนิด" value={`${post.ServiceUser?.Pet?.Gene?.Type?.Name}`} />
-                                <Input addonBefore="สายพันธุ์" value={`${post.ServiceUser?.Pet?.Gene?.Name}`} />
-                                <Input addonBefore="อาหาร" value={`${post.ServiceUser?.Pet?.Food}`} />
-                                <Input addonBefore="นิสัย" value={`${post.ServiceUser?.Pet?.Habit}`} />
-                                <Input addonBefore="ยา" value={`${post.ServiceUser?.Pet?.Pill}`} />
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
+                            <Col span={24}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <Input value="รายละเอียดผู้รับเลี้ยง" readOnly style={{ background: '#f5f5f5', color: '#000', fontWeight: 'bold', textAlign: 'center' }} />
+                                <Input readOnly addonBefore="คำแนะนำ" value={`${post.Descript}`} />
+                                <Input readOnly addonBefore="ตั้งแต่วันที่" value={`${start} ถึงวันที่ ${end}`} />
+                                <Input readOnly addonBefore="ราคา" value={`${post.Price} บาท/วัน`} />
+                                <Input readOnly addonBefore="รับเลี้ยง" value={post.Type?.Name} />
                               </div>
-                            </div>
-                          </Col>
-                        </div>
-                      </Card>
+                            </Col>
+                          </div>
+                        </Card>
+                      </div>
                     </Col>
+
+                    <Col span={12}>
+                      <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                        <Card bordered={false} style={{ marginTop: '8px', borderRadius: '8px', width: '100%', height: 375, maxWidth: '550px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
+                          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                            <Image style={{ borderRadius: '50%' }} width={95} src={post.ServiceUser?.Pic} />
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                              <Input readOnly addonBefore="ชื่อลูกค้า" value={`${post.ServiceUser?.Prefix?.Name}${post.ServiceUser?.Firstname} ${post.ServiceUser?.Lastname}`} style={{ flex: 1 }} />
+                              <Input readOnly addonBefore="สถานะ" value={`${post.ServiceUser?.Descript}`} style={{ flex: 1 }} />
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
+                            <Col span={24}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <Input value="ช่องทางการติดต่อ" readOnly style={{ background: '#f5f5f5', color: '#000', fontWeight: 'bold', textAlign: 'center' }} />
+                                <Input readOnly addonBefore="ที่อยู่" value={`${post.ServiceUser?.Address?.Descript} ต.${post.ServiceUser?.Address?.District?.Name} จ.${post.ServiceUser?.Address?.District?.Province?.Name} รหัสไปรษณี ${post.ServiceUser?.Address?.District?.Zipcode}`} />
+                                <Input readOnly addonBefore="อีเมล" value={`${post.ServiceUser?.Email}`} />
+                                <Input readOnly addonBefore="ไลน์" value={`${post.ServiceUser?.Line}`} />
+                                <Input readOnly addonBefore="เบอร์โทรศัพท์" value={`${post.ServiceUser?.Phone}`} />
+                              </div>
+                            </Col>
+                          </div>
+                        </Card>
+                      </div>
+                    </Col>
+
+                    <Col span={12}>
+                      <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                        <Card bordered={false} style={{ marginTop: '8px', borderRadius: '8px', width: '100%', height: 375, maxWidth: '550px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
+                          <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
+                            <Col span={12}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
+                                <div>
+                                  <Input readOnly addonBefore="ชื่อสัตว์เลี้ยง" value={`${post.ServiceUser?.Pet?.Name}`} style={{ flex: 1 }} />
+                                </div>
+                                <div>
+                                  <Image style={{ marginTop: 32 }} width={100} src={post.ServiceUser?.Pet?.Pic} />
+                                </div>
+                              </div>
+                            </Col>
+                            <Col span={12}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <Input value="รายละเอียดสัตว์เลี้ยง" readOnly style={{ background: '#f5f5f5', color: '#000', fontWeight: 'bold', textAlign: 'center' }} />
+                                <Input readOnly addonBefore="รายละเอียด" value={`${post.ServiceUser?.Pet?.Descript}`} />
+                                <Input readOnly addonBefore="ชนิด" value={`${post.ServiceUser?.Pet?.Gene?.Type?.Name}`} />
+                                <Input readOnly addonBefore="สายพันธุ์" value={`${post.ServiceUser?.Pet?.Gene?.Name}`} />
+                                <Input readOnly addonBefore="อาหาร" value={`${post.ServiceUser?.Pet?.Food}`} />
+                                <Input readOnly addonBefore="นิสัย" value={`${post.ServiceUser?.Pet?.Habit}`} />
+                              </div>
+                            </Col>
+                          </div>
+                        </Card>
+                      </div>
+                    </Col>
+
                   </Row>
                 </div>
               </div>

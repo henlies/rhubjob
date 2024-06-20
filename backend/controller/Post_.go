@@ -34,6 +34,20 @@ func GetPostbyPId(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": post})
 }
 
+func GetPostInCaseByuid(c *fiber.Ctx) error {
+	var post []entity.Post
+	uid := c.Params("uid")
+	rawQuery := `
+			SELECT * FROM posts WHERE service_user_id = ? AND (status_id = 3 OR (status_id = 4 AND rate = 0) OR (status_id = 5 AND rate = 0))
+		`
+	if err := entity.DB().Preload("ServiceProvider.Address.District.Province").Preload("Status").
+		Preload("Type").Preload("ServiceUser.Address.District.Province").Preload("ServiceUser.Pet.Gene.Type").
+		Preload("ServiceUser.Prefix").Preload("ServiceProvider.Prefix").Raw(rawQuery, uid).Find(&post).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": post})
+}
+
 func GetPostShowByIDAndStatus(c *fiber.Ctx, statusID int) error {
 	var post []entity.Post
 	id := c.Params("id")
@@ -41,7 +55,7 @@ func GetPostShowByIDAndStatus(c *fiber.Ctx, statusID int) error {
 		SELECT * FROM posts WHERE status_id = ? AND service_provider_id = ? 
 	`
 
-	if err := entity.DB().Preload("ServiceUser").Preload("ServiceProvider").Preload("Status").
+	if err := entity.DB().Preload("ServiceUser.Pet.Gene").Preload("ServiceProvider").Preload("Status").
 		Preload("Type").Raw(rawQuery, statusID, id).Find(&post).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -68,7 +82,7 @@ func GetPostShowIDstatus4(c *fiber.Ctx) error {
 		SELECT * FROM posts WHERE status_id IN (4, 5, 6) AND service_provider_id = ? 
 	`
 
-	if err := entity.DB().Preload("ServiceUser").Preload("ServiceProvider").Preload("Status").
+	if err := entity.DB().Preload("ServiceUser.Pet.Gene").Preload("ServiceProvider").Preload("Status").
 		Preload("Type").Raw(rawQuery, id).Find(&post).Error; err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -150,6 +164,22 @@ func CanclePost(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": cp})
 }
 
+func RateAfterJobDone(c *fiber.Ctx) error {
+	var post entity.Post
+	if err := c.BodyParser(&post); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	cp := entity.Post{
+		Rate: post.Rate,
+	}
+
+	if err := entity.DB().Where("id = ?", post.ID).Updates(&cp).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": cp})
+}
+
 func FinishPost(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if tx := entity.DB().Exec("UPDATE posts SET status_id = 4 WHERE id = ?", id); tx.RowsAffected == 0 {
@@ -181,4 +211,17 @@ func SelectPost(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "User not found"})
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{"data": id})
+}
+
+func GetPostbyUid(c *fiber.Ctx) error {
+	var post []entity.Post
+	uid := c.Params("uid")
+	rawQuery := `
+		SELECT * FROM posts WHERE service_user_id = ?
+		`
+	if err := entity.DB().Preload("ServiceProvider.Prefix").Preload("Status").
+		Raw(rawQuery, uid).Find(&post).Error; err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"data": post})
 }

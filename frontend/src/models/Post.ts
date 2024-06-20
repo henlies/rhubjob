@@ -18,6 +18,7 @@ export interface PostSInterface {
     StatusID?: number;
     Status?: StatusInterface;
     Note?: string;
+    Rate?: number;
 }
 
 // Create Post
@@ -42,4 +43,9 @@ export interface PostEInterface {
     TypeID?: number;
     Note?: string;
     Service_UserID?: number;
+}
+
+export interface PostRInterface {
+    ID?: number;
+    Rate?: number;
 }

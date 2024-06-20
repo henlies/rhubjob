@@ -15,11 +15,15 @@ import {
   Avatar,
   Tooltip,
   message,
+  Row,
 } from 'antd';
 import { PostCInterface, PostEInterface, PostSInterface } from '../../../models/Post';
-import { CreatePost, DeletePost, GetPostShowIDstatus1, GetPostbyId, GetType, UpdatePost } from '../../../services/HttpServices';
+import { AllofCat, AllofDog, AllofUserr, CreatePost, DeletePost, GetPostShowIDstatus1, GetPostbyId, GetType, UpdatePost } from '../../../services/HttpServices';
 import { TypeInterface } from '../../../models/Type';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import './DashboardPro.css';
+import { UserInterface } from '../../../models/User';
+import { PetInterface } from '../../../models/Pet';
 
 const DashboardUser: React.FC = () => {
   const { Option } = Select;
@@ -38,6 +42,31 @@ const DashboardUser: React.FC = () => {
   const [postopen, setPostopen] = useState(false);
   const [postedit, setPostedit] = useState(false);
   const [postcancle, setPostCancle] = useState(false);
+
+  const [user, setUser] = useState<UserInterface[]>([]);
+  const [dog, setDog] = useState<PetInterface[]>([]);
+  const [cat, setCat] = useState<PetInterface[]>([]);
+
+  const getuser = async () => {
+    let res = await AllofUserr();
+    if (res) {
+      setUser(res);
+    }
+  };
+
+  const getdog = async () => {
+    let res = await AllofDog();
+    if (res) {
+      setDog(res);
+    }
+  };
+
+  const getcat = async () => {
+    let res = await AllofCat();
+    if (res) {
+      setCat(res);
+    }
+  };
 
   const getpost = async () => {
     let res = await GetPostShowIDstatus1(numId);
@@ -188,6 +217,9 @@ const DashboardUser: React.FC = () => {
   }
 
   useEffect(() => {
+    getuser();
+    getdog();
+    getcat();
     getpost();
     gettype();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -197,7 +229,7 @@ const DashboardUser: React.FC = () => {
     <Layout style={{ minHeight: '100vh' }}>
       <Content style={{ margin: '16px' }}>
         <div style={{ background: '#fff', textAlign: 'center', borderRadius: 8, }}>
-          <div style={{ display: 'flex', marginBottom: '64px', marginTop: '64px', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', marginBottom: '64px', marginTop: '64px', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', borderRadius: 8 }}>
             <Col span={2}>
               <div style={{ textAlign: 'center', }}>
                 <Button onClick={() => setPostopen(true)} style={{ background: '#1677ff', color: 'white' }}>
@@ -213,6 +245,25 @@ const DashboardUser: React.FC = () => {
             <Col span={2}>
             </Col>
           </div>
+        </div>
+        <div style={{ textAlign: 'center', borderRadius: '10px' }}>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Card style={{ boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }} title="จำนวนลูกค้า" bordered={false}>
+                <p style={{ fontSize: '24px', textAlign: 'center', margin: 0 }}>{user.length}</p>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card style={{ boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }} title="จำนวนสุนัข" bordered={false}>
+                <p style={{ fontSize: '24px', textAlign: 'center', margin: 0 }}>{dog.length}</p>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card style={{ boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }} title="จำนวนแมว" bordered={false}>
+                <p style={{ fontSize: '24px', textAlign: 'center', margin: 0 }}>{cat.length}</p>
+              </Card>
+            </Col>
+          </Row>
         </div>
 
         {posts.length > 0 ? (
@@ -233,7 +284,7 @@ const DashboardUser: React.FC = () => {
 
             return (
               <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
-                <Card style={{ marginTop: '8px' }} bordered={false} actions={[
+                <Card style={{ marginTop: 24, borderRadius: '8px', width: '100%', maxWidth: '550px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }} bordered={false} actions={[
                   <Tooltip title="แก้ไขงาน" placement="bottom">
                     <EditOutlined style={{ color: 'orange' }} onClick={() => openEdit(posts.ID)} />,
                   </Tooltip>,
@@ -241,27 +292,21 @@ const DashboardUser: React.FC = () => {
                     <DeleteOutlined style={{ color: 'red' }} onClick={() => handleDelete(posts.ID)} />,
                   </Tooltip>,
                 ]}>
-                  <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-                    <div style={{ margin: '12px' }}>
-                      <Avatar size={'large'} src={posts.ServiceProvider?.Pic} />
-                    </div>
-                    <div style={{ marginRight: '20px' }}>
-                      <Input addonBefore="ชื่อผู้ให้บริการ" value={`${posts.ServiceProvider?.Firstname} ${posts.ServiceProvider?.Lastname}`} />
-                    </div>
-                    <div>
-                      <Input addonBefore="สถานะ" value={`${posts.Status?.Name}`} />
+                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                    <Avatar size={100} src={posts.ServiceProvider?.Pic} style={{ margin: '12px' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                      <Input readOnly addonBefore="ชื่อ" value={`${posts.ServiceProvider?.Firstname} ${posts.ServiceProvider?.Lastname}`} style={{ flex: 1 }} />
+                      <Input readOnly addonBefore="สถานะงาน" value={`${posts.Status?.Name}`} style={{ flex: 1 }} />
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '12px' }}>
-                    <Col span={12}>
-                      <div style={{ margin: '24px' }}>
-                        <Input value="รายละเอียดการใช้บริการ" />
-                        <div>
-                          <Input addonBefore="คำแนะนำ" value={`${posts.Descript}`} />
-                          <Input addonBefore="วันที่" value={`${start} ถึงวันที่ ${end}`} />
-                          <Input addonBefore="ราคา" value={`${posts.Price} / วัน`} />
-                          <Input addonBefore="รับเลี้ยง" value={posts.Type?.Name} />
-                        </div>
+                    <Col span={24}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <Input value="รายละเอียดผู้รับเลี้ยง" readOnly style={{ background: '#f5f5f5', color: '#000', fontWeight: 'bold', textAlign: 'center' }} />
+                        <Input readOnly addonBefore="คำแนะนำ" value={`${posts.Descript}`} />
+                        <Input readOnly addonBefore="ตั้งแต่วันที่" value={`${start} ถึงวันที่ ${end}`} />
+                        <Input readOnly addonBefore="ราคา" value={`${posts.Price} บาท/วัน`} />
+                        <Input readOnly addonBefore="รับเลี้ยง" value={posts.Type?.Name} />
                       </div>
                     </Col>
                   </div>
@@ -271,7 +316,7 @@ const DashboardUser: React.FC = () => {
           })
         ) : (
           <div style={{ textAlign: 'center', marginTop: '100px' }}>
-            <Title level={4}>ยังไม่มีโพสสำหรับการรอรับเลี้ยง</Title>
+            <Title level={4}>ยังไม่มีงานที่คุณต้องการรับ กรุณาสร้างโพส</Title>
           </div>
         )}
         <Modal
@@ -281,17 +326,19 @@ const DashboardUser: React.FC = () => {
             setPostopen(false);
           }}
           footer={null}
+          style={{ maxWidth: '400px', }}
         >
           <Col>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={2}>สร้างโพส</Title>
+            <div style={{ textAlign: 'center', marginBottom: 16 }}>
+              <Title style={{ marginBottom: 36 }} level={2}>กรอกข้อมูลที่ต้องการ</Title>
             </div>
             <Form
               initialValues={{ remember: true }}
               style={{ maxWidth: '300px', margin: 'auto' }}
+
             >
               <Input
-                placeholder="คำอธิบาย"
+                placeholder="คำอธิบายเกี่ยวกับข้อมูลต่างๆ"
                 onChange={(e) => {
                   setPostc({ ...postc, Descript: e.target.value });
                 }}
@@ -326,7 +373,7 @@ const DashboardUser: React.FC = () => {
                 htmlType="submit"
                 onClick={submit}
               >
-                โพส
+                สร้างโพส
               </Button>
             </Form>
           </Col>
@@ -341,15 +388,15 @@ const DashboardUser: React.FC = () => {
           footer={null}
         >
           <Col>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={2}>แก้ไขงาน</Title>
+            <div style={{ textAlign: 'center', marginBottom: 16 }}>
+              <Title style={{ marginBottom: 36 }} level={2}>แก้ไขข้อมูล</Title>
             </div>
             <Form
               initialValues={{ remember: true }}
               style={{ maxWidth: '300px', margin: 'auto' }}
             >
               <Input
-                placeholder="คำอธิบาย"
+                placeholder="คำอธิบายเกี่ยวกับข้อมูลต่างๆ"
                 value={poste.Descript}
                 onChange={(e) => {
                   setPoste({ ...poste, Descript: e.target.value });
